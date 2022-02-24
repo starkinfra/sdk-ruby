@@ -2,7 +2,6 @@
 
 require('starkbank')
 require_relative('key')
-require_relative('workspace/workspace')
 require_relative('pixrequest/pixrequest')
 require_relative('pixrequest/log')
 require_relative('pixreversal/pixreversal')

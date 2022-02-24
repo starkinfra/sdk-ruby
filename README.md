@@ -584,7 +584,7 @@ require('starkinfra')
 
 csv = StarkInfra::PixStatement.csv('5155165527080960')
 
-File.binwrite('statement.csv', csv)
+File.binwrite('statement.zip', csv)
 ```
 
 ## Process webhook events

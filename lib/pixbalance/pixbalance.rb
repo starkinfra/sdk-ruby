@@ -36,7 +36,7 @@ module StarkInfra
     # ## Return:
     # - PixBalance object with updated attributes
     def self.get(user: nil)
-      StarkInfra::Utils::Rest.get_stream(user: user, **resource)
+      StarkInfra::Utils::Rest.get_stream(user: user, **resource).next
     end
 
     def self.resource
@@ -47,7 +47,7 @@ module StarkInfra
             amount: json['amount'],
             currency: json['currency'],
             updated: json['updated'],
-            id: json['id'],
+            id: json['id']
           )
         }
       }
