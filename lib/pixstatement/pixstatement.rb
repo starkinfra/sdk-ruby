@@ -125,7 +125,7 @@ module StarkInfra
     # ## Return:
     # - PixStatement .csv file
     def self.csv(id, user: nil)
-      return StarkInfra::Utils::Rest.get_content(id: id, user: user, sub_resource_name: "csv", **resource)
+      StarkInfra::Utils::Rest.get_content(id: id, user: user, sub_resource_name: 'csv', **resource)
     end
 
     def self.resource
@@ -140,7 +140,7 @@ module StarkInfra
             status: json['status'],
             transaction_count: json['transaction_count'],
             created: json['created'],
-            updated: json['updated'],
+            updated: json['updated']
           )
         }
       }

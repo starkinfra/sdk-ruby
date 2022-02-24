@@ -28,7 +28,7 @@ module StarkInfra
 
         base_url = {
           Environment::PRODUCTION => 'https://api.starkinfra.com/',
-          Environment::SANDBOX => 'https://sandbox.api.starkinfra.com/',
+          Environment::SANDBOX => 'https://sandbox.api.starkinfra.com/'
         }[user.environment] + 'v2'
 
         url = "#{base_url}/#{path}#{StarkInfra::Utils::URL.urlencode(query)}"
