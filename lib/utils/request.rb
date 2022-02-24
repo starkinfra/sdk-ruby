@@ -61,7 +61,7 @@ module StarkInfra
         req['Access-Time'] = access_time
         req['Access-Signature'] = signature
         req['Content-Type'] = 'application/json'
-        req['User-Agent'] = "Ruby-#{RUBY_VERSION}-SDK-2.6.0"
+        req['User-Agent'] = "Ruby-#{RUBY_VERSION}-SDK-infra-0.0.2"
         req['Accept-Language'] = language
 
         request = Net::HTTP.start(uri.hostname, use_ssl: true) { |http| http.request(req) }
