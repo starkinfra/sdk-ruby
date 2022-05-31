@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [0.0.3] - 2022-05-31
 ### Added
 - Webhook subscriptions
 - Webhook Events
