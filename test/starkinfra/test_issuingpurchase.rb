@@ -8,7 +8,6 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
   it 'query' do
     purchases = StarkInfra::IssuingPurchase.query(limit: 5)
     purchases.each do |purchase|
-      puts purchase
       expect(purchase.id).wont_be_nil
     end
   end
@@ -30,7 +29,6 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
   it 'query and get' do
     purchase = StarkInfra::IssuingPurchase.query(limit: 1).first
     purchase = StarkInfra::IssuingPurchase.get(purchase.id)
-    puts purchase
     expect(purchase.id).wont_be_nil
   end
 end

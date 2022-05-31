@@ -6,7 +6,6 @@ require_relative('../user')
 describe(StarkInfra::IssuingBalance, '#issuing-balance#') do
   it 'get success' do
     balance = StarkInfra::IssuingBalance.get
-    puts balance
     expect(balance.id).wont_be_nil
     expect(balance.amount).wont_be_nil
     expect(balance.currency).wont_be_nil

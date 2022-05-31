@@ -152,7 +152,7 @@ class ExampleGenerator
       tags: ['iron'],
       rebate_amount: 0
       )
-    end
+  end
 
   def self.issuingcard_example(holder:)
     StarkInfra::IssuingCard.new(

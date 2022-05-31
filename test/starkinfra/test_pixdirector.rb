@@ -9,6 +9,5 @@ describe(StarkInfra::PixDirector, '#pix-director#') do
     pix_director = ExampleGenerator.pixdirector_example
     director = StarkInfra::PixDirector.create(pix_director)
     expect(director.id).wont_be_nil
-    puts director
   end
 end

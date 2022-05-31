@@ -1,7 +1,6 @@
 # frozen_string_literal: false
 
 require('date')
-require('starkinfra')
 
 module StarkInfra
   module Utils

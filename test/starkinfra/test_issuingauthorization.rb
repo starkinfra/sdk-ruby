@@ -10,12 +10,10 @@ invalid_signature = 'MEUCIQDOpo1j+V40DNZK2URL2786UQK/8mDXon9ayEd8U0/l7AIgYXtIZJB
 describe(StarkInfra::IssuingAuthorization, '#issuing-authorization#') do
   it 'response success' do
     response = StarkInfra::IssuingAuthorization.response(status: "ok")
-    puts response
   end
 
   it 'valid signature success' do
     authorization = StarkInfra::IssuingAuthorization.parse(content: content, signature: valid_signature)
-    puts authorization
   end
 
   it 'invalid signature success' do

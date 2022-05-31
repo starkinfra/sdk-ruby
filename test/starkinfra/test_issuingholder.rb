@@ -8,7 +8,6 @@ describe(StarkInfra::IssuingHolder, '#issuing-holder#') do
   it 'query' do
     holders = StarkInfra::IssuingHolder.query(limit: 5, expand: ['rules'])
     holders.each do |holder|
-      puts holder
       expect(holder.id).wont_be_nil
     end
   end
@@ -30,7 +29,6 @@ describe(StarkInfra::IssuingHolder, '#issuing-holder#') do
   it 'query and get' do
     holder = StarkInfra::IssuingHolder.query(limit: 1).first
     holder = StarkInfra::IssuingHolder.get(holder.id)
-    puts holder
     expect(holder.id).wont_be_nil
   end
 
