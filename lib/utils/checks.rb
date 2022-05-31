@@ -2,14 +2,13 @@
 
 require('date')
 require('starkbank-ecdsa')
-require('starkbank')
 require_relative('environment')
 
 module StarkInfra
   module Utils
     class Checks
       def self.check_user(user)
-        return user if user.is_a?(StarkBank::User)
+        return user if user.is_a?(StarkInfra::User)
 
         user = user.nil? ? StarkInfra.user : user
         raise(ArgumentError, 'A user is required to access our API. Check our README: https://github.com/starkinfra/sdk-ruby/') if user.nil?
@@ -90,7 +89,7 @@ module StarkInfra
           end
 
           begin
-            return [DateTime.strptime(data, '%Y-%m-%d'), 'date']
+            [DateTime.strptime(data, '%Y-%m-%d'), 'date']
           rescue ArgumentError
             raise(ArgumentError, 'invalid datetime string ' + data)
           end

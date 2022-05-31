@@ -6,40 +6,53 @@ This SDK version is compatible with the Stark Infra API v2.
 
 # Introduction
 
-## Index
+### Index
 
 - [Introduction](#introduction)
-    - [Supported Ruby versions](#supported-ruby-versions)
-    - [API documentation](#stark-infra-api-documentation)
-    - [Versioning](#versioning)
+  - [Supported Ruby versions](#supported-ruby-versions)
+  - [API documentation](#stark-infra-api-documentation)
+  - [Versioning](#versioning)
 - [Setup](#setup)
-    - [Install our SDK](#1-install-our-sdk)
-    - [Create your Private and Public Keys](#2-create-your-private-and-public-keys)
-    - [Register your user credentials](#3-register-your-user-credentials)
-    - [Setting up the user](#4-setting-up-the-user)
-    - [Setting up the error language](#5-setting-up-the-error-language)
+  - [Install our SDK](#1-install-our-sdk)
+  - [Create your Private and Public Keys](#2-create-your-private-and-public-keys)
+  - [Register your user credentials](#3-register-your-user-credentials)
+  - [Setting up the user](#4-setting-up-the-user)
+  - [Setting up the error language](#5-setting-up-the-error-language)
 - [Resource listing and manual pagination](#resource-listing-and-manual-pagination)
-- [Testing in Sandbox](#testing-in-sandbox) 
+- [Testing in Sandbox](#testing-in-sandbox)
 - [Usage](#usage)
-    - [PixRequests](#create-pix-requests): PIX receivables
-    - [PixReversals](#create-pix-reversals): Reverse PIX transactions
-    - [PixBalance](#get-pix-balance): Account balance
-    - [PixStatement](#create-pix-statement): Account statement entry
-    - [WebhookEvents](#Process-webhook-events): Manage webhook events
+  - [Pix](#pix)
+    - [PixRequests](#create-pixrequests): Create Pix transactions
+    - [PixReversals](#create-pixreversals): Reverse Pix transactions
+    - [PixBalance](#get-your-pixbalance): View your account balance
+    - [PixStatement](#create-a-pixstatement): Request your account statement
+    - [PixKey](#create-a-pixkey): Create a Pix Key
+    - [PixClaim](#create-a-pixclaim): Claim a Pix Key
+    - [PixDirector](#create-a-pixdirector): Create a Pix Director
+    - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
+    - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
+    - [PixDomain](#query-pixdomains): View registered SPI participants certificates
+  - [Credit Note](#credit-note)
+    - [CreditNote](#create-creditnotes): Create credit notes
+  - [Webhook](#webhook):
+    - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
+  - [Webhook Events](#webhook-events):
+    - [WebhookEvents](#process-webhook-events): Manage Webhook events
+    - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
 - [Handling errors](#handling-errors)
 - [Help and Feedback](#help-and-feedback)
 
-## Supported Ruby Versions
+### Supported Ruby Versions
 
 This library supports the following Ruby versions:
 
 * Ruby 2.3+
 
-## Stark Infra API documentation
+### Stark Infra API documentation
 
-Feel free to take a look at our [API docs](https://www.starkinfra.com/docs/api).
+Feel free to take a look at our [API docs](https://starkinfra.com/docs/api).
 
-## Versioning
+### Versioning
 
 This project adheres to the following versioning pattern:
 
@@ -51,7 +64,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 # Setup
 
-## 1. Install our SDK
+### 1. Install our SDK
 
 1.1 To install the package with gem, run:
 
@@ -65,7 +78,7 @@ gem install starkinfra
 gem('starkinfra', '~> 0.0.2')
 ```
 
-## 2. Create your Private and Public Keys
+### 2. Create your Private and Public Keys
 
 We use ECDSA. That means you need to generate a secp256k1 private
 key to sign your requests to our API, and register your public key
@@ -83,7 +96,7 @@ require('starkinfra')
 privateKey, publicKey = StarkInfra::Key.create
 
 # or, to also save .pem files in a specific path
-private_key, public_key = StarkInfra::Key.create('file/keys/')
+# private_key, public_key = StarkInfra::Key.create('file/keys/')
 ```
 
 **NOTE**: When you are creating new credentials, it is recommended that you create the
@@ -91,7 +104,7 @@ keys inside the infrastructure that will use it, in order to avoid risky interne
 transmissions of your **private-key**. Then you can export the **public-key** alone to the
 computer where it will be used in the new Project creation.
 
-## 3. Register your user credentials
+### 3. Register your user credentials
 
 You can interact directly with our API using two types of users: Projects and Organizations.
 
@@ -132,9 +145,9 @@ IF16ZoTVt1FzZ8WkYQ3XomRD4HS13A==
 '
 
 project = StarkInfra::Project.new(
-    environment: 'sandbox',
-    id: '5656565656565656',
-    private_key: private_key_content
+  environment: 'sandbox',
+  id: '5656565656565656',
+  private_key: private_key_content
 )
 ```
 
@@ -169,10 +182,10 @@ IF16ZoTVt1FzZ8WkYQ3XomRD4HS13A==
 '
 
 organization = StarkInfra::Organization.new(
-    environment: 'sandbox',
-    id: '5656565656565656',
-    private_key: private_key_content,
-    workspace_id: nil,  # You only need to set the workspace_id when you are operating a specific workspace_id
+  environment: 'sandbox',
+  id: '5656565656565656',
+  private_key: private_key_content,
+  workspace_id: nil,  # You only need to set the workspace_id when you are operating a specific workspace_id
 )
 
 ```
@@ -184,7 +197,7 @@ NOTE 2: We support `'sandbox'` and `'production'` as environments.
 NOTE 3: The credentials you registered in `sandbox` do not exist in `production` and vice versa.
 
 
-## 4. Setting up the user
+### 4. Setting up the user
 
 There are three kinds of users that can access our API: **Organization**, **Project**, and **Member**.
 
@@ -206,22 +219,22 @@ balance = StarkInfra::PixBalance.get(user: project)  # or organization
 ```ruby
 require('starkinfra')
 
-StarkInfra.user: project  # or organization
+StarkInfra::user = project  # or organization
 
-balance: StarkInfra::PixBalance.get()
+balance = StarkInfra::PixBalance.get
 ```
 
 Just select the way of passing the user that is more convenient to you.
 On all following examples, we will assume a default user has been set.
 
-## 5. Setting up the error language
+### 5. Setting up the error language
 
 The error language can also be set in the same way as the default user:
 
 ```ruby
 require('starkinfra')
 
-StarkInfra.language = 'en-US'
+StarkInfra::language = 'en-US'
 ```
 
 Language options are 'en-US' for English and 'pt-BR' for Brazilian Portuguese. English is the default.
@@ -240,7 +253,7 @@ require('starkinfra')
 requests = StarkInfra::PixRequest.query(limit=200)
 
 requests.each do |request|
-    puts request
+  puts request
 end
 ```
 
@@ -253,14 +266,14 @@ require('starkinfra')
 
 cursor = nil
 requests = nil
-while true:
-    requests, cursor = StarkInfra::PixRequest.page(limit: 50, cursor: cursor)
-    requests.each do |request|
-        puts request
-    end
-    if cursor.nil?
-        break
-    end
+while true
+  requests, cursor = StarkInfra::PixRequest.page(limit: 50, cursor: cursor)
+  requests.each do |request|
+    puts request
+  end
+  if cursor.nil?
+    break
+  end
 end
 ```
 
@@ -269,94 +282,94 @@ To simplify the following SDK examples, we will only use the `query` function, b
 # Testing in Sandbox
 
 Your initial balance is zero. For many operations in Stark Infra, you'll need funds
-in your account, which can be added to your balance by creating a Pix Request. 
+in your account, which can be added to your balance by creating a StarkBank::Invoice
+or a StarkBank::Boleto.
 
-In the Sandbox environment, most of the created Pix Requests will be automatically paid,
+In the Sandbox environment, most of the created Invoices will be automatically paid,
 so there's nothing else you need to do to add funds to your account. Just create
-a few Pix Request and wait around a bit.
+a few StarkBank::Invoices or StarkBank::Boletos and wait around a bit.
 
-In Production, you (or one of your clients) will need to actually pay this Pix Request
-for the value to be credited to your account.
-
+In Production, you (or one of your clients) will need to actually pay this StarkBank::Invoice 
+or StarkBank::Boleto for the value to be credited to your account.
 
 # Usage
 
-Here are a few examples on how to use the SDK. If you have any doubts, use the built-in
-`help()` function to get more info on the desired functionality
-(for example: `help(StarkInfra::boleto.create)`)
+Here are a few examples on how to use the SDK. If you have any doubts, check out the function or class docstring to get more info or go straight to our [API docs](https://starkinfra.com/docs/api).
 
-## Create pix requests
+## Pix
+
+### Create PixRequests
 You can create a Pix request to charge a user:
 
 ```ruby
 require('starkinfra')
 
 requests = StarkInfra::PixRequest.create(
-    [
-        StarkInfra::PixRequest.new(
-            amount: 100,  # (R$ 1.00)
-            external_id: '141234121',  # so we can block anything you send twice by mistake
-            sender_branch_code: '0000',
-            sender_account_number: '00000-0',
-            sender_account_type: 'checking',
-            sender_name: 'Tyrion Lannister',
-            sender_tax_id: '012.345.678-90',
-            receiver_bank_code: '00000001',
-            receiver_branch_code: '0001',
-            receiver_account_number: '00000-1',
-            receiver_account_type: 'checking',
-            receiver_name: 'Jamie Lannister',
-            receiver_tax_id: '45.987.245/0001-92',
-            end_to_end_id: 'E20018183202201201450u34sDGd19lz',
-            description: 'For saving my life',
-        ),
-        StarkInfra::PixRequest.new(
-            amount: 200,  # (R$ 2.00)
-            external_id: '2135613462',  # so we can block anything you send twice by mistake
-            sender_account_number: '00000-0',
-            sender_branch_code: '0000',
-            sender_account_type: 'checking',
-            sender_name: 'Arya Stark',
-            sender_tax_id: '012.345.678-90',
-            receiver_bank_code: '00000001',
-            receiver_account_number: '00000-1',
-            receiver_branch_code: '0001',
-            receiver_account_type: 'checking',
-            receiver_name: 'John Snow',
-            receiver_tax_id: '012.345.678-90',
-            end_to_end_id: 'E20018183202201201450u34sDGd19lz',
-            tags: ['Needle', 'sword'],
-        )
-    ]
+  [
+    StarkInfra::PixRequest.new(
+      amount: 100,  # (R$ 1.00)
+      external_id: '141234121',  # so we can block anything you send twice by mistake
+      sender_branch_code: '0000',
+      sender_account_number: '00000-0',
+      sender_account_type: 'checking',
+      sender_name: 'Tyrion Lannister',
+      sender_tax_id: '012.345.678-90',
+      receiver_bank_code: '00000001',
+      receiver_branch_code: '0001',
+      receiver_account_number: '00000-1',
+      receiver_account_type: 'checking',
+      receiver_name: 'Jamie Lannister',
+      receiver_tax_id: '45.987.245/0001-92',
+      end_to_end_id: 'E20018183202201201450u34sDGd19lz',
+      description: 'For saving my life',
+    ),
+    StarkInfra::PixRequest.new(
+      amount: 200,  # (R$ 2.00)
+      external_id: '2135613462',  # so we can block anything you send twice by mistake
+      sender_account_number: '00000-0',
+      sender_branch_code: '0000',
+      sender_account_type: 'checking',
+      sender_name: 'Arya Stark',
+      sender_tax_id: '012.345.678-90',
+      receiver_bank_code: '00000001',
+      receiver_account_number: '00000-1',
+      receiver_branch_code: '0001',
+      receiver_account_type: 'checking',
+      receiver_name: 'John Snow',
+      receiver_tax_id: '012.345.678-90',
+      end_to_end_id: 'E20018183202201201450u34sDGd19lz',
+      tags: ['Needle', 'sword'],
+    )
+  ]
 )
 
 requests.each do |request|
-    puts request
+  puts request
 end
 ```
 
-**Note**: Instead of using Pix Request objects, you can also pass each transaction element in dictionary format
+**Note**: Instead of using Pix request objects, you can also pass each transaction element in hash format
 
-## Query pix requests
+### Query PixRequests
 
-You can query multiple pix requests according to filters.
+You can query multiple Pix requests according to filters.
 
 ```ruby
 require('starkinfra')
 
 requests = StarkInfra::PixRequest.query(
-    after: '2022-01-01',
-    before: '2022-01-10'
+  after: '2022-01-01',
+  before: '2022-01-10'
 )
 
 requests.each do |request|
-    puts request
+  puts request
 end
 ```
 
-## Get a pix request
+### Get a PixRequest
 
-After its creation, information on a pix request may be retrieved by its id. Its status indicated whether it has been paid.
+After its creation, information on a Pix request may be retrieved by its id. Its status indicates whether it has been paid.
 
 ```ruby
 require('starkinfra')
@@ -366,44 +379,43 @@ request = StarkInfra::PixRequest.get('5155165527080960')
 puts request
 ```
 
-## Process pix request authorization requests
+### Process PixRequest authorization requests
 
 It's easy to process authorization requests that arrived in your handler. Remember to pass the
-signature header so the SDK can make sure it's StarkInfra that sent you
-the event.
+signature header so the SDK can make sure it's StarkInfra that sent you the event.
 
 ```ruby
 require('starkinfra')
 
 request = listen_requests()  # this is your handler to listen for authorization requests
 
-pix_request = Sevent = StarkBank::Event.parse(
-    content: request.body.read, 
-    signature: request.headers['Digital-Signature']
+pix_request = StarkInfra::PixRequest.parse(
+  content: request.body.read, 
+  signature: request.headers['Digital-Signature']
 )
 
 puts pix_request
 ```
 
-## Query pix request logs
+### Query PixRequest logs
 
-You can query pix request logs to better understand pix request life cycles. 
+You can query Pix request logs to better understand Pix request life cycles. 
 
 ```ruby
 require('starkinfra')
 
 logs = StarkInfra::PixRequest::Log.query(
-    limit: 50, 
-    after: '2022-01-01',
-    before: '2022-01-20',
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
 )
 
 logs.each do |log|
-    puts log
+  puts log
 end
 ```
 
-## Get a pix request log
+### Get a PixRequest log
 
 You can also get a specific log by its id.
 
@@ -415,47 +427,46 @@ log = StarkInfra::PixRequest::Log.get('5155165527080960')
 puts log
 ```
 
-## Create pix reversals
+### Create PixReversals
 
-You can reverse a pix request by whole or by a fraction of its amount using a pix reversal.
+You can reverse a Pix request by whole or by a fraction of its amount using a Pix reversal.
 
 ```ruby
 require('starkinfra')
 
 reversal = StarkInfra::PixReversal.create([
-        StarkInfra::PixReversal.new(
-            amount: 100,
-            end_to_end_id: 'E00000000202201060100rzsJzG9PzMg',
-            external_id: '17238435823958934',
-            reason: 'bankError',
-        )
-    ]
-)
+  StarkInfra::PixReversal.new(
+    amount: 100,
+    end_to_end_id: StarkInfra::EndToEndId.create(bank_code),
+    external_id: 'my_external_id',
+    reason: 'bankError',
+  )
+])
 
 puts reversal
 ```
 
-## Query pix reversals 
+### Query PixReversals 
 
-You can query multiple pix reversals according to filters. 
+You can query multiple Pix reversals according to filters. 
 
 ```ruby
 require('starkinfra')
 
 reversals = StarkInfra::PixReversal.query(
-    limit: 50, 
-    after: '2022-01-01',
-    before: '2022-01-20',
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
 )
 
 reversals.each do |reversal|
-    puts reversal
+  puts reversal
 end
 ```
 
-## Get a pix reversal
+### Get a PixReversal
 
-After its creation, information on a pix reversal may be retrieved by its id. Its status indicated whether it has been paid.
+After its creation, information on a Pix reversal may be retrieved by its id. Its status indicates whether it has been paid.
 
 ```ruby
 require('starkinfra')
@@ -465,45 +476,44 @@ reversal = StarkInfra::PixReversal.get('5155165527080960')
 puts reversal
 ```
 
-## Process pix reversal authorization requests
+### Process PixReversal authorization requests
 
 It's easy to process authorization requests that arrived in your handler. Remember to pass the
-signature header so the SDK can make sure it's StarkInfra that sent you
-the event.
+signature header so the SDK can make sure it's StarkInfra that sent you the event.
 
 ```ruby
 require('starkinfra')
 
 reversal = listen_reversals()  # this is your handler to listen for authorization reversals
 
-pix_reversal = Sevent = StarkBank::Event.parse(
-    content: reversal.body.read, 
-    signature: reversal.headers['Digital-Signature']
+pix_reversal = StarkInfra::PixReversal.parse(
+  content: reversal.body.read, 
+  signature: reversal.headers['Digital-Signature']
 )
 
 puts pix_reversal
 ```
 
 
-## Query pix reversal logs
+### Query PixReversal logs
 
-You can query pix reversal logs to better understand pix reversal life cycles. 
+You can query Pix reversal logs to better understand Pix reversal life cycles. 
 
 ```ruby
 require('starkinfra')
 
 logs = StarkInfra::PixReversal::Log.query(
-    limit: 50, 
-    after: '2022-01-01',
-    before: '2022-01-20',
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
 )
 
 logs.each do |log|
-    puts log
+  puts log
 end
 ```
 
-## Get a pix reversal log
+### Get a PixReversal log
 
 You can also get a specific log by its id.
 
@@ -515,7 +525,7 @@ log = StarkInfra::PixReversal::Log.get('5155165527080960')
 puts log
 ```
 
-## Get pix balance 
+### Get your PixBalance
 
 To know how much money you have in your workspace, run:
 
@@ -527,7 +537,7 @@ balance = StarkInfra::PixBalance.get()
 puts balance
 ```
 
-## Create a pix statement
+### Create a PixStatement
 
 Statements are only available for direct participants. To create a statement of all the transactions that happened on your workspace during a specific day, run:
 
@@ -535,37 +545,35 @@ Statements are only available for direct participants. To create a statement of 
 require('starkinfra')
 
 statement = StarkInfra::PixStatement.create([
-    StarkInfra::PixStatement.new(
-        after: '2022-01-01', # This is the date that you want to create a statement.
-        before: '2022-01-01', # After and before must be the same date.
-        type: 'transaction' # Options are 'interchange', 'interchangeTotal', 'transaction'.
-    )
+  StarkInfra::PixStatement.new(
+    after: '2022-01-01', # This is the date that you want to create a statement.
+    before: '2022-01-01', # After and before must be the same date.
+    type: 'transaction' # Options are 'interchange', 'interchangeTotal', 'transaction'.
+  )
 ])
 
 puts statement
 ```
 
-## Query pix statements
+### Query PixStatements
 
-You can query multiple pix statements according to filters. 
+You can query multiple Pix statements according to filters. 
 
 ```ruby
 require('starkinfra')
 
 statements = StarkInfra::PixStatement.query(
-    limit: 50, 
-    after: '2022-01-01', # Note that this after and before parameters are different from the ones used in the creation of the statement. 
-    before: '2022-01-20',
+  limit: 50,
 )
 
 statements.each do |statement|
-    puts statement
+  puts statement
 end
 ```
 
-## Get a pix statement
+### Get a PixStatement
 
-Statements are only available for direct participants. To get a pix statement by its id:
+Statements are only available for direct participants. To get a Pix statement by its id:
 
 ```ruby
 require('starkinfra')
@@ -575,9 +583,9 @@ statement = StarkInfra::PixStatement.get('5155165527080960')
 puts statement
 ```
 
-## Get a pix statement .csv file
+### Get a PixStatement .csv file
 
-To get a .csv file of a pix statement using its id, run:
+To get a .csv file of a Pix statement using its id, run:
 
 ```ruby
 require('starkinfra')
@@ -587,7 +595,689 @@ csv = StarkInfra::PixStatement.csv('5155165527080960')
 File.binwrite('statement.zip', csv)
 ```
 
-## Process webhook events
+#### Create a PixKey
+
+You can create a Pix Key to link a bank account information to a key id:
+
+```ruby
+require('starkinfra')
+
+key = StarkInfra::PixKey.create(
+  StarkInfra::PixKey.new(
+    account_created: '2022-02-01T00:00:00.00',
+    account_number: '00000',
+    account_type: 'savings',
+    branch_code: '0000',
+    name: 'Jamie Lannister',
+    tax_id: '012.345.678-90',
+    id: '+5511989898989',
+  )
+)
+
+puts key
+```
+
+#### Query PixKeys
+
+You can query multiple Pix keys you own according to filters.
+
+```ruby
+require('starkinfra')
+
+keys = StarkInfra::PixKey.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: 'registered',
+  tags: ['iron', 'bank'],
+  ids: ['+5511989898989'],
+  type: 'phone'
+)
+
+keys.each do |key|
+  puts key
+end
+```
+
+#### Get a PixKey
+
+Information on a Pix key may be retrieved by its id and the tax ID of the consulting agent.
+An endToEndId must be informed so you can link any resulting purchases to this query,
+avoiding sweep blocks by the Central Bank.
+
+```ruby
+require('starkinfra')
+
+key = StarkInfra::PixKey.get(
+  '5155165527080960',
+  payer_id: '012.345.678-90',
+  end_to_end_id: StarkInfra::EndToEndId.create('20018183'),
+)
+
+puts key
+```
+
+#### Patch a PixKey
+
+Update the account information linked to a Pix Key.
+
+```ruby
+require('starkinfra')
+
+key = StarkInfra::PixKey.update(
+  '+5511989898989',
+  reason: 'branchTransfer',
+  name: 'Jamie Lannister'
+)
+
+puts key
+```
+
+#### Cancel a PixKey
+
+Cancel a specific Pix Key using its id.
+
+```ruby
+require('starkinfra')
+
+key = StarkInfra::PixKey.cancel('5155165527080960')
+
+puts key
+```
+
+#### Query PixKey logs
+
+You can query Pix key logs to better understand a Pix key life cycle.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixKey::Log.query(
+  limit: 50, 
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['created'],
+  key_ids: ['+5511989898989']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+#### Get a PixKey log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixKey::Log.get('5155165527080960')
+
+puts log
+```
+
+#### Create a PixClaim
+
+You can create a Pix claim to request the transfer of a Pix key from another bank to one of your accounts:
+
+```ruby
+require('starkinfra')
+
+claim = StarkInfra::PixClaim.create(
+  StarkInfra::PixClaim.new(
+    account_created: '2022-02-01T00:00:00.00',
+    account_number: '5692908409716736',
+    account_type: 'checking',
+    branch_code: '0000',
+    name: 'testKey',
+    tax_id: '012.345.678-90',
+    key_id: '+5511989898989'
+  )
+)
+
+puts claim
+```
+
+#### Query PixClaims
+
+You can query multiple Pix claims according to filters.
+
+```ruby
+require('starkinfra')
+
+claims = StarkInfra::PixClaim.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: 'registered',
+  ids: ['5729405850615808'],
+  type: 'ownership',
+  agent: 'claimed',
+  key_type: 'phone',
+  key_id: '+5511989898989'
+)
+
+claims.each do |claim|
+  puts claim
+end
+```
+
+#### Get a PixClaim
+
+After its creation, information on a Pix claim may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+claim = StarkInfra::PixClaim.get('5155165527080960')
+
+puts claim
+```
+
+#### Patch a PixClaim
+
+A Pix claim can be confirmed or canceled by patching its status.
+A received Pix claim must be confirmed by the donor to be completed.
+Ownership Pix claims can only be canceled by the donor if the reason is "fraud".
+A sent Pix claim can also be canceled.
+
+```ruby
+require('starkinfra')
+
+claim = StarkInfra::PixClaim.update(
+  '5155165527080960',
+  status: 'confirmed'
+)
+
+puts claim
+```
+
+#### Query PixClaim logs
+
+You can query Pix claim logs to better understand Pix claim life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixClaim::Log.query(
+  limit: 50, 
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['registered'],
+  claim_ids: ['5719405850615809']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+#### Get a PixClaim log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixClaim::Log.get('5155165527080960')
+
+puts log
+```
+
+#### Create a PixDirector
+
+To register the Pix director contact information at the Central Bank, run the following:
+
+```ruby
+require('starkinfra')
+
+director = StarkInfra::PixDirector.create(
+  StarkInfra::PixDirector.new(
+    name: 'Edward Stark',
+    tax_id: '03.300.300/0001-00',
+    phone: '+5511999999999',
+    email: 'ned.stark@company.com',
+    password: '12345678',
+    team_email: 'pix.team@company.com',
+    team_phones: ['+5511988889999', '+5511988889998']
+  )
+)
+
+puts director
+```
+
+#### Create PixInfractions
+
+Pix Infraction reports are used to report transactions that raise fraud suspicion, to request a refund or to
+reverse a refund. Infraction reports can be created by either participant of a transaction.
+
+```ruby
+require('starkinfra')
+
+infractions = StarkInfra::PixInfraction.create([
+  StarkInfra::PixInfraction.new(
+    reference_id: 'E20018183202201201450u34sDGd19lz',
+    type: 'fraud',
+  )
+])
+
+infractions.each do |infraction|
+  puts infraction
+end
+```
+
+#### Query PixInfractions
+
+You can query multiple infraction reports according to filters.
+
+```ruby
+require('starkinfra')
+
+infractions = StarkInfra::PixInfraction.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: 'delivered',
+  ids: ['5155165527080960']
+)
+
+infractions.each do |infraction|
+  puts infraction
+end
+```
+
+#### Get a PixInfraction
+
+After its creation, information on a Pix infraction may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+infraction = StarkInfra::PixInfraction.get('5155165527080960')
+
+puts infraction
+```
+
+#### Patch a PixInfraction
+
+A received Pix infraction can be confirmed or declined by patching its status.
+After a Pix infraction is patched, its status changes to closed.
+
+```ruby
+require('starkinfra')
+
+infraction = StarkInfra::PixInfraction.update(
+  '5155165527080960',
+  result: 'agreed'
+)
+
+puts infraction
+```
+
+#### Cancel a PixInfraction
+
+Cancel a specific Pix Infraction using its id.
+
+```ruby
+require('starkinfra')
+
+infraction = StarkInfra::PixInfraction.cancel('5155165527080960')
+
+puts infraction
+```
+
+#### Query PixInfraction logs
+
+You can query infraction report logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixInfraction::Log.query(
+  limit: 50, 
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['created'],
+  infraction_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+#### Get a PixInfraction log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixInfraction::Log.get('5155165527080960')
+
+puts log 
+```
+
+#### Create PixChargebacks
+
+A Pix chargeback can be created when fraud is detected on a transaction or a system malfunction
+results in an erroneous transaction.
+
+```ruby
+require('starkinfra')
+
+chargebacks = StarkInfra::PixChargeback.create([
+  StarkInfra::PixChargeback.new(
+    amount: 100,
+    reference_id: 'E20018183202201201450u34sDGd19lz',
+    reason: 'fraud',
+  )
+])
+
+chargebacks.each do |chargeback|
+  puts chargeback
+end
+```
+
+#### Query PixChargebacks
+
+You can query multiple Pix chargebacks according to filters.
+
+```ruby
+require('starkinfra')
+
+chargebacks = StarkInfra::PixChargeback.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: 'registered',
+  ids: ['5155165527080960']
+)
+
+chargebacks.each do |chargeback|
+  puts chargeback
+end
+```
+
+#### Get a PixChargeback
+
+After its creation, information on a Pix Chargeback may be retrieved by its.
+
+```ruby
+require('starkinfra')
+
+chargeback = StarkInfra::PixChargeback.get('5155165527080960')
+
+puts chargeback
+```
+
+#### Patch a PixChargeback
+
+A received Pix Chargeback can be accepted or rejected by patching its status.
+After a Pix Chargeback is patched, its status changes to closed.
+
+```ruby
+require('starkinfra')
+
+chargeback = StarkInfra::PixChargeback.update(
+  '5155165527080960',
+  result: 'accepted',
+  reversal_reference_id: StarkInfra::ReturnId.create('20018183'),
+)
+
+puts chargeback
+```
+
+#### Cancel a PixChargeback
+
+Cancel a specific Pix Chargeback using its id.
+
+```ruby
+require('starkinfra')
+
+chargeback = StarkInfra::PixChargeback.cancel('5155165527080960')
+
+puts chargeback
+```
+
+#### Query PixChargeback logs
+
+You can query Pix chargeback logs to better understand Pix chargeback life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixChargeback::Log.query(
+  limit: 50, 
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['created'],
+  chargeback_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+#### Get a PixChargeback log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixChargeback::Log.get('5155165527080960')
+
+puts log
+```
+
+#### Query PixDomains
+
+Here you can list all Pix Domains registered at the Brazilian Central Bank. The Pix Domain object displays the domain
+name and the QR Code domain certificates of registered Pix participants able to issue dynamic QR Codes.
+
+```ruby
+require('starkinfra')
+
+domains = StarkInfra::PixDomain.query
+
+domains.each do |domain|
+  puts domain
+end
+```
+
+## Credit Note
+
+### Create CreditNotes
+You can create a CreditNote to generate a CCB contract:
+
+```ruby
+require('starkinfra')
+
+notes = StarkInfra::CreditNote.create([
+  StarkInfra::CreditNote.new(
+    template_id: '0123456789101112',
+    name: 'Jamie Lannister',
+    tax_id: '012.345.678-90',
+    nominal_amount: 100000,
+    scheduled: '2022-04-28',
+    invoices: [
+      StarkInfra::CreditNote::Invoice.new(
+        due: '2023-06-25',
+        amount: 120000,
+        fine: 10,
+        interest: 2,
+        tax_id: '012.345.678-90',
+        name: 'Jamie Lannister'
+      )
+    ],
+    payment: StarkInfra::CreditNote::Transfer.new(
+      bank_code: '00000000',
+      branch_code: '1234',
+      account_number: '129340-1',
+      name: 'Jamie Lannister',
+      tax_id: '012.345.678-90',
+      amount: 100000,
+    ),
+    payment_type: 'transfer',
+    signers: [
+      StarkInfra::CreditNote::Signer.new(
+        name: 'Jamie Lannister',
+        contact: 'jamie.lannister@gmail.com',
+        method: 'link'
+      )
+    ],
+    external_id: '1234'
+  )
+])
+
+notes.each do |note|
+  puts note
+end
+```
+
+**Note**: Instead of using CreditNote objects, you can also pass each element in hash format
+
+### Query CreditNotes
+
+You can query multiple credit notes according to filters.
+
+```ruby
+require('starkinfra')
+
+notes = StarkInfra::CreditNote.query(
+  limit: 10,
+  after: DateTime.new(2020, 1, 1),
+  before: DateTime.new(2020, 4, 1),
+  status: 'success',
+  tags: ['iron', 'suit']
+)
+
+notes.each do |note|
+  puts note
+end
+```
+
+### Get a CreditNote
+
+After its creation, information on a credit note may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+note = StarkInfra::CreditNote.get('5155165527080960')
+
+puts note
+```
+
+### Cancel a CreditNote
+
+You can cancel a credit note if it has not been signed yet.
+
+```ruby
+require('starkinfra')
+
+note = StarkInfra::CreditNote.cancel('5155165527080960')
+
+puts note
+```
+
+### Query CreditNote logs
+
+You can query credit note logs to better understand credit note life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::CreditNote::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20'
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a CreditNote log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::CreditNote::Log.get('5155165527080960')
+
+puts log
+```
+
+### Webhook
+
+#### Create a webhook subscription
+
+To create a webhook subscription and be notified whenever an event occurs, run:
+
+```ruby
+require('starkinfra')
+
+webhook = StarkInfra::Webhook.create(
+  StarkInfra::Webhook.new(
+  url: 'https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec',
+  subscriptions: %w[pix-infraction pix-chargeback]
+  )
+)
+
+puts webhook
+```
+
+### Query webhooks
+
+To search for registered webhooks, run:
+
+```ruby
+require('starkinfra')
+
+webhooks = StarkInfra::Webhook.query()
+
+webhooks.each do |webhook|
+  puts webhook
+end
+```
+
+### Get a webhook
+
+You can get a specific webhook by its id.
+
+```ruby
+require('starkinfra')
+
+webhook = StarkInfra::Webhook.get('1082736198236817')
+
+puts webhook
+```
+
+### Delete a webhook
+
+You can also delete a specific webhook by its id.
+
+```ruby
+require('starkinfra')
+
+webhook = StarkInfra::Webhook.delete('1082736198236817')
+
+puts webhook
+```
+
+## Webhook Events
+
+### Process webhook events
 
 It's easy to process events that arrived in your webhook. Remember to pass the
 signature header so the SDK can make sure it's StarkInfra that sent you
@@ -598,16 +1288,110 @@ require('starkinfra')
 
 response = listen()  # this is the method you made to get the events posted to your webhook endpoint
 
-event = StarkInfra::event.parse(
-    content: response.data.decode('utf-8'),
-    signature: response.headers['Digital-Signature'],
+event = StarkInfra::Event.parse(
+  content: response.data.decode('utf-8'),
+  signature: response.headers['Digital-Signature'],
 )
 
-if event.subscription == 'pix-request.in' or event.subscription == 'pix-request.out':
-    print(event.log.request)
+if event.subscription.include? 'pix-request'
+  puts event.log.request
+elsif event.subscription.include? 'pix-reversal'
+  puts event.log.reversal
+elsif event.subscription == 'pix-key' 
+  puts event.log.key
+elsif event.subscription == 'pix-claim' 
+  puts event.log.claim
+elsif event.subscription == 'pix-infraction' 
+  puts event.log.infraction
+elsif event.subscription == 'pix-chargeback' 
+  puts event.log.chargeback
+elsif event.subscription == 'credit-note'
+  puts event.log.note
+elsif event.subscription == 'issuing-card'
+  puts event.log.card
+elsif event.subscription == 'issuing-invoice'
+  puts event.log.invoice
+elsif event.subscription == 'issuing-purchase'
+  puts event.log.purchase
+end
+```
 
-elif event.subscription == 'pix-reversal.in' or event.subscription == 'pix-reversal.out':
-    print(event.log.reversal)
+## Query webhook events
+
+To search for webhook events, run:
+
+```ruby
+require('starkinfra')
+
+events = StarkInfra::Event.query(after: '2020-03-20', is_delivered: false)
+
+events.each do |event|
+  puts event
+end
+```
+
+## Get a webhook event
+
+You can get a specific webhook event by its id.
+
+```ruby
+require('starkinfra')
+
+event = StarkInfra::Event.get('4828869076975616')
+
+puts event
+```
+
+## Delete a webhook event
+
+You can also delete a specific webhook event by its id.
+
+```ruby
+require('starkinfra')
+
+event = StarkInfra::Event.delete('4828869076975616')
+
+puts event
+```
+
+## Set webhook events as delivered
+
+This can be used in case you've lost events.
+With this function, you can manually set events retrieved from the API as
+"delivered" to help future event queries with `is_delivered: false`.
+
+```ruby
+require('starkinfra')
+
+event = StarkInfra::Event.update('5892075044208640', is_delivered: true)
+
+puts event
+```
+
+## Query failed webhook event delivery attempts information
+
+You can also get information on failed webhook event delivery attempts.
+
+```ruby
+require('starkinfra')
+
+attempts = StarkInfra::Event::Attempt.query(after: '2020-03-20');
+
+attempts.each do |attempt|
+  puts attempt
+end
+```
+
+## Get a failed webhook event delivery attempt information
+
+To retrieve information on a single attempt, use the following function:
+
+```ruby
+require('starkinfra')
+
+attempt = StarkInfra::Event::Attempt.get('1616161616161616')
+
+puts attempt
 ```
 
 # Handling errors
@@ -623,21 +1407,20 @@ For example:
 require('starkinfra')
 
 begin
-    reversal = StarkInfra::PixReversal.create(
-        [
-            StarkInfra::PixReversal.new(
-                amount: 100,
-                end_to_end_id: 'E00000000202201060100rzsJzG9PzMg',
-                external_id: '17238435823958934',
-                reason: 'bankError',
-            )
-        ]
+  reversal = StarkInfra::PixReversal.create(
+  [
+    StarkInfra::PixReversal.new(
+      amount: 100,
+      end_to_end_id: 'E00000000202201060100rzsJzG9PzMg',
+      external_id: 'my_external_id',
+      reason: 'bankError',
     )
-except StarkInfra::Error::InputErrors => e
-    e.errors.each do |error|
-        puts error.code
-        puts error.message
-    end
+  ])
+rescue StarkInfra::Error::InputErrors => e
+  e.errors.each do |error|
+  puts error.code
+  puts error.message
+  end
 end
 ```
 
@@ -648,7 +1431,7 @@ is already rushing in to fix the mistake and get you back up to speed.
 __UnknownError__ will be raised if a request encounters an error that is
 neither __InputErrors__ nor an __InternalServerError__, such as connectivity problems.
 
-__InvalidSignatureError__ will be raised specifically by StarkInfra::event.parse()
+__InvalidSignatureError__ will be raised specifically by StarkInfra::Event.parse()
 when the provided content and signature do not check out with the Stark Infra public
 key.
 
@@ -658,4 +1441,4 @@ If you have any questions about our SDK, just send us an email.
 We will respond you quickly, pinky promise. We are here to help you integrate with us ASAP.
 We also love feedback, so don't be shy about sharing your thoughts with us.
 
-Email: developers@starkbank.com
+Email: help@starkbank.com

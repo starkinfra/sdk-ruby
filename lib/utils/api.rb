@@ -41,7 +41,15 @@ module StarkInfra
 
         list = []
         value.each do |v|
-          list << (v.is_a?(Hash) ? cast_json_to_api_format(v) : v)
+          if v.is_a?(Hash)
+            list << cast_json_to_api_format(v)
+            next
+          end
+          if v.is_a?(SubResource)
+            list << api_json(v)
+            next
+          end
+          list << v
         end
         list
       end
@@ -51,7 +59,7 @@ module StarkInfra
         json.each do |key, value|
           snakes[StarkInfra::Utils::Case.camel_to_snake(key)] = value
         end
-      
+
         resource_maker.call(snakes)
       end
 

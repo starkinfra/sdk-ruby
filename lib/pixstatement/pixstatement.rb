@@ -12,17 +12,16 @@ module StarkInfra
   # accessed by the user. This feature is only available for direct participants.
   #
   # ## Parameters (required):
-  # - after [Date, DateTime, Time or string]: transactions that happened at this date are stored in the PixStatement, must be the same as before. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  # - before [Date, DateTime, Time or string]: transactions that happened at this date are stored in the PixStatement, must be the same as after. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  # - type [string]: types of entities to include in statement. Options: ["interchange", "interchangeTotal", "transaction"]
+  # - after [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as before. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - before [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as after. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - type [string]: type of entities to include in statement. Options: 'interchange', 'interchangeTotal', 'transaction'
   #
   # ## Attributes (return-only):
-  # - id [string, default nil]: unique id returned when the PixStatement is created. ex: "5656565656565656"
-  # - status [string, default nil]: current PixStatement status. ex: "success" or "failed"
-  # - transaction_count [integer]: number of transactions that happened during the day that the PixStatement was requested. ex 11
-  # - created [Datetime, default nil]: creation datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  # - updated [Datetime, default nil]: latest update datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  
+  # - id [string]: unique id returned when the PixStatement is created. ex: '5656565656565656'
+  # - status [string]: current PixStatement status. ex: 'success' or 'failed'
+  # - transaction_count [integer]: number of transactions that happened during the day that the PixStatement was requested. ex: 11
+  # - created [DateTime]: creation datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - updated [DateTime]: latest update datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixStatement < StarkInfra::Utils::Resource
     attr_reader :after, :before, :type, :id, :status, :transaction_count, :created, :updated
     def initialize(after:, before:, type:, id: nil, status: nil, transaction_count: nil, created: nil, updated: nil)
@@ -40,11 +39,11 @@ module StarkInfra
     #
     # Create a PixStatements linked to your workspace in the Stark Infra API
     # 
-    # ## Parameters (requiered):
+    # ## Parameters (required):
     # - statement [PixStatement object]: PixStatement object to be created in the API.
     #
     # ## Parameters (optional):
-    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - PixStatement object with updated attributes.
@@ -52,18 +51,18 @@ module StarkInfra
       StarkInfra::Utils::Rest.post_single(entity: statement, user: user, **resource)
     end
 
-    # # Retrieve a specific PixStatment object
+    # # Retrieve a specific PixStatement object
     #
-    # Receive a single PixStatment object previously created in the Stark Infra API by passing its id
+    # Receive a single PixStatement object previously created in the Stark Infra API by passing its id
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'
     #
     # ## Parameters (optional):
-    # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - PixStatment object with updated attributes
+    # - PixStatement object with updated attributes
     def self.get(id, user: nil)
       StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
     end
@@ -75,7 +74,7 @@ module StarkInfra
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - generator of PixStatement objects with updated attributes
@@ -91,19 +90,19 @@ module StarkInfra
     # # Retrieve paged PixStatements
     #
     # Receive a list of up to 100 PixStatements objects previously created in the Stark infra API and the cursor to the next page.
-    # Use this function instead of query if you want to manually page your requests.
+    # Use this function instead of query if you want to manually page your statements.
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call
-    # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
+    # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - list of PixStatement objects with updated attributes
-    # - Cursor to retrieve the next page of PixStatement objects
+    # - cursor to retrieve the next page of PixStatement objects
     def self.page(cursor: nil, limit: nil, ids: nil, user: nil)
-      return StarkInfra::Utils::Rest.get_page(
+      StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
         ids: ids,
@@ -117,10 +116,10 @@ module StarkInfra
     # Retrieve a specific PixStatement by its ID in a .csv file.
     #
     # ## Parameters (required):
-    # - id [string]: object unique id. ex: "5656565656565656"
+    # - id [string]: object unique id. ex: '5656565656565656'
     #
     # ## Parameters (optional):
-    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - PixStatement .csv file
