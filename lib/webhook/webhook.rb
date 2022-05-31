@@ -11,7 +11,7 @@ module StarkInfra
   # Currently available services for subscription are contract, credit-note, signer, issuing-card, issuing-invoice, issuing-purchase, pix-request.in, pix-request.out, pix-reversal.in, pix-reversal.out, pix-claim, pix-key, pix-chargeback, pix-infraction.
   #
   # ## Parameters (required):
-  # - url [string]: Url that will be notified when an event occurs.
+  # - url [string]: URL that will be notified when an event occurs.
   # - subscriptions [list of strings]: list of any non-empty combination of the available services. ex: ['contract', 'credit-note', 'signer', 'issuing-card', 'issuing-invoice', 'issuing-purchase', 'pix-request.in', 'pix-request.out', 'pix-reversal.in', 'pix-reversal.out', 'pix-claim', 'pix-key', 'pix-chargeback', 'pix-infraction']
   #
   # ## Attributes:
@@ -29,8 +29,7 @@ module StarkInfra
     # Send a single Webhook subscription for creation in the Stark Infra API
     #
     # ## Parameters (required):
-    # - url [string]: url to which notification events will be sent to. ex: 'https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29'
-    # - subscriptions [list of strings]: list of any non-empty combination of the available services. ex: ['pix-request.in', 'pix-key']
+    # - webhook [Webhook object or hash]: Webhook subscription to be created to receive Events. ex: Webhook.new()
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call

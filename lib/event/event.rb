@@ -43,7 +43,10 @@ module StarkInfra
         'pix-key': StarkInfra::PixKey::Log.resource,
         'pix-claim': StarkInfra::PixClaim::Log.resource,
         'pix-infraction': StarkInfra::PixInfraction::Log.resource,
-        'pix-chargeback': StarkInfra::PixChargeback::Log.resource
+        'pix-chargeback': StarkInfra::PixChargeback::Log.resource,
+        'issuing-card': StarkInfra::IssuingCard::Log.resource,
+        'issuing-invoice': StarkInfra::IssuingInvoice::Log.resource,
+        'issuing-purchase': StarkInfra::IssuingPurchase::Log.resource
       }[subscription.to_sym]
 
       @log = log

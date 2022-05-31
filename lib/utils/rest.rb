@@ -65,12 +65,12 @@ module StarkInfra
         StarkInfra::Utils::Request.fetch(
           method: 'GET',
           path: "#{StarkInfra::Utils::API.endpoint(resource_name)}/#{id}/#{sub_resource_name}",
-          query: StarkInfra::Utils::API.cast_json_to_api_format(query),
+          query: query,
           user: user
         ).content
       end
 
-      def self.post(resource_name:, resource_maker:, entities:, user: nil)
+      def self.post(resource_name:, resource_maker:, entities:, user: nil, **query)
         jsons = []
         entities.each do |entity|
           jsons << StarkInfra::Utils::API.api_json(entity)
@@ -80,6 +80,7 @@ module StarkInfra
           method: 'POST',
           path: StarkInfra::Utils::API.endpoint(resource_name),
           payload: payload,
+          query: query,
           user: user
         ).json
         returned_jsons = json[StarkInfra::Utils::API.last_name_plural(resource_name)]
@@ -127,7 +128,7 @@ module StarkInfra
           method: 'GET',
           path: "#{StarkInfra::Utils::API.endpoint(resource_name)}/#{id}/#{StarkInfra::Utils::API.endpoint(sub_resource_name)}",
           user: user,
-          query: StarkInfra::Utils::API.cast_json_to_api_format(query)
+          query: query
         ).json
         entity = json[StarkInfra::Utils::API.last_name(sub_resource_name)]
         StarkInfra::Utils::API.from_api_json(sub_resource_maker, entity)

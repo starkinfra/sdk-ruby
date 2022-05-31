@@ -151,6 +151,50 @@ class ExampleGenerator
       external_id: SecureRandom.base64,
       tags: ['iron'],
       rebate_amount: 0
+      )
+    end
+
+  def self.issuingcard_example(holder:)
+    StarkInfra::IssuingCard.new(
+      holder_name: holder.name,
+      holder_tax_id: holder.tax_id,
+      holder_external_id: holder.external_id,
+      rules: [issuingrule_example, issuingrule_example, issuingrule_example]
+    )
+  end
+
+  def self.issuingholder_example
+    StarkInfra::IssuingHolder.new(
+      name: 'Iron Bank S.A.',
+      external_id: SecureRandom.base64,
+      tax_id: '012.345.678-90',
+      tags: [
+        'Traveler Employee'
+      ],
+      rules: [issuingrule_example]
+    )
+  end
+
+  def self.issuinginvoice_example
+    StarkInfra::IssuingInvoice.new(
+      amount: rand(1..1_000)
+    )
+  end
+
+  def self.issuingwithdrawal_example
+    StarkInfra::IssuingWithdrawal.new(
+      amount: rand(1..1_000),
+      external_id: SecureRandom.base64,
+      description: "Issuing Withdrawal test"
+    )
+  end
+
+  def self.issuingrule_example
+    StarkInfra::IssuingRule.new(
+      name: "Example Rule",
+      interval: ['day', 'week', 'month', 'instant'].sample,
+      amount: rand(1_000..100_000),
+      currency_code: ['BRL', 'USD'].sample
     )
   end
 
