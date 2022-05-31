@@ -21,7 +21,7 @@ describe(StarkInfra::PixReversal, '#pix-reversal#') do
   end
 
   it 'page params' do
-    reversals, cursor = StarkInfra::PixReversal.page(
+    reversals, _ = StarkInfra::PixReversal.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',

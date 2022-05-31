@@ -19,7 +19,7 @@ describe(StarkInfra::CreditNote, '#credit-note#') do
   end
 
   it 'page params' do
-    notes, cursor = StarkInfra::CreditNote.page(
+    notes, _ = StarkInfra::CreditNote.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
@@ -70,9 +70,5 @@ describe(StarkInfra::CreditNote, '#credit-note#') do
     expect(note.id).must_equal(note_get.id)
     note_canceled = StarkInfra::CreditNote.cancel(note_get.id)
     expect(note_canceled.status).must_equal('canceled')
-    puts note_canceled
-    puts note_canceled.signers
-    puts note_canceled.payment
-    puts note_canceled.invoices[0]
   end
 end

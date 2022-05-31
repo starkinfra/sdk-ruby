@@ -8,7 +8,6 @@ describe(StarkInfra::IssuingInvoice, '#issuing-invoice#') do
   it 'query' do
     invoices = StarkInfra::IssuingInvoice.query(limit: 5)
     invoices.each do |invoice|
-      puts invoice
       expect(invoice.id).wont_be_nil
     end
   end
@@ -30,13 +29,11 @@ describe(StarkInfra::IssuingInvoice, '#issuing-invoice#') do
   it 'query and get' do
     invoice = StarkInfra::IssuingInvoice.query(limit: 1).first
     invoice = StarkInfra::IssuingInvoice.get(invoice.id)
-    puts invoice
     expect(invoice.id).wont_be_nil
   end
 
   it 'create' do
     invoice_id = StarkInfra::IssuingInvoice.create(ExampleGenerator.issuinginvoice_example).id
     expect(invoice_id).wont_be_nil
-    puts invoice_id
   end
 end

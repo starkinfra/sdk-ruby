@@ -40,8 +40,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - PixRequest resource for Indirect and Direct Participants
 - PixReversal resource for Indirect and Direct Participants
-- PixDirector resource for Indirect and Direct Participants
+- PixDirector resource for Direct Participants
 - PixBalance resource for Indirect and Direct Participants
 - PixStatement resource for Direct Participants
-- IndirectParticipant resource for Direct Participants
 - Event resource for webhook receptions

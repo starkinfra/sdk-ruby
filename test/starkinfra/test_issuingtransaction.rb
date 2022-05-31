@@ -8,7 +8,6 @@ describe(StarkInfra::IssuingTransaction, '#issuing-transaction#') do
   it 'query' do
     transactions = StarkInfra::IssuingTransaction.query(limit: 5)
     transactions.each do |transaction|
-      puts transaction
       expect(transaction.id).wont_be_nil
     end
   end
@@ -30,7 +29,6 @@ describe(StarkInfra::IssuingTransaction, '#issuing-transaction#') do
   it 'query and get' do
     transaction = StarkInfra::IssuingTransaction.query(limit: 1).first
     transaction = StarkInfra::IssuingTransaction.get(transaction.id)
-    puts transaction
     expect(transaction.id).wont_be_nil
   end
 end

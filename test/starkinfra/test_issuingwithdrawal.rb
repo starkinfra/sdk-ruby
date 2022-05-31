@@ -8,7 +8,6 @@ describe(StarkInfra::IssuingWithdrawal, '#issuing-withdrawak#') do
   it 'query' do
     withdrawals = StarkInfra::IssuingWithdrawal.query(limit: 5)
     withdrawals.each do |withdrawal|
-      puts withdrawal
       expect(withdrawal.id).wont_be_nil
     end
   end
@@ -30,13 +29,11 @@ describe(StarkInfra::IssuingWithdrawal, '#issuing-withdrawak#') do
   it 'query and get' do
     withdrawal = StarkInfra::IssuingWithdrawal.query(limit: 1).first
     withdrawal = StarkInfra::IssuingWithdrawal.get(withdrawal.id)
-    puts withdrawal
     expect(withdrawal.id).wont_be_nil
   end
 
   it 'create, update and delete' do
     withdrawal_id = StarkInfra::IssuingWithdrawal.create(ExampleGenerator.issuingwithdrawal_example).id
     expect(withdrawal_id).wont_be_nil
-    puts withdrawal_id
   end
 end
