@@ -22,6 +22,15 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - PixChargeback resource for Indirect and Direct Participants
 - PixDomain resource for Indirect and Direct Participants
 - CreditNote resource for money lending with Stark Infra's endorsement
+- IssuingAuthorization resource for Sub Issuers
+- IssuingBalance resource for Sub Issuers
+- IssuingBin resource for Sub Issuers
+- IssuingCard resource for Sub Issuers
+- IssuingHolder resource for Sub Issuers
+- IssuingInvoice resource for Sub Issuers
+- IssuingPurchase resource for Sub Issuers
+- IssuingTransaction resource for Sub Issuers
+- IssuingWithdrawal resource for Sub Issuers
 
 ## [0.0.2] - 2022-02-24
 ### Fixed:

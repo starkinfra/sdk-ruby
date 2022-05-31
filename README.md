@@ -21,6 +21,15 @@ This SDK version is compatible with the Stark Infra API v2.
 - [Resource listing and manual pagination](#resource-listing-and-manual-pagination)
 - [Testing in Sandbox](#testing-in-sandbox)
 - [Usage](#usage)
+  - [Issuing](#issuing)
+    - [BINs](#query-issuingbins): View available sub-issuer BINs (a.k.a. card number ranges)
+    - [Holders](#create-issuingholders): Manage card holders
+    - [Cards](#create-issuingcards): Create virtual and/or physical cards
+    - [Purchases](#process-purchase-authorizations): Authorize and view your past purchases
+    - [Invoices](#create-issuinginvoices): Add money to your issuing balance
+    - [Withdrawals](#create-issuingwithdrawals): Send money back to your Workspace from your issuing balance
+    - [Balance](#get-your-issuingbalance): View your issuing balance
+    - [Transactions](#query-issuingtransactions): View the transactions that have affected your issuing balance
   - [Pix](#pix)
     - [PixRequests](#create-pixrequests): Create Pix transactions
     - [PixReversals](#create-pixreversals): Reverse Pix transactions
@@ -295,6 +304,520 @@ or StarkBank::Boleto for the value to be credited to your account.
 # Usage
 
 Here are a few examples on how to use the SDK. If you have any doubts, check out the function or class docstring to get more info or go straight to our [API docs](https://starkinfra.com/docs/api).
+
+## Issuing
+
+### Query IssuingBins
+
+To take a look at the sub-issuer BINs available to you, just run the following:
+
+```ruby
+require('starkinfra')
+
+bins = StarkInfra::IssuingBin.query()
+
+bins.each do |bin|
+  puts bin
+end
+```
+
+This will tell which card products and card number prefixes you have at your disposal.
+
+### Create IssuingHolders
+
+You can create card holders to which your cards will be bound.
+They support spending rules that will apply to all underlying cards.
+
+```ruby
+require('starkinfra')
+
+holders = StarkInfra::IssuingHolder.create([
+  StarkInfra::IssuingHolder.new(
+    name: "Iron Bank S.A.",
+    external_id: '1234',
+    tax_id: '0000',
+    tags: '012.345.678-90',
+    rules: [StarkInfra::IssuingRule.new(
+      name: "General USD",
+      interval: "day",
+      amount: 100000,
+      currency_code: "USD"
+    )]
+  )
+])
+
+holders.each do |holder|
+    puts holder
+end
+```
+
+**Note**: Instead of using IssuingHolder objects, you can also pass each IssuingHolder element in hash format
+
+### Query IssuingHolders
+
+You can query multiple holders according to filters.
+
+```ruby
+require('starkinfra')
+
+holders = StarkInfra::IssuingHolder.query()
+
+holders.each do |holder|
+  puts holder
+end
+```
+
+### Cancel an IssuingHolder
+
+To cancel a single Issuing Holder by its id, run:
+
+```ruby
+require('starkinfra')
+
+holder = StarkInfra::IssuingHolder.cancel('5155165527080960')
+
+puts holder
+```
+
+### Get an IssuingHolder
+
+To get a single Issuing Holder by its id, run:
+
+```ruby
+require('starkinfra')
+
+holder = StarkInfra::IssuingHolder.get('5155165527080960')
+
+puts holder
+```
+
+### Update an IssuingHolder
+
+You can update a specific holder by its id.
+
+```ruby
+require('starkinfra')
+
+holder = StarkInfra::IssuingHolder.update(
+  '5155165527080960',
+  status: 'blocked'
+)
+
+puts holder
+```
+
+### Query IssuingHolder logs
+
+You can query holder logs to better understand holder life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingHolder::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingHolder log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingHolder::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create IssuingCards
+
+You can issue cards with specific spending rules.
+
+```ruby
+require('starkinfra')
+
+cards = StarkInfra::IssuingCard.create([
+  StarkInfra::IssuingCard.new(
+    holder_name: "Developers",
+    holder_tax_id: "012.345.678-90",
+    holder_external_id: "1234",
+    rules: [
+      StarkInfra::IssuingRule.new(
+        name: "General USD",
+        interval: "day",
+        amount: 100000,
+        currency_code: "USD"
+      )
+    ]
+  )
+])
+
+cards.each do |card|
+    puts card
+end
+```
+
+### Query IssuingCards
+
+You can get a list of created cards given some filters.
+
+```ruby
+require('starkinfra')
+
+cards = StarkInfra::IssuingCard.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+cards.each do |card|
+  puts card
+end
+```
+
+### Get an IssuingCard
+
+After its creation, information on a card may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+card = StarkInfra::IssuingCard.get('5155165527080960')
+
+puts card
+```
+
+### Update an IssuingCard
+
+You can update a specific card by its id.
+
+```ruby
+require('starkinfra')
+
+card = StarkInfra::IssuingCard.update(
+  '5155165527080960',
+  status: 'blocked'
+)
+
+puts card
+```
+
+### Cancel an IssuingCard
+
+You can also cancel a card by its id.
+
+```ruby
+require('starkinfra')
+
+card = StarkInfra::IssuingCard.cancel('5155165527080960')
+
+puts card
+```
+
+### Query IssuingCard logs
+
+Logs are pretty important to understand the life cycle of a card.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingCard::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingCard log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingCard::Log.get('5155165527080960')
+
+puts log
+```
+
+### Process Purchase authorizations
+
+It's easy to process purchase authorizations delivered to your endpoint.
+If you do not approve or decline the authorization within 2 seconds, the authorization will be denied.
+
+```ruby
+require('starkinfra')
+
+authorization = listen_authorizations()  # this is your handler to listen for purchase authorization
+
+authorization = StarkInfra::IssuingAuthorization.parse(
+  content: authorization.body.read, 
+  signature: authorization.headers['Digital-Signature']
+)
+
+send_response(  # you should also implement this method
+  StarkInfra::IssuingAuthorization.response(  # this optional method just helps you build the response JSON
+    status: 'accepted',
+    amount: authorization.amount,
+    tags: ['my-purchase-id/123']
+  )
+)
+
+# or
+
+send_response(
+  StarkInfra::IssuingAuthorization.response(
+    status: 'denied',
+    reason: 'other',
+    tags: ['my-other-id/456']
+  )
+)
+```
+
+### Query IssuingPurchases
+
+You can get a list of created purchases given some filters.
+
+```ruby
+require('starkinfra')
+
+purchases = StarkInfra::IssuingPurchase.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+purchases.each do |purchase|
+  puts purchase
+end
+```
+
+### Get an IssuingPurchase
+
+After its creation, information on a purchase may be retrieved by its id. 
+
+```ruby
+require('starkinfra')
+
+purchase = StarkInfra::IssuingPurchase.get('5155165527080960')
+
+puts purchase
+```
+
+### Query IssuingPurchase logs
+
+Logs are pretty important to understand the life cycle of a purchase.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingPurchase::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingPurchase log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingPurchase::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create IssuingInvoices
+
+Issuing invoices are requests to transfer money to your Issuing Balance. When an Issuing Invoice you created is paid, the amount will be added to your Issuing Balance.
+
+```ruby
+require('starkinfra')
+
+invoice = StarkInfra::IssuingInvoice.create(
+  StarkInfra::IssuingInvoice.new(
+    amount: 1_000
+  )
+)
+
+puts invoice
+```
+
+**Note**: Instead of using IssuingInvoice objects, you can also pass each invoice element in hash format
+
+### Get an IssuingInvoice
+
+After its creation, information on an invoice may be retrieved by its id. 
+Its status indicates whether it's been paid.
+
+```ruby
+require('starkinfra')
+
+invoice = StarkInfra::IssuingInvoice.get('5155165527080960')
+
+puts invoice
+```
+
+### Query IssuingInvoices
+
+You can get a list of created invoices given some filters.
+
+```ruby
+require('starkinfra')
+
+invoices = StarkInfra::IssuingInvoice.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+invoices.each do |invoice|
+  puts invoice
+end
+```
+
+### Query IssuingInvoice logs
+
+Logs are pretty important to understand the life cycle of an invoice.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingInvoice::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingInvoice log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingInvoice::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create IssuingWithdrawals
+
+You can create withdrawals to send cash back from your Issuing balance to your Banking balance
+by using the Withdrawal resource.
+
+```ruby
+require('starkinfra')
+
+withdrawal = StarkInfra::IssuingWithdrawal.create(
+  StarkInfra::IssuingWithdrawal.new(
+    amount: 10_000,
+    external_id: '123',
+    description: 'Sending back'
+  )
+)
+
+puts withdrawal
+```
+
+**Note**: Instead of using Withdrawal objects, you can also pass each withdrawal element in dictionary format
+
+### Get an IssuingWithdrawal
+
+After its creation, information on a withdrawal may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+withdrawal = StarkInfra::IssuingWithdrawal.get('5155165527080960')
+
+puts withdrawal
+```
+
+### Query IssuingWithdrawals
+
+You can get a list of created withdrawals given some filters.
+
+```ruby
+require('starkinfra')
+
+withdrawals = StarkInfra::IssuingWithdrawal.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+withdrawals.each do |withdrawal|
+  puts withdrawal
+end
+```
+
+### Get your IssuingBalance
+
+To know how much money you have available to run authorizations, run:
+
+```ruby
+require('starkinfra')
+
+balance = StarkInfra::IssuingBalance.get()
+
+puts balance
+```
+
+### Query IssuingTransactions
+
+To understand your balance changes (issuing statement), you can query
+transactions. Note that our system creates transactions for you when
+you make purchases, withdrawals, receive issuing invoice payments, for example.
+
+```ruby
+require('starkinfra')
+
+transactions = StarkInfra::IssuingTransaction.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
+### Get an IssuingTransaction
+
+You can get a specific transaction by its id:
+
+```ruby
+require('starkinfra')
+
+transaction = StarkInfra::IssuingTransaction.get('5155165527080960')
+
+puts transaction
+```
 
 ## Pix
 
@@ -1418,8 +1941,8 @@ begin
   ])
 rescue StarkInfra::Error::InputErrors => e
   e.errors.each do |error|
-  puts error.code
-  puts error.message
+    puts error.code
+    puts error.message
   end
 end
 ```

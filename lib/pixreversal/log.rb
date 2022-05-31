@@ -76,7 +76,7 @@ module StarkInfra
       # # Retrieve paged Logs
       #
       # Receive a list of up to 100 Log objects previously created in the Stark Infra API and the cursor to the next page.
-      # Use this function instead of query if you want to manually page your requests.
+      # Use this function instead of query if you want to manually page your reversals.
       #
       # ## Parameters (optional):
       # - cursor [string, default nil]: cursor returned on the previous page function call
