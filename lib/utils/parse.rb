@@ -5,28 +5,30 @@ require('starkbank-ecdsa')
 require_relative('api')
 require_relative('cache')
 require_relative('request')
-require_relative('../error')\
-
+require_relative('../error')
 
 module StarkInfra
   module Utils
     module Parse
       def self.parse_and_verify(content:, signature:, user: nil, resource:, key: nil)
-        event = StarkInfra::Utils::API.from_api_json(resource[:resource_maker], JSON.parse(content))
-        if key != nil
-          event = StarkInfra::Utils::API.from_api_json(resource[:resource_maker], JSON.parse(content)[key])
-        end
+        json = JSON.parse(content)
+        json = JSON.parse(content)[key] unless key.nil?
+        event = StarkInfra::Utils::API.from_api_json(resource[:resource_maker], json)
 
         begin
           signature = EllipticCurve::Signature.fromBase64(signature)
         rescue
           raise(StarkInfra::Error::InvalidSignatureError, 'The provided signature is not valid')
         end
-  
-        return event if verify_signature(content: content, signature: signature, user: user)
-  
-        return event if verify_signature(content: content, signature: signature, user: user, refresh: true)
-  
+
+        if verify_signature(content: content, signature: signature, user: user)
+          return event
+        end
+
+        if verify_signature(content: content, signature: signature, user: user, refresh: true)
+          return event
+        end
+
         raise(StarkInfra::Error::InvalidSignatureError, 'The provided signature and content do not match the Stark Infra public key')
       end
 
@@ -46,5 +48,3 @@ module StarkInfra
     end
   end
 end
-
-

@@ -9,9 +9,8 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/**/*.rb']
   s.license = 'MIT'
   s.required_ruby_version = '>= 2.3'
-  s.add_dependency('starkbank', '~> 2.6.0')
   s.add_dependency('starkbank-ecdsa', '~> 0.0.5')
-  s.add_development_dependency('minitest', '~> 5.14.1')
+  s.add_development_dependency('minitest', '~> 5.14.4')
   s.add_development_dependency('rake', '~> 13.0')
   s.add_development_dependency('rubocop', '~> 0.81')
 end

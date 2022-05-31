@@ -13,10 +13,19 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- Webhook subscriptions
+- Webhook Events
+- PixClaim resource for Indirect and Direct Participants
+- PixKey resource for Indirect and Direct Participants
+- PixInfraction resource for Indirect and Direct Participants
+- PixChargeback resource for Indirect and Direct Participants
+- PixDomain resource for Indirect and Direct Participants
+- CreditNote resource for money lending with Stark Infra's endorsement
 
 ## [0.0.2] - 2022-02-24
 ### Fixed:
-- Fix worskpace import error
+- Fix workspace import error
 
 ## [0.0.1] - 2022-02-24
 ### Added

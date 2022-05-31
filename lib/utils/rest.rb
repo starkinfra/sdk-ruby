@@ -50,17 +50,18 @@ module StarkInfra
         end
       end
 
-      def self.get_id(resource_name:, resource_maker:, id:, user: nil)
+      def self.get_id(resource_name:, resource_maker:, id:, user: nil, **query)
         json = StarkInfra::Utils::Request.fetch(
           method: 'GET',
           path: "#{StarkInfra::Utils::API.endpoint(resource_name)}/#{id}",
+          query: query,
           user: user
         ).json
         entity = json[StarkInfra::Utils::API.last_name(resource_name)]
         StarkInfra::Utils::API.from_api_json(resource_maker, entity)
       end
 
-      def self.get_content(resource_name:, resource_maker:, sub_resource_name:, id:, user: nil, **query)
+      def self.get_content(resource_name:, sub_resource_name:, id:, user: nil, **query)
         StarkInfra::Utils::Request.fetch(
           method: 'GET',
           path: "#{StarkInfra::Utils::API.endpoint(resource_name)}/#{id}/#{sub_resource_name}",

@@ -37,7 +37,7 @@ module StarkInfra
       # - id [string]: object unique id. ex: '5656565656565656'
       #
       # ## Parameters (optional):
-      # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+      # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
       # - Log object with updated attributes
@@ -51,14 +51,14 @@ module StarkInfra
       #
       # ## Parameters (optional):
       # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-      # - after [Date, DateTime, Time or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-      # - before [Date, DateTime, Time or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+      # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+      # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter retrieved objects by types. ex: 'success' or 'failed'
       # - reversal_ids [list of strings, default nil]: list of PixReversal ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-      # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+      # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
-      # - list of Log objects with updated attributes
+      # - generator of Log objects with updated attributes
       def self.query(limit: nil, after: nil, before: nil, types: nil, reversal_ids: nil, user: nil)
         after = StarkInfra::Utils::Checks.check_date(after)
         before = StarkInfra::Utils::Checks.check_date(before)
@@ -80,19 +80,20 @@ module StarkInfra
       #
       # ## Parameters (optional):
       # - cursor [string, default nil]: cursor returned on the previous page function call
-      # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-      # - after [Date, DateTime, Time or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-      # - before [Date, DateTime, Time or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+      # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
+      # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+      # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter retrieved objects by types. ex: 'success' or 'failed'
       # - reversal_ids [list of strings, default nil]: list of PixReversal ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-      # - user [Organization/Project object]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+      # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
-      # - list of Log objects with updated attributes and cursor to retrieve the next page of Log objects
+      # - list of Log objects with updated attributes
+      # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, types: nil, reversal_ids: nil, user: nil)
         after = StarkInfra::Utils::Checks.check_date(after)
         before = StarkInfra::Utils::Checks.check_date(before)
-        return StarkInfra::Utils::Rest.get_page(
+        StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
           after: after,
