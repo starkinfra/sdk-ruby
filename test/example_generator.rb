@@ -149,9 +149,15 @@ class ExampleGenerator
       payment_type: 'transfer',
       signers: signers,
       external_id: SecureRandom.base64,
+      street_line_1: 'Rua ABC',
+      street_line_2: 'Ap 123',
+      district: 'Jardim Paulista',
+      city: 'São Paulo',
+      state_code: 'SP',
+      zip_code: '01234-567',
       tags: ['iron'],
       rebate_amount: 0
-      )
+    )
   end
 
   def self.issuingcard_example(holder:)
@@ -171,7 +177,7 @@ class ExampleGenerator
       tags: [
         'Traveler Employee'
       ],
-      rules: [issuingrule_example]
+      rules: [issuingrule_example],
     )
   end
 
@@ -185,13 +191,13 @@ class ExampleGenerator
     StarkInfra::IssuingWithdrawal.new(
       amount: rand(1..1_000),
       external_id: SecureRandom.base64,
-      description: "Issuing Withdrawal test"
+      description: 'Issuing Withdrawal test'
     )
   end
 
   def self.issuingrule_example
     StarkInfra::IssuingRule.new(
-      name: "Example Rule",
+      name: 'Example Rule',
       interval: ['day', 'week', 'month', 'instant'].sample,
       amount: rand(1_000..100_000),
       currency_code: ['BRL', 'USD'].sample
@@ -200,7 +206,7 @@ class ExampleGenerator
 
   def self.webhook_example
     StarkInfra::Webhook.new(
-      url: "https://webhook.site/#{SecureRandom.uuid}",
+      url: 'https://webhook.site/#{SecureRandom.uuid}',
       subscriptions: %w[pix-request.in pix-claim]
     )
   end

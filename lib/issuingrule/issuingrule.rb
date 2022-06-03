@@ -12,8 +12,9 @@ module StarkInfra
   # ## Parameters (required):
   # - name [string]: rule name. ex: 'Travel' or 'Food'
   # - amount [integer]: maximum amount that can be spent in the informed interval. ex: 200000 (= R$ 2000.00)
-  # - interval [string]: interval after which the rule amount counter will be reset to 0. ex: 'instant', 'day', 'week', 'month', 'year' or 'lifetime'
   # ## Parameters (optional):
+  # - id [string, default nil]: unique id returned when Rule is created. ex: '5656565656565656'
+  # - interval [string, default 'lifetime']: interval after which the rule amount counter will be reset to 0. ex: 'instant', 'day', 'week', 'month', 'year' or 'lifetime'
   # - currency_code [string, default 'BRL']: code of the currency that the rule amount refers to. ex: 'BRL' or 'USD'
   # - categories [list of strings, default []]: merchant categories accepted by the rule. ex: ['eatingPlacesRestaurants', 'travelAgenciesTourOperators']
   # - countries [list of strings, default []]: countries accepted by the rule. ex: ['BRA', 'USA']
@@ -22,11 +23,9 @@ module StarkInfra
   # - counter_amount [integer]: current rule spent amount. ex: 1000
   # - currency_symbol [string]: currency symbol. ex: 'R$'
   # - currency_name [string]: currency name. ex: 'Brazilian Real'
-  # ## Attributes (return-only):
-  # - id [string]: unique id returned when Rule is created. ex: '5656565656565656'
   class IssuingRule < StarkInfra::Utils::Resource
     attr_reader :name, :interval, :amount, :currency_code, :counter_amount, :currency_name, :currency_symbol, :categories, :countries, :methods
-    def initialize(name:, interval:, amount:, currency_code: nil, counter_amount: nil, currency_name: nil,
+    def initialize(name:, amount:, id: nil, interval: nil, currency_code: nil, counter_amount: nil, currency_name: nil,
       currency_symbol: nil, categories: nil, countries: nil, methods: nil
     )
       super(id)
@@ -43,16 +42,15 @@ module StarkInfra
     end
 
     def self.parse_rules(rules)
-      parsed_rules = []
       rule_maker = StarkInfra::IssuingRule.resource[:resource_maker]
       return rules if rules.nil?
 
+      parsed_rules = []
       rules.each do |rule|
-        if rule.is_a? IssuingRule
-          parsed_rules.append(rule)
-          next
+        unless rule.is_a? IssuingRule
+          rule = StarkInfra::Utils::API.from_api_json(rule_maker, rule)
         end
-        parsed_rules.append(StarkInfra::Utils::API.from_api_json(rule_maker, rule))
+        parsed_rules << rule
       end
       parsed_rules
     end
@@ -62,16 +60,16 @@ module StarkInfra
         resource_name: 'IssuingRule',
         resource_maker: proc { |json|
           IssuingRule.new(
-            name: json[:name],
-            interval: json[:interval],
-            amount: json[:amount],
-            currency_code: json[:currency_code],
-            counter_amount: json[:counter_amount],
-            currency_name: json[:currency_name],
-            currency_symbol: json[:currency_symbol],
-            categories: json[:categories],
-            countries: json[:countries],
-            methods: json[:methods]
+            name: json['name'],
+            interval: json['interval'],
+            amount: json['amount'],
+            currency_code: json['currency_code'],
+            counter_amount: json['counter_amount'],
+            currency_name: json['currency_name'],
+            currency_symbol: json['currency_symbol'],
+            categories: json['categories'],
+            countries: json['countries'],
+            methods: json['methods']
           )
         }
       }

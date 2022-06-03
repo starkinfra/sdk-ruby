@@ -45,7 +45,7 @@ describe(StarkInfra::PixStatement, '#pix-statement#') do
     expect(statements_ids_expected).must_equal(statements_ids_result)
   end
 
-  it 'create, get and get_pdf' do
+  it 'create' do
     statement = StarkInfra::PixStatement.create(ExampleGenerator.pixstatement_example)
     get_statement = StarkInfra::PixStatement.get(statement.id)
     expect(statement.id).must_equal(get_statement.id)

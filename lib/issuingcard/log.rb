@@ -79,7 +79,7 @@ module StarkInfra
       # ## Parameters (optional):
       # - cursor [string, default nil]: cursor returned on the previous page function call
       # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-      # - limit [integer, default nil]: maximum number of objects to be retrieved. Max = 100. ex: 35
+      # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
       # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter for log event types. ex: ['blocked', 'canceled', 'created', 'expired', 'unblocked', 'updated']

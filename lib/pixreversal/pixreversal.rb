@@ -30,7 +30,8 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixReversal < StarkInfra::Utils::Resource;
-    attr_reader :amount, :external_id, :end_to_end_id, :reason, :tags, :id, :return_id, :bank_code, :fee, :status, :flow, :created, :updated
+    attr_reader :amount, :external_id, :end_to_end_id, :reason, :tags, :id, :return_id, :bank_code, :fee,
+                :status, :flow, :created, :updated
     def initialize(
       amount:, external_id:, end_to_end_id:, reason:, tags: nil, id: nil, return_id: nil, bank_code: nil, fee: nil, 
       status: nil, flow: nil, created: nil, updated: nil

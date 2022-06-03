@@ -17,15 +17,15 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - display_name [string, default nil]: card displayed name. ex: 'ANTHONY STARK'
-  # - rules [list of IssuingRule objects, default nil]: [EXPANDABLE] list of card spending rules.
+  # - rules [list of IssuingRule objects, default []]: [EXPANDABLE] list of card spending rules.
   # - bin_id [string, default nil]: BIN ID to which the card is bound. ex: '53810200'
-  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
-  # - street_line_1 [string, default nil]: card holder main address. ex: 'Av. Paulista, 200'
-  # - street_line_2 [string, default nil]: card holder address complement. ex: 'Apto. 123'
-  # - district [string, default nil]: card holder address district / neighbourhood. ex: 'Bela Vista'
-  # - city [string, default nil]: card holder address city. ex: 'Rio de Janeiro'
-  # - state_code [string, default nil]: card holder address state. ex: 'GO'
-  # - zip_code [string, default nil]: card holder address zip code. ex: '01311-200'
+  # - tags [list of strings, default []]: list of strings for tagging. ex: ['travel', 'food']
+  # - street_line_1 [string, default sub-issuer street line 1]: card holder main address. ex: 'Av. Paulista, 200'
+  # - street_line_2 [string, default sub-issuer street line 2]: card holder address complement. ex: 'Apto. 123'
+  # - district [string, default sub-issuer district]: card holder address district / neighbourhood. ex: 'Bela Vista'
+  # - city [string, default sub-issuer city]: card holder address city. ex: 'Rio de Janeiro'
+  # - state_code [string, default sub-issuer state code]: card holder address state. ex: 'GO'
+  # - zip_code [string, default sub-issuer zip code]: card holder address zip code. ex: '01311-200'
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
@@ -34,7 +34,7 @@ module StarkInfra
   # - status [string]: current IssuingCard status. ex: 'active', 'blocked', 'canceled', 'expired'.
   # - number [string]: [EXPANDABLE] masked card number. Expand to unmask the value. ex: '123'.
   # - security_code [string]: [EXPANDABLE] masked card verification value (cvv). Expand to unmask the value. ex: '123'.
-  # - expiration [string]: [EXPANDABLE] masked card expiration datetime. Expand to unmask the value. ex: '2032-02-29T23:59:59.999999+00:00'.
+  # - expiration [DateTime]: [EXPANDABLE] masked card expiration datetime. Expand to unmask the value. ex: DateTime.new(2032, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingCard < StarkInfra::Utils::Resource
@@ -66,7 +66,8 @@ module StarkInfra
       @tags = tags
       @number = number
       @security_code = security_code
-      @expiration = expiration
+      expiration = nil if !expiration.nil? && expiration.include?('*')
+      @expiration = StarkInfra::Utils::Checks.check_datetime(expiration)
       @created = StarkInfra::Utils::Checks.check_datetime(created)
       @updated = StarkInfra::Utils::Checks.check_datetime(updated)
     end
@@ -147,7 +148,7 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
-    # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
+    # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - after [DateTime or string, default nil] date filter for objects created only after specified date. ex: DateTime.new(2020, 3, 10)
     # - before [DateTime or string, default nil] date filter for objects created only before specified date. ex: DateTime.new(2020, 3, 10)

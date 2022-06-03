@@ -33,7 +33,8 @@ module StarkInfra
   # - type [string]: type of the PixKey. Options: 'cpf', 'cnpj', 'phone', 'email' and 'evp',
   # - created [DateTime]: creation datetime for the PixKey. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixKey < StarkInfra::Utils::Resource
-    attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :id, :tags, :owned, :owner_type, :status, :bank_code, :bank_name, :type, :created
+    attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :id,
+                :tags, :owned, :owner_type, :status, :bank_code, :bank_name, :type, :created
     def initialize(
       account_created:, account_number:, account_type:, branch_code:, name:, tax_id:, id: nil, tags: nil, owned: nil,
       owner_type: nil, status: nil, bank_code: nil, bank_name: nil, type: nil, created: nil

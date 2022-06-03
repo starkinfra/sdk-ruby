@@ -61,11 +61,10 @@ module StarkInfra
         StarkInfra::Utils::API.from_api_json(resource_maker, entity)
       end
 
-      def self.get_content(resource_name:, sub_resource_name:, id:, user: nil, **query)
+      def self.get_content(resource_name:, sub_resource_name:, id:, user: nil)
         StarkInfra::Utils::Request.fetch(
           method: 'GET',
           path: "#{StarkInfra::Utils::API.endpoint(resource_name)}/#{id}/#{sub_resource_name}",
-          query: query,
           user: user
         ).content
       end
