@@ -23,6 +23,12 @@ module StarkInfra
   # - payment [CreditNote::Transfer object]: payment entity to be created and sent to the credit receiver. ex: payment=CreditNote::Transfer.new()
   # - signers [list of CreditNote::Signer objects]: signer's name, contact and delivery method for the signature request. ex: signers=[CreditNote::Signer.new(), CreditNote::Signer.new()]
   # - external_id [string]: a string that must be unique among all your CreditNotes, used to avoid resource duplication. ex: 'my-internal-id-123456'
+  # - street_line_1 [string]: credit receiver main address. ex: 'Av. Paulista, 200'
+  # - street_line_2 [string]: credit receiver address complement. ex: 'Apto. 123'
+  # - district [string]: credit receiver address district / neighbourhood. ex: 'Bela Vista'
+  # - city [string]: credit receiver address city. ex: 'Rio de Janeiro'
+  # - state_code [string]: credit receiver address state. ex: 'GO'
+  # - zip_code [string]: credit receiver address zip code. ex: '01311-200'
   #
   # ## Parameters (conditionally required):
   # - payment_type [string]: payment type, inferred from the payment parameter if it is not a hash. ex: 'transfer'
@@ -44,12 +50,16 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class CreditNote < StarkInfra::Utils::Resource
-    attr_reader :template_id, :name, :tax_id, :nominal_amount, :scheduled, :invoices, :payment, :signers, :external_id, :payment_type, :rebate_amount, :tags, :id, :amount, :expiration, :document_id, :status, :transaction_ids, :workspace_id, :tax_amount, :interest, :created, :updated
+    attr_reader :template_id, :name, :tax_id, :nominal_amount, :scheduled, :invoices, :payment, :signers, :external_id,
+                :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type, :rebate_amount,
+                :tags, :id, :amount, :expiration, :document_id, :status, :transaction_ids, :workspace_id, :tax_amount,
+                :interest, :created, :updated
     def initialize(
       template_id:, name:, tax_id:, nominal_amount:, scheduled:, invoices:, payment:,
-      signers:, external_id:, payment_type: nil, rebate_amount: nil, tags: nil, id: nil, amount: nil,
-      expiration: nil, document_id: nil, status: nil, transaction_ids: nil, workspace_id: nil,
-      tax_amount: nil, interest: nil, created: nil, updated: nil
+      signers:, external_id:, street_line_1:, street_line_2:, district:, city:, state_code:, zip_code:,
+      payment_type: nil, rebate_amount: nil, tags: nil, id: nil, amount: nil, expiration: nil,
+      document_id: nil, status: nil, transaction_ids: nil, workspace_id: nil, tax_amount: nil, interest: nil,
+      created: nil, updated: nil
     )
       super(id)
       @template_id = template_id
@@ -60,6 +70,12 @@ module StarkInfra
       @invoices = CreditNote::Invoice.parse_invoices(invoices)
       @signers = CreditNote::Signer.parse_signers(signers)
       @external_id = external_id
+      @street_line_1 = street_line_1
+      @street_line_2 = street_line_2
+      @district = district
+      @city = city
+      @state_code = state_code
+      @zip_code = zip_code
       @rebate_amount = rebate_amount
       @tags = tags
       @amount = amount
@@ -224,6 +240,12 @@ module StarkInfra
             payment: json['payment'],
             signers: json['signers'],
             external_id: json['external_id'],
+            street_line_1: json['street_line_1'],
+            street_line_2: json['street_line_2'],
+            district: json['district'],
+            city: json['city'],
+            state_code: json['state_code'],
+            zip_code: json['zip_code'],
             payment_type: json['payment_type'],
             rebate_amount: json['rebate_amount'],
             tags: json['tags'],

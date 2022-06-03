@@ -7,7 +7,7 @@ require_relative('../utils/checks')
 module StarkInfra
   # # IssuingBin object
   #
-  # The IssuingBin object displays information of registered BINs to your Workspace.
+  # The IssuingBin object displays information of BINs registered to your Workspace.
   # They represent a group of cards that begin with the same numbers (BIN) and offer the same product to end customers.
   #
   # ## Attributes (return-only):
@@ -54,7 +54,7 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
-    # - limit [integer, default nil]: maximum number of objects to be retrieved. Max = 100. ex: 35
+    # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:

@@ -1656,7 +1656,13 @@ notes = StarkInfra::CreditNote.create([
         method: 'link'
       )
     ],
-    external_id: '1234'
+    external_id: '1234',
+    street_line_1: 'Rua ABC',
+    street_line_2: 'Ap 123',
+    district: 'Jardim Paulista',
+    city: 'São Paulo',
+    state_code: 'SP',
+    zip_code: '01234-567'
   )
 ])
 
@@ -1679,7 +1685,7 @@ notes = StarkInfra::CreditNote.query(
   after: DateTime.new(2020, 1, 1),
   before: DateTime.new(2020, 4, 1),
   status: 'success',
-  tags: ['iron', 'suit']
+  tags: %w[iron, suit]
 )
 
 notes.each do |note|

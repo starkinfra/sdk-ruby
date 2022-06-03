@@ -32,7 +32,8 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the PixClaim. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: update datetime for the PixClaim. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixClaim < StarkInfra::Utils::Resource
-    attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :key_id, :id, :status, :type, :key_type, :agent, :bank_code, :claimed_bank_code, :created, :updated
+    attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :key_id,
+                :id, :status, :type, :key_type, :agent, :bank_code, :claimed_bank_code, :created, :updated
     def initialize(
       account_created:, account_number:, account_type:, branch_code:, name:,
       tax_id:, key_id:, id: nil, status: nil, type: nil, key_type: nil, agent: nil,
