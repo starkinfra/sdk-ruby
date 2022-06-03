@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'starkinfra'
-  s.version = '0.0.3'
+  s.version = '0.1.0'
   s.summary = 'SDK to facilitate Ruby integrations with Stark Infra'
   s.authors = 'starkinfra'
   s.homepage = 'https://github.com/starkinfra/sdk-ruby'
