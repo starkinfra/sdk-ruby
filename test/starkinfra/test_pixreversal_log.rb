@@ -1,25 +1,24 @@
 # frozen_string_literal: false
 
-require_relative('../test_helper.rb')
 require_relative('../user')
+require_relative('../test_helper.rb')
 
 describe(StarkInfra::PixReversal::Log, '#pix-reversal/log#') do
   it 'query logs' do
-    logs = StarkInfra::PixReversal::Log.query(limit: 10, types: 'success').to_a
+    logs = StarkInfra::PixReversal::Log.query(limit: 10, types: 'denied').to_a
     expect(logs.length).must_equal(10)
     logs.each do |log|
       expect(log.id).wont_be_nil
-      expect(log.type).must_equal('success')
-      expect(log.reversal.status).must_equal('success')
+      expect(log.type).must_equal('denied')
     end
   end
 
   it 'page' do
     ids = []
     cursor = nil
-    logs = nil
     (0..1).step(1) do
       logs, cursor = StarkInfra::PixReversal::Log.page(limit: 5, cursor: cursor)
+
       logs.each do |log|
         expect(ids).wont_include(log.id)
         ids << log.id
@@ -31,6 +30,7 @@ describe(StarkInfra::PixReversal::Log, '#pix-reversal/log#') do
 
   it 'query and get' do
     log = StarkInfra::PixReversal::Log.query(limit: 1).to_a[0]
+
     get_log = StarkInfra::PixReversal::Log.get(log.id)
     expect(log.id).must_equal(get_log.id)
   end

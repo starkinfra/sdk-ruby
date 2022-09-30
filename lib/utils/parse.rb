@@ -11,10 +11,14 @@ module StarkInfra
   module Utils
     module Parse
       def self.parse_and_verify(content:, signature:, user: nil, resource:, key: nil)
+        content = verify(content:content, signature: signature, user: user)
         json = JSON.parse(content)
         json = JSON.parse(content)[key] unless key.nil?
-        event = StarkInfra::Utils::API.from_api_json(resource[:resource_maker], json)
 
+        StarkInfra::Utils::API.from_api_json(resource[:resource_maker], json)
+      end
+
+      def self.verify(content:, signature:, user: nil)
         begin
           signature = EllipticCurve::Signature.fromBase64(signature)
         rescue
@@ -22,11 +26,11 @@ module StarkInfra
         end
 
         if verify_signature(content: content, signature: signature, user: user)
-          return event
+          return content
         end
 
         if verify_signature(content: content, signature: signature, user: user, refresh: true)
-          return event
+          return content
         end
 
         raise(StarkInfra::Error::InvalidSignatureError, 'The provided signature and content do not match the Stark Infra public key')

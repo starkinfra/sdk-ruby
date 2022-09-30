@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('./test_helper.rb')
-require_relative('./end_to_end_id')
 require('securerandom')
-
+require_relative('./end_to_end_id')
+require_relative('./test_helper.rb')
 
 class ExampleGenerator
   def self.pixrequest_example(bank_code)
@@ -97,28 +96,24 @@ class ExampleGenerator
   end
 
   def self.creditnote_example
-    invoice1 = StarkInfra::CreditNote::Invoice.new(
+    invoice1 = StarkInfra::Invoice.new(
       amount: 50_000,
-      fine: 10,
-      interest: 2,
       due: (Time.now + 60 * 24 * 3600).to_date,
       descriptions: [
-        StarkInfra::CreditNote::Invoice::Description.new(
+        StarkInfra::Description.new(
           key: 'key',
           value: 'value'
         )
       ]
     )
 
-    invoice2 = StarkInfra::CreditNote::Invoice.new(
+    invoice2 = StarkInfra::Invoice.new(
       amount: 50_000,
-      fine: 10,
-      interest: 2,
       due: (Time.now + 30 * 24 * 3600).to_date
     )
     invoices = [invoice1, invoice2]
 
-    payment = StarkInfra::CreditNote::Transfer.new(
+    payment = StarkInfra::Transfer.new(
       bank_code: '00000000',
       branch_code: '0122',
       account_number: '129340-1',
@@ -127,12 +122,12 @@ class ExampleGenerator
     )
 
     signers = [
-      StarkInfra::CreditNote::Signer.new(
+      StarkInfra::CreditSigner.new(
         name: 'Jamie Lannister',
         contact: rand(10_000_000...99_999_999).to_s + '@invaliddomain.com',
         method: 'link'
       ),
-      StarkInfra::CreditNote::Signer.new(
+      StarkInfra::CreditSigner.new(
         name: 'Jamie Lannister 2',
         contact: rand(10_000_000...99_999_999).to_s + '@invaliddomain.com',
         method: 'link'
@@ -160,6 +155,51 @@ class ExampleGenerator
     )
   end
 
+  def self.creditnote_hash_example
+    {
+      'template_id' => '5707012469948416',
+      'name' => 'Jamie Lannister',
+      'tax_id' => '20.018.183/0001-80',
+      'nominal_amount' => 100_000,
+      'scheduled' => (Time.now + 3 * 24 * 3600).to_date,
+      'invoices' => [
+        {
+          'amount' => 50_000,
+          'due' => (Time.now + 60 * 24 * 3600).to_date
+        }
+      ],
+      'payment' => {
+        'bank_code' => '00000000',
+        'branch_code' => '0122',
+        'account_number' => '129340-1',
+        'tax_id' => '012.345.678-90',
+        'name' => 'Jamie Lannister'
+      },
+      'payment_type' => 'transfer',
+      'signers' => [
+        {
+          'name' => 'Jamie Lannister',
+          'contact' => rand(10_000_000...99_999_999).to_s + '@invaliddomain.com',
+          'method' => 'link'
+        },
+        {
+          'name' => 'Jamie Lannister 2',
+          'contact' => rand(10_000_000...99_999_999).to_s + '@invaliddomain.com',
+          'method' => 'link'
+        }
+      ],
+      'external_id' => SecureRandom.base64,
+      'street_line_1' => 'Rua ABC',
+      'street_line_2' => 'Ap 123',
+      'district' => 'Jardim Paulista',
+      'city' => 'São Paulo',
+      'state_code' => 'SP',
+      'zip_code' => '01234-567',
+      'tags' => ['iron'],
+      'rebate_amount' => 0
+    }
+  end
+
   def self.issuingcard_example(holder:)
     StarkInfra::IssuingCard.new(
       holder_name: holder.name,
@@ -177,7 +217,7 @@ class ExampleGenerator
       tags: [
         'Traveler Employee'
       ],
-      rules: [issuingrule_example],
+      rules: [issuingrule_example]
     )
   end
 
@@ -198,16 +238,129 @@ class ExampleGenerator
   def self.issuingrule_example
     StarkInfra::IssuingRule.new(
       name: 'Example Rule',
-      interval: ['day', 'week', 'month', 'instant'].sample,
+      interval: %w[day week month instant].sample,
       amount: rand(1_000..100_000),
-      currency_code: ['BRL', 'USD'].sample
+      currency_code: %w[BRL USD].sample
+    )
+  end
+
+  def self.brcodepreview_example
+    brcode = StarkInfra::StaticBrcode.query(limit: 1).to_a[0]
+    StarkInfra::BrcodePreview.new(
+      id: brcode.id
+    )
+  end
+
+  def self.dynamicbrcode_example
+    StarkInfra::DynamicBrcode.new(
+      name: 'Jamie Lannister',
+      city: 'Rio de Janeiro',
+      external_id: SecureRandom.base64,
+      type: 'instant'
+    )
+  end
+
+  def self.staticbrcode_example
+    StarkInfra::StaticBrcode.new(
+      name: 'Jamie Lannister',
+      key_id: '+5511988887777',
+      amount: 0,
+      reconciliation_id: '123',
+      city: 'São Paulo'
     )
   end
 
   def self.webhook_example
     StarkInfra::Webhook.new(
-      url: 'https://webhook.site/#{SecureRandom.uuid}',
+      url: "https://webhook.site/#{SecureRandom.uuid}",
       subscriptions: %w[pix-request.in pix-claim]
     )
+  end
+
+  def self.webhook_hash_example
+    {
+      'url' => "https://webhook.site/#{SecureRandom.uuid}",
+      'subscriptions' => %w[pix-request.in pix-claim]
+    }
+  end
+
+  def self.preview_sac_example
+    StarkInfra::CreditNotePreview.new(
+      type: 'sac',
+      nominal_amount: rand(1..100_000),
+      scheduled: (Time.now + 3 * 24 * 3600).to_date,
+      tax_id: '20.018.183/0001-80',
+      initial_due: (Time.now + 3 * 24 * 3600).to_date,
+      nominal_interest: 10,
+      count: 3,
+      interval: %w[month year].sample
+    )
+  end
+
+  def self.preview_price_example
+    StarkInfra::CreditNotePreview.new(
+      type: 'price',
+      nominal_amount: rand(1..100_000),
+      scheduled: (Time.now + 3 * 24 * 3600).to_date,
+      tax_id: '20.018.183/0001-80',
+      initial_due: (Time.now + 3 * 24 * 3600).to_date,
+      nominal_interest: 10,
+      count: 3,
+      interval: %w[month year].sample
+    )
+  end
+
+  def self.preview_american_example
+    StarkInfra::CreditNotePreview.new(
+      type: 'american',
+      nominal_amount: rand(1..100_000),
+      scheduled: (Time.now + 3 * 24 * 3600).to_date,
+      tax_id: '20.018.183/0001-80',
+      initial_due: (Time.now + 3 * 24 * 3600).to_date,
+      nominal_interest: rand(1..4.99),
+      count: 3,
+      interval: %w[month year].sample
+    )
+  end
+
+  def self.preview_bullet_example
+    StarkInfra::CreditNotePreview.new(
+      type: 'bullet',
+      nominal_amount: 100000,
+      scheduled: '2023-07-10',
+      tax_id: '20.018.183/0001-80',
+      initial_due: '2023-07-20',
+      nominal_interest: 10
+    )
+  end
+
+  def self.hash_sac_example
+    {
+      'tax_id' => '20.018.183/0001-80',
+      'type' => 'sac',
+      'nominal_amount' => rand(1..100_000),
+      'rebate_amount' => rand(1..1000),
+      'nominal_interest' => rand(1..4.99),
+      'scheduled' => (Time.now + 3 * 24 * 3600).to_date,
+      'initial_due' => (Time.now + 3 * 24 * 3600).to_date,
+      'initial_amount' => rand(1..9999),
+      'interval' => %w[month year].sample
+    }
+  end
+
+  def self.dynamic_brcode_discount_example
+
+    discount1 = StarkInfra::DynamicBrcode::Discount.new(
+      percentage: 3,
+      due: (Time.now + 3 * 24 * 3600).to_date
+    )
+
+    discount2 = StarkInfra::DynamicBrcode::Discount.new(
+      percentage: 5,
+      due: (Time.now + 3 * 24 * 3600).to_date
+    )
+
+    discounts = [discount1, discount2]
+    discounts
   end
 end

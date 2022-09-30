@@ -14,9 +14,9 @@ describe(StarkInfra::Webhook, '#webhook#') do
   it 'page' do
     ids = []
     cursor = nil
-    webhooks = nil
     (0..1).step(1) do
       webhooks, cursor = StarkInfra::Webhook.page(limit: 2, cursor: cursor)
+
       webhooks.each do |webhook|
         expect(ids).wont_include(webhook.id)
         ids << webhook.id
@@ -28,14 +28,22 @@ describe(StarkInfra::Webhook, '#webhook#') do
 
   it 'create, get and delete' do
     webhook = ExampleGenerator.webhook_example
-    webhook = StarkInfra::Webhook.create(
-      StarkInfra::Webhook.new(
-        url: webhook.url,
-        subscriptions: webhook.subscriptions
-      )
-    )
+    webhook = StarkInfra::Webhook.create(webhook)
+
     get_webhook = StarkInfra::Webhook.get(webhook.id)
     expect(webhook.id).must_equal(get_webhook.id)
+
+    delete_webhook = StarkInfra::Webhook.delete(webhook.id)
+    expect(webhook.id).must_equal(delete_webhook.id)
+  end
+
+  it 'create with hash, get and delete' do
+    webhook = ExampleGenerator.webhook_hash_example
+    webhook = StarkInfra::Webhook.create(webhook)
+
+    get_webhook = StarkInfra::Webhook.get(webhook.id)
+    expect(webhook.id).must_equal(get_webhook.id)
+
     delete_webhook = StarkInfra::Webhook.delete(webhook.id)
     expect(webhook.id).must_equal(delete_webhook.id)
   end

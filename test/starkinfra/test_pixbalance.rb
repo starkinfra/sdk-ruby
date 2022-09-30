@@ -1,7 +1,7 @@
 # frozen_string_literal: false
 
-require_relative('../test_helper.rb')
 require_relative('../user')
+require_relative('../test_helper.rb')
 
 describe(StarkInfra::PixBalance, '#pix-balance#') do
   it 'get success' do
@@ -12,4 +12,3 @@ describe(StarkInfra::PixBalance, '#pix-balance#') do
     expect(balance.updated).wont_be_nil
   end
 end
-

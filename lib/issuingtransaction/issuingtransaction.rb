@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingTransaction object
@@ -20,9 +20,7 @@ module StarkInfra
   class IssuingTransaction < StarkInfra::Utils::Resource
     attr_reader :id, :amount, :balance, :description, :source, :tags, :created
 
-    def initialize(
-      id: nil, amount: nil, balance: nil, description: nil, source: nil, tags: nil, created: nil
-    )
+    def initialize(id: nil, amount: nil, balance: nil, description: nil, source: nil, tags: nil, created: nil)
       super(id)
       @amount = amount
       @balance = balance
@@ -54,11 +52,11 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
-    # - external_ids [list of strings, default []]: external IDs. ex: ['5656565656565656', '4545454545454545']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'approved', 'canceled', 'denied', 'confirmed' or 'voided'
-    # - ids [list of strings, default [], default nil]: purchase IDs
+    # - ids [list of strings, default nil]: purchase IDs
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
@@ -87,7 +85,7 @@ module StarkInfra
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
-    # - external_ids [list of strings, default nil: external IDs. ex: ['5656565656565656', '4545454545454545']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'approved', 'canceled', 'denied', 'confirmed' or 'voided'

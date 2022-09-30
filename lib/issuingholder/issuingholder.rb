@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingHolder object
   #
   # The IssuingHolder describes a card holder that may group several cards.
+  #
+  # When you initialize a IssuingHolder, the entity will not be automatically
+  # created in the Stark Infra API. The 'create' function sends the objects
+  # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
   # - name [string]: card holder name.
@@ -16,7 +20,7 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - rules [list of IssuingRule objects, default nil]: [EXPANDABLE] list of holder spending rules.
-  # - tags [list of strings, default []]: list of strings for tagging. ex: ['travel', 'food']
+  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingHolder is created. ex: '5656565656565656'
@@ -24,17 +28,17 @@ module StarkInfra
   # - updated [DateTime]: latest update datetime for the IssuingHolder. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingHolder < StarkInfra::Utils::Resource
-    attr_reader :id, :name, :tax_id, :external_id, :status, :rules, :tags, :updated, :created
+    attr_reader :id, :name, :tax_id, :external_id, :rules, :tags, :status, :updated, :created
     def initialize(
-      name:, tax_id:, external_id:, id: nil, status: nil, rules: nil, tags: nil, updated: nil, created: nil
+      name:, tax_id:, external_id:, rules: nil, tags: nil, id: nil, status: nil, updated: nil, created: nil
     )
       super(id)
       @name = name
       @tax_id = tax_id
       @external_id = external_id
-      @status = status
       @rules = StarkInfra::IssuingRule.parse_rules(rules)
       @tags = tags
+      @status = status
       @created = StarkInfra::Utils::Checks.check_datetime(created)
       @updated = StarkInfra::Utils::Checks.check_datetime(updated)
     end
@@ -47,12 +51,13 @@ module StarkInfra
     # - holders [list of IssuingHolder objects]: list of IssuingHolder objects to be created in the API
     #
     # ## Parameters (optional):
+    # - expand [list of strings, default nil]: fields to expand information. Options: ['rules']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - list of IssuingHolder objects with updated attributes
-    def self.create(holders:, user: nil)
-      StarkInfra::Utils::Rest.post(entities: holders, user: user, **resource)
+    def self.create(holders:, expand: nil, user: nil)
+      StarkInfra::Utils::Rest.post(entities: holders, expand: expand, user: user, **resource)
     end
 
     # # Retrieve a specific IssuingHolder
@@ -193,9 +198,9 @@ module StarkInfra
             name: json['name'],
             tax_id: json['tax_id'],
             external_id: json['external_id'],
-            status: json['status'],
             rules: json['rules'],
             tags: json['tags'],
+            status: json['status'],
             updated: json['updated'],
             created: json['created']
           )

@@ -34,6 +34,7 @@ module StarkInfra
       end
 
       def self.parse_value(value)
+        return api_json(value) if value.is_a?(SubResource)
         return value.strftime('%Y-%m-%d') if value.is_a?(Date)
         return value.strftime('%Y-%m-%dT%H:%M:%S+00:00') if value.is_a?(DateTime) || value.is_a?(Time)
         return cast_json_to_api_format(value) if value.is_a?(Hash)

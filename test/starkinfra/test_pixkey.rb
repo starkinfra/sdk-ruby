@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 describe(StarkInfra::PixKey, '#pix-key#') do
   it 'query params' do
@@ -19,7 +19,7 @@ describe(StarkInfra::PixKey, '#pix-key#') do
   end
 
   it 'page params' do
-    keys, _ = StarkInfra::PixKey.page(
+    keys = StarkInfra::PixKey.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
@@ -34,9 +34,9 @@ describe(StarkInfra::PixKey, '#pix-key#') do
   it 'page' do
     ids = []
     cursor = nil
-    keys = nil
     (0..1).step(1) do
       keys, cursor = StarkInfra::PixKey.page(limit: 5, cursor: cursor)
+
       keys.each do |key|
         expect(ids).wont_include(key.id)
         ids << key.id
@@ -73,8 +73,10 @@ describe(StarkInfra::PixKey, '#pix-key#') do
 
   it 'page, get and update' do
     key = StarkInfra::PixKey.query(limit: 1, status: 'registered').to_a[0]
+
     key_get = StarkInfra::PixKey.get(key.id, payer_id: '012.345.678-90')
     expect(key.id).must_equal(key_get.id)
+
     key = StarkInfra::PixKey.update(
       key.id,
       reason: 'branchTransfer',
@@ -89,6 +91,7 @@ describe(StarkInfra::PixKey, '#pix-key#') do
 
   it 'page and cancel' do
     key = StarkInfra::PixKey.query(limit: 1, status: 'registered').to_a[0]
+
     key_cancel = StarkInfra::PixKey.cancel(key.id)
     expect(key.id).must_equal(key_cancel.id)
   end

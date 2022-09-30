@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixChargeback object
@@ -10,8 +10,10 @@ module StarkInfra
   # A Pix chargeback can be created when fraud is detected on a transaction or a system malfunction
   # results in an erroneous transaction.
   # It notifies another participant of your request to reverse the payment they have received.
+  #
   # When you initialize a PixChargeback, the entity will not be automatically
   # created in the Stark Infra API. The 'create' function sends the objects
+  # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
   # - amount [integer]: amount in cents to be reversed. ex: 11234 (= R$ 112.34)
@@ -20,40 +22,41 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - description [string, default nil]: description for the PixChargeback. ex: 'Payment for service #1234'
+  # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
-  # - id [string]: unique id returned when PixChargeback is created. ex: '5656565656565656'
+  # - id [string]: unique id returned when the PixChargeback is created. ex: '5656565656565656'
   # - analysis [string]: analysis that led to the result.
-  # - bacen_id [string]: central bank's unique UUID that identifies the PixChargeback.
   # - sender_bank_code [string]: bank_code of the Pix participant that created the PixChargeback. ex: '20018183'
   # - receiver_bank_code [string]: bank_code of the Pix participant that received the PixChargeback. ex: '20018183'
   # - rejection_reason [string]: reason for the rejection of the Pix chargeback. Options: 'noBalance', 'accountClosed', 'unableToReverse'
   # - reversal_reference_id [string]: return id of the reversal transaction. ex: 'D20018183202202030109X3OoBHG74wo'.
-  # - id [string]: unique id returned when the PixChargeback is created. ex: '5656565656565656'
   # - result [string]: result after the analysis of the PixChargeback by the receiving party. Options: 'rejected', 'accepted', 'partiallyAccepted'
+  # - flow [string]: direction of the Pix Chargeback. Options: 'in' for received chargebacks, 'out' for chargebacks you requested
   # - status [string]: current PixChargeback status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
   # - created [DateTime]: creation datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixChargeback < StarkInfra::Utils::Resource
-    attr_reader :amount, :reference_id, :reason, :description, :id, :analysis, :bacen_id, :sender_bank_code,
-                :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :status, :created, :updated
+    attr_reader :amount, :reference_id, :reason, :description, :tags, :id, :analysis, :sender_bank_code,
+                :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :flow, :status, :created, :updated
     def initialize(
-      amount:, reference_id:, reason:, description: nil, id: nil, analysis: nil, bacen_id: nil,
-      sender_bank_code: nil, receiver_bank_code: nil, rejection_reason: nil, reversal_reference_id: nil,
-      result: nil, status: nil, created: nil, updated: nil
+      amount:, reference_id:, reason:, description: nil, tags: nil, id: nil, analysis: nil, sender_bank_code: nil,
+      receiver_bank_code: nil, rejection_reason: nil, reversal_reference_id: nil, result: nil, flow: nil, status: nil,
+      created: nil, updated: nil
     )
       super(id)
       @amount = amount
       @reference_id = reference_id
       @reason = reason
       @description = description
+      @tags = tags
       @analysis = analysis
-      @bacen_id = bacen_id
       @sender_bank_code = sender_bank_code
       @receiver_bank_code = receiver_bank_code
       @rejection_reason = rejection_reason
       @reversal_reference_id = reversal_reference_id
       @result = result
+      @flow = flow
       @status = status
       @created = StarkInfra::Utils::Checks.check_datetime(created)
       @updated = StarkInfra::Utils::Checks.check_datetime(updated)
@@ -61,10 +64,10 @@ module StarkInfra
 
     # # Create PixChargebacks
     #
-    # Send a list of PixChargeback objects for creation in the Stark Infra API
+    # Create PixChargebacks in the Stark Infra API
     #
     # ## Parameters (required):
-    # - chargebacks [list of PixChargeback objects]: list of PixChargeback objects to be created in the API. ex: [PixChargeback.new()]
+    # - chargebacks [list of PixChargeback objects]: list of PixChargeback objects to be created in the API.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -75,9 +78,9 @@ module StarkInfra
       StarkInfra::Utils::Rest.post(entities: chargebacks, user: user, **resource)
     end
 
-    # # Retrieve a specific PixChargeback
+    # # Retrieve a PixChargeback object
     #
-    # Receive a single PixChargeback object previously created in the Stark Infra API by passing its id
+    # Retrieve a PixChargeback object linked to your Workspace in the Stark Infra API using its id.
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'
@@ -101,11 +104,13 @@ module StarkInfra
     # - before [Date or string, default nil]: date filter for objects created or updated only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'success' or 'failed'
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
+    # - flow [string, default nil]: direction of the Pix Chargeback. Options: 'in' for received chargebacks, 'out' for chargebacks you requested
+    # - tags [list of strings, default nil]: filter for tags of retrieved objects. ex: ['travel', 'food']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - generator of PixChargeback objects with updated attributes
-    def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, user: nil)
+    def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, user: nil)
       after = StarkInfra::Utils::Checks.check_date(after)
       before = StarkInfra::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
@@ -114,6 +119,8 @@ module StarkInfra
         before: before,
         status: status,
         ids: ids,
+        flow: flow,
+        tags: tags,
         user: user,
         **resource
       )
@@ -131,12 +138,14 @@ module StarkInfra
     # - before [Date or string, default nil]: date filter for objects created or updated only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'success' or 'failed'
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
+    # - flow [string, default nil]: direction of the Pix Chargeback. Options: 'in' for received chargebacks, 'out' for chargebacks you requested
+    # - tags [list of strings, default nil]: filter for tags of retrieved objects. ex: ['travel', 'food']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - list of PixChargeback objects with updated attributes
     # - cursor to retrieve the next page of PixChargeback objects
-    def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, user: nil)
+    def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, user: nil)
       after = StarkInfra::Utils::Checks.check_date(after)
       before = StarkInfra::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
@@ -146,6 +155,8 @@ module StarkInfra
         before: before,
         status: status,
         ids: ids,
+        flow: flow,
+        tags: tags,
         user: user,
         **resource
       )
@@ -157,7 +168,7 @@ module StarkInfra
     #
     # ## Parameters (required):
     # - id [string]: PixChargeback unique id. ex: '5656565656565656'
-    # - result [string]: result of the PixChargeback. Options: 'rejected', 'accepted', 'partiallyAccepted'.
+    # - result [string]: result after the analysis of the PixChargeback. Options: 'rejected', 'accepted', 'partiallyAccepted'.
     #
     # ## Parameters (conditionally required):
     # - rejection_reason [string, default nil]: if the PixChargeback is rejected a reason is required. Options: 'noBalance', 'accountClosed', 'unableToReverse',
@@ -174,8 +185,8 @@ module StarkInfra
         id: id,
         result: result,
         rejection_reason: rejection_reason,
-        analysis: analysis,
         reversal_reference_id: reversal_reference_id,
+        analysis: analysis,
         user: user,
         **resource
       )
@@ -202,18 +213,19 @@ module StarkInfra
         resource_name: 'PixChargeback',
         resource_maker: proc { |json|
           PixChargeback.new(
+            id: json['id'],
             amount: json['amount'],
             reference_id: json['reference_id'],
             reason: json['reason'],
             description: json['description'],
-            id: json['id'],
+            tags: json['tags'],
             analysis: json['analysis'],
-            bacen_id: json['bacen_id'],
             sender_bank_code: json['sender_bank_code'],
             receiver_bank_code: json['receiver_bank_code'],
             rejection_reason: json['rejection_reason'],
             reversal_reference_id: json['reversal_reference_id'],
             result: json['result'],
+            flow: json['flow'],
             status: json['status'],
             created: json['created'],
             updated: json['updated']

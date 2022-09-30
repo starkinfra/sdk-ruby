@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixBalance object
@@ -18,8 +18,8 @@ module StarkInfra
   # - currency [string]: currency of the current workspace. Expect others to be added eventually. ex: 'BRL'
   # - updated [DateTime]: latest update datetime for the balance. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixBalance < StarkInfra::Utils::Resource
-    attr_reader :amount, :currency, :updated, :id
-    def initialize(amount: nil, currency: nil, updated: nil, id: nil)
+    attr_reader :id, :amount, :currency, :updated
+    def initialize(id: nil, amount: nil, currency: nil, updated: nil)
       super(id)
       @amount = amount
       @currency = currency
@@ -44,10 +44,10 @@ module StarkInfra
         resource_name: 'PixBalance',
         resource_maker: proc { |json|
           PixBalance.new(
+            id: json['id'],
             amount: json['amount'],
             currency: json['currency'],
-            updated: json['updated'],
-            id: json['id']
+            updated: json['updated']
           )
         }
       }

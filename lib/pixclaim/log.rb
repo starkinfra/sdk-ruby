@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
+require_relative('pixclaim')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
-require_relative('pixclaim')
+require_relative('../utils/resource')
 
 module StarkInfra
   class PixClaim
@@ -18,17 +18,15 @@ module StarkInfra
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
     # - type [string]: type of the PixClaim event which triggered the log creation. Options: 'created', 'failed', 'delivering', 'delivered', 'confirming', 'confirmed', 'success', 'canceling', 'canceled'.
     # - errors [list of strings]: list of errors linked to this PixClaim event.
-    # - agent [string]: agent that modified the PixClaim resulting in the Log. Options: 'claimer', 'claimed'.
     # - reason [string]: reason why the PixClaim was modified, resulting in the Log. Options: 'fraud', 'userRequested', 'accountClosure', 'defaultOperation', 'reconciliation'
     # - claim [PixClaim]: PixClaim entity to which the log refers to.
     class Log < StarkInfra::Utils::Resource
-      attr_reader :id, :created, :type, :errors, :agent, :reason, :claim
-      def initialize(id:, created:, type:, errors:, agent:, reason:, claim:)
+      attr_reader :id, :created, :type, :errors, :reason, :claim
+      def initialize(id:, created:, type:, errors:, reason:, claim:)
         super(id)
         @created = StarkInfra::Utils::Checks.check_datetime(created)
         @type = type
         @errors = errors
-        @agent = agent
         @reason = reason
         @claim = claim
       end
@@ -58,8 +56,8 @@ module StarkInfra
       # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-      # - types [list of strings]: filter PixClaim Logs by their types. Options: 'created', 'failed', 'delivering', 'delivered', 'confirming', 'confirmed', 'success', 'canceling', 'canceled'.
-      # - claim_ids [list of strings, default nil]: list of PixClaim ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - types [list of strings, default nil]: filter PixClaim Logs by their types. Options: 'created', 'failed', 'delivering', 'delivered', 'confirming', 'confirmed', 'success', 'canceling', 'canceled'.
+      # - claim_ids [list of strings, default nil]: list of PixClaim ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
@@ -90,8 +88,8 @@ module StarkInfra
       # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-      # - types [list of strings]: filter PixClaim Logs by their types. Options: 'created', 'failed', 'delivering', 'delivered', 'confirming', 'confirmed', 'success', 'canceling', 'canceled'.
-      # - claim_ids [list of strings, default nil]: list of PixClaim ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - types [list of strings, default nil]: filter PixClaim Logs by their types. Options: 'created', 'failed', 'delivering', 'delivered', 'confirming', 'confirmed', 'success', 'canceling', 'canceled'.
+      # - claim_ids [list of strings, default nil]: list of PixClaim ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
@@ -123,7 +121,6 @@ module StarkInfra
               created: json['created'],
               type: json['type'],
               errors: json['errors'],
-              agent: json['agent'],
               reason: json['reason'],
               claim: StarkInfra::Utils::API.from_api_json(claim_maker, json['claim'])
             )

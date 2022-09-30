@@ -5,6 +5,7 @@ require_relative('../test_helper.rb')
 describe(StarkInfra::Event, '#event#') do
   it 'query' do
     events = StarkInfra::Event.query(limit: 101).to_a
+
     expect(events.length).must_equal(101)
     events.each do |event|
       expect(event.id).wont_be_nil
@@ -15,9 +16,9 @@ describe(StarkInfra::Event, '#event#') do
   it 'page' do
     ids = []
     cursor = nil
-    events = nil
     (0..1).step(1) do
       events, cursor = StarkInfra::Event.page(limit: 5, cursor: cursor)
+
       events.each do |event|
         expect(ids).wont_include(event.id)
         ids << event.id
@@ -29,11 +30,13 @@ describe(StarkInfra::Event, '#event#') do
 
   it 'query and attempt' do
     events = StarkInfra::Event.query(limit: 2, is_delivered: false).to_a
+
     expect(events.length).must_equal(2)
     events.each do |event|
       expect(event.id).wont_be_nil
       expect(event.log).wont_be_nil
       attempts = StarkInfra::Event::Attempt.query(event_ids: [event.id], limit: 1).to_a
+
       attempts.each do |attempt|
         attempt_get = StarkInfra::Event::Attempt.get(attempt.id)
         expect(attempt_get.id).must_equal(attempt.id)
@@ -43,12 +46,16 @@ describe(StarkInfra::Event, '#event#') do
 
   it 'query, get, update and delete' do
     event = StarkInfra::Event.query(limit: 100, is_delivered: false).to_a.sample
+
     expect(event.is_delivered).must_equal(false)
     get_event = StarkInfra::Event.get(event.id)
+
     expect(event.id).must_equal(get_event.id)
     update_event = StarkInfra::Event.update(event.id, is_delivered: true)
+
     expect(update_event.id).must_equal(event.id)
     expect(update_event.is_delivered).must_equal(true)
+
     delete_event = StarkInfra::Event.delete(event.id)
     expect(delete_event.id).must_equal(event.id)
   end

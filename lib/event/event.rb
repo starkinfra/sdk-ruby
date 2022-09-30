@@ -2,14 +2,14 @@
 
 require('json')
 require('starkbank-ecdsa')
-require_relative('../utils/resource')
-require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/cache')
 require_relative('../error')
+require_relative('../utils/rest')
+require_relative('../utils/parse')
+require_relative('../utils/cache')
+require_relative('../utils/checks')
+require_relative('../utils/resource')
 require_relative('../pixrequest/log')
 require_relative('../pixreversal/log')
-require_relative('../utils/parse')
 
 module StarkInfra
   # # Webhook Event object
@@ -35,18 +35,18 @@ module StarkInfra
       @subscription = subscription
 
       resource = {
-        'credit-note': StarkInfra::CreditNote::Log.resource,
+        'pix-key': StarkInfra::PixKey::Log.resource,
+        'pix-claim': StarkInfra::PixClaim::Log.resource,
+        'pix-chargeback': StarkInfra::PixChargeback::Log.resource,
+        'pix-infraction': StarkInfra::PixInfraction::Log.resource,
         'pix-request.in': StarkInfra::PixRequest::Log.resource,
         'pix-request.out': StarkInfra::PixRequest::Log.resource,
         'pix-reversal.in': StarkInfra::PixReversal::Log.resource,
         'pix-reversal.out': StarkInfra::PixReversal::Log.resource,
-        'pix-key': StarkInfra::PixKey::Log.resource,
-        'pix-claim': StarkInfra::PixClaim::Log.resource,
-        'pix-infraction': StarkInfra::PixInfraction::Log.resource,
-        'pix-chargeback': StarkInfra::PixChargeback::Log.resource,
         'issuing-card': StarkInfra::IssuingCard::Log.resource,
         'issuing-invoice': StarkInfra::IssuingInvoice::Log.resource,
-        'issuing-purchase': StarkInfra::IssuingPurchase::Log.resource
+        'issuing-purchase': StarkInfra::IssuingPurchase::Log.resource,
+        'credit-note': StarkInfra::CreditNote::Log.resource,
       }[subscription.to_sym]
 
       @log = log

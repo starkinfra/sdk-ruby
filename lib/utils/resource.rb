@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require_relative("sub_resource")
+require_relative('sub_resource')
 
 module StarkInfra
   module Utils

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
 require_relative('../utils/parse')
+require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixRequest object
@@ -28,16 +28,18 @@ module StarkInfra
   # - receiver_account_type [string]: receiver bank account type. ex: 'checking', 'savings', 'salary' or 'payment'
   # - end_to_end_id [string]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
   #
+  # ## Parameters (conditionally-required):
+  # - cashier_type [string]: Cashier's type. Required if the cash_amount is different from 0. Options: 'merchant', 'participant' and 'other'
+  # - cashier_bank_code [string]: Cashier's bank code. Required if the cash_amount is different from 0. ex: '20018183'
+  #
   # ## Parameters (optional):
+  # - cash_amount [integer, default nil]: Amount to be withdrawal from the cashier in cents. ex: 1000 (= R$ 10.00)
   # - receiver_key_id [string, default nil]: Receiver's dict key. Example: tax id (CPF/CNPJ).
   # - description [string, default nil]: optional description to override default description to be shown in the bank statement. ex: 'Payment for service #1234'
   # - reconciliation_id [string, default nil]: Reconciliation ID linked to this payment. ex: 'b77f5236-7ab9-4487-9f95-66ee6eaf1781'
   # - initiator_tax_id [string, default nil]: Payment initiator's tax id (CPF/CNPJ). ex: '01234567890' or '20.018.183/0001-80'
-  # - cash_amount [integer, default nil]: Amount to be withdrawal from the cashier in cents. ex: 1000 (= R$ 10.00)
-  # - cashier_bank_code [string, default nil]: Cashier's bank code. ex: '00000000'
-  # - cashier_type [string, default nil]: Cashier's type. ex: [merchant, other, participant]
   # - tags [list of strings, default nil]: list of strings for reference when searching for PixRequests. ex: ['employees', 'monthly']
-  # - method [string, default nil]: execution  method of creation of the PIX. ex: 'manual', 'payerQrcode', 'dynamicQrcode'.
+  # - method [string, default nil]: execution method of creation of the Pix. ex: 'manual', 'payerQrcode', 'dynamicQrcode'.
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixRequest is created. ex: '5656565656565656'
@@ -50,15 +52,15 @@ module StarkInfra
   class PixRequest < StarkInfra::Utils::Resource
     attr_reader :amount, :external_id, :sender_name, :sender_tax_id, :sender_branch_code, :sender_account_number,
                 :sender_account_type, :receiver_name, :receiver_tax_id, :receiver_bank_code, :receiver_account_number,
-                :receiver_branch_code, :receiver_account_type, :end_to_end_id, :receiver_key_id, :sender_bank_code,
-                :status, :reconciliation_id, :description, :flow, :initiator_tax_id, :cash_amount, :cashier_bank_code,
-                :cashier_type, :tags, :created, :updated, :fee, :id
+                :receiver_branch_code, :receiver_account_type, :end_to_end_id, :cashier_type,
+                :cashier_bank_code, :cash_amount, :receiver_key_id, :description, :reconciliation_id, :initiator_tax_id,
+                :tags, :method, :id, :fee, :status, :flow, :sender_bank_code, :created, :updated
     def initialize(
       amount:, external_id:, sender_name:, sender_tax_id:, sender_branch_code:, sender_account_number:, 
       sender_account_type:, receiver_name:, receiver_tax_id:, receiver_bank_code:, receiver_account_number:, 
-      receiver_branch_code:, receiver_account_type:, end_to_end_id:, receiver_key_id: nil, description: nil, 
-      reconciliation_id: nil, initiator_tax_id: nil, cash_amount: nil, cashier_bank_code: nil, cashier_type: nil, 
-      tags: nil, id: nil, fee: nil, status:nil, flow: nil, method: nil, sender_bank_code: nil, created: nil, updated: nil
+      receiver_branch_code:, receiver_account_type:, end_to_end_id:, cashier_type: nil, cashier_bank_code: nil,
+      cash_amount: nil, receiver_key_id: nil, description: nil, reconciliation_id: nil, initiator_tax_id: nil,
+      tags: nil, method: nil, id: nil, fee: nil, status:nil, flow: nil, sender_bank_code: nil, created: nil, updated: nil
     )
       super(id)
       @amount = amount
@@ -75,13 +77,13 @@ module StarkInfra
       @receiver_branch_code = receiver_branch_code
       @receiver_account_type = receiver_account_type
       @end_to_end_id = end_to_end_id
+      @cashier_type = cashier_type
+      @cashier_bank_code = cashier_bank_code
+      @cash_amount = cash_amount
       @receiver_key_id = receiver_key_id
       @description = description
       @reconciliation_id = reconciliation_id
       @initiator_tax_id = initiator_tax_id
-      @cash_amount = cash_amount
-      @cashier_bank_code = cashier_bank_code
-      @cashier_type = cashier_type
       @tags = tags
       @method = method
       @fee = fee
@@ -169,10 +171,10 @@ module StarkInfra
     # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'paid' or 'registered'
-    # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - end_to_end_ids [list of strings, default nil]: central bank's unique transaction IDs. ex: ['E79457883202101262140HHX553UPqeq', 'E79457883202101262140HHX553UPxzx']
     # - external_ids [list of strings, default nil]: url safe strings that must be unique among all your PixRequests. Duplicated external IDs will cause failures. By default, this parameter will block any PixRequests that repeats amount and receiver information on the same date. ex: ['my-internal-id-123456', 'my-internal-id-654321']
+    # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
@@ -212,7 +214,35 @@ module StarkInfra
     # ## Return:
     # - Parsed PixRequest object
     def self.parse(content:, signature:, user: nil)
-      StarkInfra::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
+      request = StarkInfra::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
+
+      !request.fee.nil? ? request.fee : 0
+      !request.tags.nil? ? request.tags : []
+      !request.external_id.nil?  ? request.external_id : ''
+      !request.description.nil?  ? request.description : ''
+
+      request
+    end
+
+    # Helps you respond to a PixRequest authorization
+    #
+    ## Parameters (required):
+    # - status [string]: response to the authorization. ex: 'approved' or 'denied'
+    #
+    ## Parameters (conditionally required):
+    # - reason [string, default nil]: denial reason. Options: 'invalidAccountNumber', 'blockedAccount', 'accountClosed', 'invalidAccountType', 'invalidTransactionType', 'taxIdMismatch', 'invalidTaxId', 'orderRejected', 'reversalTimeExpired', 'settlementFailed'
+    #
+    ## Return:
+    # - Dumped JSON string that must be returned to us
+    def self.response(status:, reason: nil)
+      response = {
+        authorization: {
+          status: status,
+          reason: reason
+        }
+      }.to_json
+
+      response
     end
 
     def self.resource
@@ -235,18 +265,18 @@ module StarkInfra
             receiver_branch_code: json['receiver_branch_code'],
             receiver_account_type: json['receiver_account_type'],
             end_to_end_id: json['end_to_end_id'],
+            cashier_type: json['cashier_type'],
+            cashier_bank_code: json['cashier_bank_code'],
+            cash_amount: json['cash_amount'],
             receiver_key_id: json['receiver_key_id'],
             description: json['description'],
             reconciliation_id: json['reconciliation_id'],
             initiator_tax_id: json['initiator_tax_id'],
-            cash_amount: json['cash_amount'],
-            cashier_bank_code: json['cashier_bank_code'],
-            cashier_type: json['cashier_type'],
             tags: json['tags'],
+            method: json['method'],
             fee: json['fee'],
             status: json['status'],
             flow: json['flow'],
-            method: json['method'],
             sender_bank_code: json['sender_bank_code'],
             created: json['created'],
             updated: json['updated']

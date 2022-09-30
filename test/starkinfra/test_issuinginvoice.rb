@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 describe(StarkInfra::IssuingInvoice, '#issuing-invoice#') do
   it 'query' do
@@ -15,19 +15,21 @@ describe(StarkInfra::IssuingInvoice, '#issuing-invoice#') do
   it 'page' do
     ids = []
     cursor = nil
-    invoices = nil
     (0..1).step(1) do
       invoices, cursor = StarkInfra::IssuingInvoice.page(limit: 5, cursor: cursor)
+
       invoices.each do |invoice|
         expect(ids).wont_include(invoice.id)
         ids << invoice.id
       end
       break if cursor.nil?
     end
+    expect(ids.length).must_equal(10)
   end
 
   it 'query and get' do
     invoice = StarkInfra::IssuingInvoice.query(limit: 1).first
+
     invoice = StarkInfra::IssuingInvoice.get(invoice.id)
     expect(invoice.id).wont_be_nil
   end

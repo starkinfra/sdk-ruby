@@ -19,7 +19,7 @@ module StarkInfra
   # - environment [string]: environment where the project is being used. ex: 'sandbox' or 'production'
   #
   # ## Attributes (return-only):
-  # - name [string, default '']: project name. ex: 'MyProject'
+  # - name [string, default nil]: project name. ex: 'MyProject'
   # - allowed_ips [list of strings]: list containing the strings of the ips allowed to make requests on behalf of this project. ex: ['190.190.0.50']
   # - pem [string]: private key in pem format. ex: '-----BEGIN PUBLIC KEY-----\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEyTIHK6jYuik6ktM9FIF3yCEYzpLjO5X/\ntqDioGM+R2RyW0QEo+1DG8BrUf4UXHSvCjtQ0yLppygz23z0yPZYfw==\n-----END PUBLIC KEY-----'
   class Project < StarkInfra::User

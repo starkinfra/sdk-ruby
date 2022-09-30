@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 describe(StarkInfra::PixClaim, '#pix-claim#') do
   it 'query params' do
@@ -12,25 +12,27 @@ describe(StarkInfra::PixClaim, '#pix-claim#') do
       before: '2022-02-01',
       status: %w[created],
       ids: %w[+55999999999],
-      type: 'cpf',
-      agent: 'claimed',
+      type: 'ownership',
+      key_type: 'cpf',
       key_id: '+55119' + rand(10_000_000...99_999_999).to_s,
-      key_type: 'cpf'
+      flow: 'out',
+      tags: %w[tony stark]
     ).to_a
     expect(claims.length).must_equal(0)
   end
 
   it 'page params' do
-    claims, _ = StarkInfra::PixClaim.page(
+    claims = StarkInfra::PixClaim.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
       status: %w[created],
       ids: %w[+55999999999],
-      type: 'cpf',
-      agent: 'claimed',
+      type: 'ownership',
+      key_type: 'cpf',
       key_id: '+55119' + rand(10_000_000...99_999_999).to_s,
-      key_type: 'cpf'
+      flow: 'out',
+      tags: %w[tony stark]
     ).to_a
     expect(claims.length).must_equal(0)
   end
@@ -38,9 +40,9 @@ describe(StarkInfra::PixClaim, '#pix-claim#') do
   it 'page' do
     ids = []
     cursor = nil
-    claims = nil
     (0..1).step(1) do
       claims, cursor = StarkInfra::PixClaim.page(limit: 5, cursor: cursor)
+
       claims.each do |claim|
         expect(ids).wont_include(claim.id)
         ids << claim.id
@@ -68,17 +70,19 @@ describe(StarkInfra::PixClaim, '#pix-claim#') do
     expect(claims_ids_expected).must_equal(claims_ids_result)
   end
 
-  it 'create and get' do
+  it 'create' do
     pix_claim = ExampleGenerator.pixclaim_example
     claim = StarkInfra::PixClaim.create(pix_claim)
     expect(claim.name).wont_be_nil
     expect(claim.status).must_equal('created')
   end
 
-  it 'page, get and update' do
-    claim = StarkInfra::PixClaim.query(limit: 1, agent: 'claimer', status: 'delivered').to_a[0]
+  it 'query, get and update' do
+    claim = StarkInfra::PixClaim.query(limit: 1).to_a[0]
+
     claim_get = StarkInfra::PixClaim.get(claim.id)
     expect(claim.id).must_equal(claim_get.id)
+
     claim = StarkInfra::PixClaim.update(
       claim_get.id,
       status: 'canceled',

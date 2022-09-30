@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 describe(StarkInfra::PixInfraction, '#pix-infraction#') do
   it 'query params' do
@@ -12,19 +12,23 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
       before: '2022-02-01',
       status: %w[created],
       ids: %w[1 2 3],
-      type: 'fraud'
+      type: 'fraud',
+      flow: 'in',
+      tags: %w[travel food]
     ).to_a
     expect(infractions.length).must_equal(0)
   end
 
   it 'page params' do
-    infractions, _ = StarkInfra::PixInfraction.page(
+    infractions = StarkInfra::PixInfraction.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
       status: %w[created],
       ids: %w[1 2 3],
-      type: 'fraud'
+      type: 'fraud',
+      flow: 'in',
+      tags: %w[travel food]
     ).to_a
     expect(infractions.length).must_equal(0)
   end
@@ -32,9 +36,9 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
   it 'page' do
     ids = []
     cursor = nil
-    infractions = nil
     (0..1).step(1) do
       infractions, cursor = StarkInfra::PixInfraction.page(limit: 5, cursor: cursor)
+
       infractions.each do |infraction|
         expect(ids).wont_include(infraction.id)
         ids << infraction.id
@@ -66,30 +70,35 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
     pix_infraction1 = ExampleGenerator.pixinfraction_example
     pix_infraction2 = ExampleGenerator.pixinfraction_example
     infraction = StarkInfra::PixInfraction.create([pix_infraction1, pix_infraction2])[0]
+
     infraction_get = StarkInfra::PixInfraction.get(infraction.id)
     expect(infraction.id).must_equal(infraction_get.id)
   end
 
   it 'page and update' do
-    infraction = StarkInfra::PixInfraction.get(get_infraction('reported'))
+    infraction = StarkInfra::PixInfraction.get(get_infraction('out'))
+
     infraction = StarkInfra::PixInfraction.update(infraction.id, result: 'agreed')
     expect(infraction.status).must_equal('closed')
   end
 
   it 'page and cancel' do
-    infraction = StarkInfra::PixInfraction.get(get_infraction('reporter'))
+    infraction = StarkInfra::PixInfraction.get(get_infraction('out'))
+
     infraction = StarkInfra::PixInfraction.cancel(infraction.id)
     expect(infraction.status).must_equal('canceled')
   end
 
-  def get_infraction(agent)
+  def get_infraction(flow)
     cursor = nil
     infraction_id = nil
     while true
       infractions, cursor = StarkInfra::PixInfraction.page(limit: 5, status: 'delivered', cursor: cursor)
       infractions.each do |infraction|
-        if infraction.agent == agent
+        assert !infraction.nil?
+        if infraction.flow == flow
           infraction_id = infraction.id
+          assert !infraction_id.nil?
           break
         end
       end

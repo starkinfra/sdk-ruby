@@ -12,7 +12,7 @@ module StarkInfra
         requests, cursor = StarkInfra::PixRequest.page(
           cursor: cursor,
           limit: 30,
-          status: "success"
+          status: 'success'
         )
         requests.each do |request|
           if request.flow == 'in' && request.amount >= 1
@@ -22,10 +22,10 @@ module StarkInfra
         break if cursor.nil?
       end
       if end_to_end_ids.empty?
-        print('Sorry, There are no PixRequests to be reversed in your workspace')
+        raise Exception, 'Sorry, There are no PixRequests to be reversed in your workspace'
       end
+
       end_to_end_ids[0]
     end
   end
 end
-

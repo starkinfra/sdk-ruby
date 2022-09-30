@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
+require_relative('pixchargeback')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
-require_relative('pixchargeback')
+require_relative('../utils/resource')
 
 module StarkInfra
   class PixChargeback
@@ -44,7 +44,7 @@ module StarkInfra
       def self.get(id, user: nil)
         StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
       end
-      
+
       # # Retrieve Logs
       #
       # Receive a generator of Log objects previously created in the Stark Infra API

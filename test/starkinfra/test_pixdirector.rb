@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 describe(StarkInfra::PixDirector, '#pix-director#') do
   it 'create' do

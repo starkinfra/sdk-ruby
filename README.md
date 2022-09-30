@@ -22,7 +22,7 @@ This SDK version is compatible with the Stark Infra API v2.
 - [Testing in Sandbox](#testing-in-sandbox)
 - [Usage](#usage)
   - [Issuing](#issuing)
-    - [BINs](#query-issuingbins): View available sub-issuer BINs (a.k.a. card number ranges)
+    - [Products](#query-issuingproducts): View available sub-issuer card products (a.k.a. card number ranges or BINs)
     - [Holders](#create-issuingholders): Manage card holders
     - [Cards](#create-issuingcards): Create virtual and/or physical cards
     - [Purchases](#process-purchase-authorizations): Authorize and view your past purchases
@@ -30,6 +30,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Withdrawals](#create-issuingwithdrawals): Send money back to your Workspace from your issuing balance
     - [Balance](#get-your-issuingbalance): View your issuing balance
     - [Transactions](#query-issuingtransactions): View the transactions that have affected your issuing balance
+    - [Enums](#issuing-enums): Query enums related to the issuing purchases, such as merchant categories, countries and card purchase methods
   - [Pix](#pix)
     - [PixRequests](#create-pixrequests): Create Pix transactions
     - [PixReversals](#create-pixreversals): Reverse Pix transactions
@@ -41,11 +42,15 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
     - [PixDomain](#query-pixdomains): View registered SPI participants certificates
+    - [StaticBrcode](#create-staticbrcodes): Create static Pix BR Codes
+    - [DynamicBrcode](#create-dynamicbrcodes): Create dynamic Pix BR Codes
+    - [BrcodePreview](#create-brcodepreviews): Read data from BR Codes before paying them
   - [Credit Note](#credit-note)
     - [CreditNote](#create-creditnotes): Create credit notes
+  - [Credit Preview](#credit-preview)
+    - [CreditNotePreview](#create-creditnotepreviews): Create credit note previews
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
-  - [Webhook Events](#webhook-events):
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
     - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
 - [Handling errors](#handling-errors)
@@ -274,7 +279,6 @@ pick up from where you left off whenever it is convenient. When there are no mor
 require('starkinfra')
 
 cursor = nil
-requests = nil
 while true
   requests, cursor = StarkInfra::PixRequest.page(limit: 50, cursor: cursor)
   requests.each do |request|
@@ -291,15 +295,14 @@ To simplify the following SDK examples, we will only use the `query` function, b
 # Testing in Sandbox
 
 Your initial balance is zero. For many operations in Stark Infra, you'll need funds
-in your account, which can be added to your balance by creating a StarkBank::Invoice
-or a StarkBank::Boleto.
+in your account, which can be added to your balance by creating a StarkBank::Invoice.
 
 In the Sandbox environment, most of the created Invoices will be automatically paid,
 so there's nothing else you need to do to add funds to your account. Just create
-a few StarkBank::Invoices or StarkBank::Boletos and wait around a bit.
+a few StarkBank::Invoices and wait around a bit.
 
 In Production, you (or one of your clients) will need to actually pay this StarkBank::Invoice 
-or StarkBank::Boleto for the value to be credited to your account.
+for the value to be credited to your account.
 
 # Usage
 
@@ -307,17 +310,17 @@ Here are a few examples on how to use the SDK. If you have any doubts, check out
 
 ## Issuing
 
-### Query IssuingBins
+### Query IssuingProducts
 
-To take a look at the sub-issuer BINs available to you, just run the following:
+To take a look at the sub-issuer card products available to you, just run the following:
 
 ```ruby
 require('starkinfra')
 
-bins = StarkInfra::IssuingBin.query()
+products = StarkInfra::IssuingProduct.query()
 
-bins.each do |bin|
-  puts bin
+products.each do |product|
+  puts product
 end
 ```
 
@@ -336,7 +339,7 @@ holders = StarkInfra::IssuingHolder.create([
     name: "Iron Bank S.A.",
     external_id: '1234',
     tax_id: '0000',
-    tags: '012.345.678-90',
+    tags: ['012.345.678-90'],
     rules: [StarkInfra::IssuingRule.new(
       name: "General USD",
       interval: "day",
@@ -387,21 +390,6 @@ To get a single Issuing Holder by its id, run:
 require('starkinfra')
 
 holder = StarkInfra::IssuingHolder.get('5155165527080960')
-
-puts holder
-```
-
-### Update an IssuingHolder
-
-You can update a specific holder by its id.
-
-```ruby
-require('starkinfra')
-
-holder = StarkInfra::IssuingHolder.update(
-  '5155165527080960',
-  status: 'blocked'
-)
 
 puts holder
 ```
@@ -554,6 +542,7 @@ puts log
 ### Process Purchase authorizations
 
 It's easy to process purchase authorizations delivered to your endpoint.
+Remember to pass the signature header so the SDK can make sure it's StarkInfra that sent you the event.
 If you do not approve or decline the authorization within 2 seconds, the authorization will be denied.
 
 ```ruby
@@ -561,13 +550,13 @@ require('starkinfra')
 
 authorization = listen_authorizations()  # this is your handler to listen for purchase authorization
 
-authorization = StarkInfra::IssuingAuthorization.parse(
+authorization = StarkInfra::IssuingPurchase.parse(
   content: authorization.body.read, 
   signature: authorization.headers['Digital-Signature']
 )
 
 send_response(  # you should also implement this method
-  StarkInfra::IssuingAuthorization.response(  # this optional method just helps you build the response JSON
+  StarkInfra::IssuingPurchase.response(  # this optional method just helps you build the response JSON
     status: 'accepted',
     amount: authorization.amount,
     tags: ['my-purchase-id/123']
@@ -577,7 +566,7 @@ send_response(  # you should also implement this method
 # or
 
 send_response(
-  StarkInfra::IssuingAuthorization.response(
+  StarkInfra::IssuingPurchase.response(
     status: 'denied',
     reason: 'other',
     tags: ['my-other-id/456']
@@ -647,7 +636,8 @@ puts log
 
 ### Create IssuingInvoices
 
-Issuing invoices are requests to transfer money to your Issuing Balance. When an Issuing Invoice you created is paid, the amount will be added to your Issuing Balance.
+You can create Pix invoices to transfer money from accounts you have in any bank to your Issuing balance,
+allowing you to run your issuing operation.
 
 ```ruby
 require('starkinfra')
@@ -819,6 +809,60 @@ transaction = StarkInfra::IssuingTransaction.get('5155165527080960')
 puts transaction
 ```
 
+### Issuing Enums
+
+#### Query MerchantCategories
+
+You can query any merchant categories using this resource.
+You may also use MerchantCategories to define specific category filters in IssuingRules.
+Either codes (which represents specific MCCs) or types (code groups) will be accepted as filters.
+
+```ruby
+require('starkinfra')
+
+categories = StarkInfra::MerchantCategory.query(
+  search: 'food'
+)
+
+categories.each do |category|
+  puts category
+end
+```
+
+#### Query MerchantCountries
+
+You can query any merchant countries using this resource.
+You may also use MerchantCountries to define specific country filters in IssuingRules.
+
+```ruby
+require('starkinfra')
+
+countries = StarkInfra::MerchantCountry.query(
+  search: 'brazil'
+)
+
+countries.each do |country|
+  puts country
+end
+```
+
+#### Query CardMethods
+
+You can query available card methods using this resource.
+You may also use CardMethods to define specific purchase method filters in IssuingRules.
+
+```ruby
+require('starkinfra')
+
+methods = StarkInfra::CardMethod.query(
+  search: 'token',
+)
+
+methods.each do |method|
+  puts method
+end
+```
+
 ## Pix
 
 ### Create PixRequests
@@ -952,7 +996,7 @@ puts log
 
 ### Create PixReversals
 
-You can reverse a Pix request by whole or by a fraction of its amount using a Pix reversal.
+You can reverse a PixRequest either partially or totally using a PixReversal.
 
 ```ruby
 require('starkinfra')
@@ -989,7 +1033,8 @@ end
 
 ### Get a PixReversal
 
-After its creation, information on a Pix reversal may be retrieved by its id. Its status indicates whether it has been paid.
+After its creation, information on a Pix reversal may be retrieved by its id.
+Its status indicates whether it has been successfully processed.
 
 ```ruby
 require('starkinfra')
@@ -1001,8 +1046,9 @@ puts reversal
 
 ### Process PixReversal authorization requests
 
-It's easy to process authorization requests that arrived in your handler. Remember to pass the
-signature header so the SDK can make sure it's StarkInfra that sent you the event.
+It's easy to process authorization requests that arrived at your endpoint.
+Remember to pass the signature header so the SDK can make sure it's StarkInfra that sent you the event.
+If you do not approve or decline the authorization within 1 second, the authorization will be denied.
 
 ```ruby
 require('starkinfra')
@@ -1062,7 +1108,8 @@ puts balance
 
 ### Create a PixStatement
 
-Statements are only available for direct participants. To create a statement of all the transactions that happened on your workspace during a specific day, run:
+Statements are generated directly by the Central Bank and are only available for direct participants.
+To create a statement of all the transactions that happened on your account during a specific day, run:
 
 ```ruby
 require('starkinfra')
@@ -1108,7 +1155,7 @@ puts statement
 
 ### Get a PixStatement .csv file
 
-To get a .csv file of a Pix statement using its id, run:
+To get the .csv file corresponding to a Pix statement using its id, run:
 
 ```ruby
 require('starkinfra')
@@ -1433,7 +1480,7 @@ After a Pix infraction is patched, its status changes to closed.
 require('starkinfra')
 
 infraction = StarkInfra::PixInfraction.update(
-  '5155165527080960',
+  id: '5155165527080960',
   result: 'agreed'
 )
 
@@ -1538,7 +1585,7 @@ chargeback = StarkInfra::PixChargeback.get('5155165527080960')
 puts chargeback
 ```
 
-#### Patch a PixChargeback
+#### Update a PixChargeback
 
 A received Pix Chargeback can be accepted or rejected by patching its status.
 After a Pix Chargeback is patched, its status changes to closed.
@@ -1612,6 +1659,231 @@ domains = StarkInfra::PixDomain.query
 
 domains.each do |domain|
   puts domain
+end
+```
+
+### Create StaticBrcodes
+
+StaticBrcodes store account information via a BR Code or an image (QR code)
+that represents a PixKey and a few extra fixed parameters, such as an amount
+and a reconciliation ID. They can easily be used to receive Pix transactions.
+
+```ruby
+require('starkinfra')
+
+brcodes = StarkInfra::StaticBrcode.create(
+  StarkInfra::StaticBrcode.new(
+    name: "Jamie Lannister",
+    key_id: "+5511988887777",
+    amount: 0,
+    reconciliation_id: "123",
+    city: "São Paulo"
+  )
+)
+
+brcodes.each do |brcode|
+  puts brcode
+end
+```
+
+### Query StaticBrcodes
+
+You can query multiple StaticBrcodes according to filters.
+
+```ruby
+require('starkinfra')
+
+brcodes = StarkInfra::StaticBrcode.query(
+  limit: 4,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+brcodes.each do |brcode|
+  puts brcode
+end
+```
+
+### Get a StaticBrcodes
+
+After its creation, information on a StaticBrcode may be retrieved by its UUID.
+
+```ruby
+require('starkinfra')
+
+brcode = StarkInfra::StaticBrcode.get("5ddde28043a245c2848b08cf315effa2")
+
+puts brcode
+```
+
+### Create DynamicBrcodes
+
+BR Codes store information represented by Pix QR Codes, which are used to send
+or receive Pix transactions in a convenient way.
+DynamicBrcodes represent charges with information that can change at any time,
+since all data needed for the payment is requested dynamically to an URL stored
+in the BR Code. Stark Infra will receive the GET request and forward it to your
+registered endpoint with a GET request containing the UUID of the BR Code for
+identification.
+
+```ruby
+require('starkinfra')
+
+brcodes = StarkInfra::DynamicBrcode.create([
+  StarkInfra::DynamicBrcode.new(
+    name: "Jamie Lannister",
+    city: "Rio de Janeiro",
+    external_id: "my-external-id/1234",
+    type: "instant"
+  )
+])
+
+brcodes.each do |brcode|
+  puts brcode
+end
+```
+
+### Query DynamicBrcodes
+
+You can query multiple DynamicBrcodes according to filters.
+
+```ruby
+require('starkinfra')
+
+brcodes = StarkInfra::DynamicBrcode.query(
+  limit: 4,
+  after: '2022-01-01',
+  before: '2022-02-01',
+  uuids: %w[68a6af231c594a40bd11a80cb980c400 ba989316ffeb4500a60c3636eca90d7e],
+)
+
+brcodes.each do |brcode|
+  puts brcode
+end
+```
+
+### Get a DynamicBrcode
+
+After its creation, information on a DynamicBrcode may be retrieved by its UUID.
+
+```ruby
+require('starkinfra')
+
+brcode = StarkInfra::DynamicBrcode.get("ac7caa14e601461dbd6b12bf7e4cc48e")
+
+puts brcode
+```
+
+### Verify a DynamicBrcode read
+
+When a DynamicBrcode is read by your user, a GET request will be made to the your regitered URL to
+retrieve additional information needed to complete the transaction.
+Use this method to verify the authenticity of a GET request received at your registered endpoint.
+If the provided digital signature does not check out with the StarkInfra public key, 
+a stark.exception.InvalidSignatureException will be raised.
+
+```ruby
+require('starkinfra')
+
+request = listen()  # this is the method you made to get the read requests posted to your registered endpoint
+
+uuid = StarkInfra::Dynamicbrcode.verify(
+    signature=request.headers["Digital-Signature"],
+    uuid=get_uuid(request.url) # you should implement this method to extract the UUID from the request's URL
+)
+
+puts uuid
+```
+
+### Answer to a Due DynamicBrcode read
+
+When a Due DynamicBrcode is read by your user, a GET request containing
+the BR Code UUID will be made to your registered URL to retrieve additional
+information needed to complete the transaction.
+
+The GET request must be answered in the following format within 5 seconds
+and with an HTTP status code 200.
+
+```ruby
+require('starkinfra')
+
+request = listen()  # this is the method you made to get the read requests posted to your registered endpoint
+
+uuid = StarkInfra::DynamicBrcode.verify(
+  signature: request.headers["Digital-Signature"], 
+  content: get_uuid(request.url) # you should implement this method to extract the UUID from the request's URL
+)
+
+invoice = get_my_invoice(uuid) # you should implement this method to get the information of the BR Code from its uuid
+
+send_response(  # you should also implement this method to respond the read request
+  StarkInfra::DynamicBrcode.response_due(
+    version: invoice.version,
+    created: invoice.created,
+    due: invoice.due,
+    key_id: invoice.key_id,
+    status: invoice.status,
+    reconciliation_id: invoice.reconciliation_id,
+    nominal_amount: invoice.nominal_amount,
+    sender_name: invoice.sender_name,
+    receiver_name: invoice.receiver_name,
+    receiver_street_line: invoice.receiver_street_line,
+    receiver_city: invoice.receiver_city,
+    receiver_state_code: invoice.receiver_state_code,
+    receiver_zip_code: invoice.receiver_zip_code,
+  )
+)
+```
+
+### Answer to an Instant DynamicBrcode read
+
+When an Instant DynamicBrcode is read by your user, a GET request
+containing the BR Code UUID will be made to your registered URL to retrieve
+additional information needed to complete the transaction.
+The get request must be answered in the following format
+within 5 seconds and with an HTTP status code 200.
+
+```ruby
+require('starkinfra')
+
+request = listen()  # this is the method you made to get the read requests posted to your registered endpoint
+
+uuid = StarkInfra::DynamicBrcode.verify(
+  signature: request.headers["Digital-Signature"], 
+  content: get_uuid(request.url) # you should implement this method to extract the UUID from the request's URL
+)
+
+invoice = get_my_invoice(uuid) # you should implement this method to get the information of the BR Code from its uuid
+
+send_response(  # you should also implement this method to respond the read request
+  StarkInfra::DynamicBrcode.response_instant(
+    version: invoice.version,
+    created: invoice.created,
+    key_id: invoice.key_id,
+    status: invoice.status,
+    reconciliation_id: invoice.reconciliation_id,
+    amount: invoice.amount,
+    cashier_type: invoice.cashier_type,
+    cashier_bank_code: invoice.cashier_bank_code,
+    cash_amount: invoice.cash_amount,
+  )
+)
+```
+
+## Create BrcodePreviews
+You can create BrcodePreviews to preview BR Codes before paying them.
+
+```ruby
+require('starkinfra')
+
+previews = StarkInfra::BrcodePreview.create([
+  StarkInfra::BrcodePreview.new(
+    id: "00020126420014br.gov.bcb.pix0120nedstark@hotmail.com52040000530398654075000.005802BR5909Ned Stark6014Rio de Janeiro621605126674869738606304FF71"
+  )
+])
+
+previews.each do |preview|
+  puts preview
 end
 ```
 
@@ -1746,6 +2018,78 @@ log = StarkInfra::CreditNote::Log.get('5155165527080960')
 
 puts log
 ```
+
+## Credit Preview
+You can preview different types of credits before creating them (Currently we only have credit note previews):
+
+### Create CreditNotePreviews
+You can preview Credit Notes before the creation CCB contracts:
+
+```ruby
+require('starkinfra')
+
+previews = StarkInfra::CreditPreview.create([
+   StarkInfra::CreditPreview.new(
+     credit: StarkInfra::CreditNotePreview.new(
+       type: "price",
+       nominal_amount: 100000,
+       scheduled: '2022-07-10',
+       tax_id: "20.018.183/0001-80",
+       initial_due: '2022-07-10',
+       nominal_interest: 15,
+       count: 15,
+       interval: "year",
+       rebate_amount: 900,
+     ),
+     type: "credit-note"
+   ),
+  StarkInfra::CreditPreview.new(
+     credit: StarkInfra::CreditNotePreview.new(
+       type: "bullet",
+       nominal_amount: 100000,
+       scheduled: '2022-07-10',
+       tax_id: "20.018.183/0001-80",
+       initial_due: '2022-07-10',
+       nominal_interest: 15,
+       rebate_amount: 0,
+     ),
+     type: "credit-note",
+  ),
+  StarkInfra::CreditPreview.new(
+     credit: StarkInfra::CreditNotePreview.new(
+       type: "price",
+       nominal_amount: 100000,
+       scheduled: '2022-07-10',
+       tax_id: "20.018.183/0001-80",
+       initial_due: '2022-07-10',
+       nominal_interest: 15,
+       count: 15,
+       interval: "year",
+       rebate_amount: 900,
+     ),
+     type: "credit-note",
+  ),
+  StarkInfra::CreditPreview.new(
+     credit: StarkInfra::CreditNotePreview.new(
+      type: "american",
+      nominal_amount: 100000,
+      scheduled: '2022-07-10',
+      tax_id: "20.018.183/0001-80",
+      initial_due: '2022-07-10',
+      nominal_interest: 15,
+      count: 5,
+      interval: "month",
+      rebate_amount: 900,
+      )
+  )]
+)
+
+previews.each do |preview|
+  puts preview
+end
+```
+
+**Note**: Instead of using CreditPreview objects, you can also pass each element in dictionary format
 
 ### Webhook
 

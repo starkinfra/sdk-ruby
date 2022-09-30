@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingWithdrawal object
   #
   # The IssuingWithdrawal objects created in your Workspace return cash from your Issuing balance to your Banking balance.
+  #
+  # When you initialize a IssuingWithdrawal, the entity will not be automatically
+  # created in the Stark Infra API. The 'create' function sends the objects
+  # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
   # - amount [integer]: IssuingWithdrawal value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
@@ -15,7 +19,7 @@ module StarkInfra
   # - description [string]: IssuingWithdrawal description. ex: 'sending money back'
   #
   # ## Parameters (optional):
-  # - tags [list of strings, default []]: list of strings for tagging. ex: ['tony', 'stark']
+  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['tony', 'stark']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingWithdrawal is created. ex: '5656565656565656'
@@ -36,8 +40,8 @@ module StarkInfra
       @tags = tags
       @transaction_id = transaction_id
       @issuing_transaction_id = issuing_transaction_id
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
       @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkInfra::Utils::Checks.check_datetime(created)
     end
 
     # # Create an IssuingWithdrawal
@@ -78,7 +82,7 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - external_ids [list of strings, default []]: external IDs. ex: ['5656565656565656', '4545454545454545']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
@@ -107,7 +111,7 @@ module StarkInfra
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-    # - external_ids [list of strings, default []]: external IDs. ex: ['5656565656565656', '4545454545454545']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
@@ -136,11 +140,11 @@ module StarkInfra
         resource_name: 'IssuingWithdrawal',
         resource_maker: proc { |json|
           IssuingWithdrawal.new(
+            id: json['id'],
             amount: json['amount'],
             external_id: json['external_id'],
             description: json['description'],
             tags: json['tags'],
-            id: json['id'],
             transaction_id: json['transaction_id'],
             issuing_transaction_id: json['issuing_transaction_id'],
             updated: json['updated'],

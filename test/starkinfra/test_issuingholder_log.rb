@@ -1,11 +1,12 @@
 # frozen_string_literal: false
 
-require_relative('../test_helper.rb')
 require_relative('../user')
+require_relative('../test_helper.rb')
 
 describe(StarkInfra::IssuingHolder::Log, '#issuingholder/log#') do
   it 'query logs' do
     logs = StarkInfra::IssuingHolder::Log.query(limit: 10, types: 'created').to_a
+
     expect(logs.length).must_equal(10)
     logs.each do |log|
       expect(log.id).wont_be_nil
@@ -17,9 +18,9 @@ describe(StarkInfra::IssuingHolder::Log, '#issuingholder/log#') do
   it 'page' do
     ids = []
     cursor = nil
-    logs = nil
     (0..1).step(1) do
       logs, cursor = StarkInfra::IssuingHolder::Log.page(limit: 5, cursor: cursor)
+
       logs.each do |log|
         expect(ids).wont_include(log.id)
         ids << log.id
@@ -31,6 +32,7 @@ describe(StarkInfra::IssuingHolder::Log, '#issuingholder/log#') do
 
   it 'query and get' do
     log = StarkInfra::IssuingHolder::Log.query(limit: 1).to_a[0]
+
     get_log = StarkInfra::IssuingHolder::Log.get(log.id)
     expect(log.id).must_equal(get_log.id)
   end
