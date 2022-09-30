@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # Webhook subscription object
@@ -29,7 +29,7 @@ module StarkInfra
     # Send a single Webhook subscription for creation in the Stark Infra API
     #
     # ## Parameters (required):
-    # - webhook [Webhook object or hash]: Webhook subscription to be created to receive Events. ex: Webhook.new()
+    # - webhook [Webhook object]: Webhook subscription to be created to receive Events. ex: Webhook.new()
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -84,7 +84,7 @@ module StarkInfra
     # - list of Webhook objects with updated attributes
     # - cursor to retrieve the next page of Webhook objects
     def self.page(cursor: nil, limit: nil, user: nil)
-      return StarkInfra::Utils::Rest.get_page(
+      StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
         user: user,

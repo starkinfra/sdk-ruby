@@ -1,8 +1,8 @@
 # frozen_string_literal: false
 
+require_relative('../user')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../user')
 
 bank_code = BankCode.bank_code
 
@@ -13,28 +13,32 @@ describe(StarkInfra::PixChargeback, '#pix-chargeback#') do
       after: '2022-01-01',
       before: '2022-02-01',
       status: %w[created],
-      ids: %w[1 2 3]
+      ids: %w[1 2 3],
+      flow: 'in',
+      tags: %w[travel food]
     ).to_a
     expect(chargebacks.length).must_equal(0)
   end
 
   it 'page params' do
-    chargebacks, _ = StarkInfra::PixChargeback.page(
+    chargebacks = StarkInfra::PixChargeback.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
       status: %w[created],
-      ids: %w[1 2 3]
+      ids: %w[1 2 3],
+      flow: 'in',
+      tags: %w[travel food]
     ).to_a
-    expect(chargebacks.length).must_equal(0)
+    expect(chargebacks.length).must_equal(2)
   end
 
   it 'page' do
     ids = []
     cursor = nil
-    chargebacks = nil
     (0..1).step(1) do
       chargebacks, cursor = StarkInfra::PixChargeback.page(limit: 5, cursor: cursor)
+
       chargebacks.each do |chargeback|
         expect(ids).wont_include(chargeback.id)
         ids << chargeback.id
@@ -66,30 +70,34 @@ describe(StarkInfra::PixChargeback, '#pix-chargeback#') do
     pix_chargeback1 = ExampleGenerator.pixchargeback_example
     pix_chargeback2 = ExampleGenerator.pixchargeback_example
     chargeback = StarkInfra::PixChargeback.create([pix_chargeback1, pix_chargeback2])[0]
+
     chargeback_get = StarkInfra::PixChargeback.get(chargeback.id)
     expect(chargeback.id).must_equal(chargeback_get.id)
   end
 
   it 'page and update' do
-    chargeback = StarkInfra::PixChargeback.get(get_chargeback(bank_code))
+    chargeback = StarkInfra::PixChargeback.get(get_chargeback('out'))
+
     chargeback = StarkInfra::PixChargeback.update(
       chargeback.id, result: 'accepted', reversal_reference_id: StarkInfra::ReturnId.create(bank_code))
     expect(chargeback.status).must_equal('closed')
   end
 
   it 'page and cancel' do
-    chargeback = StarkInfra::PixChargeback.get(get_chargeback(bank_code))
+    chargeback = StarkInfra::PixChargeback.get(get_chargeback('out'))
+
     chargeback = StarkInfra::PixChargeback.cancel(chargeback.id)
     expect(chargeback.status).must_equal('canceled')
   end
 
-  def get_chargeback(bank_code)
+  def get_chargeback(flow)
     cursor = nil
     chargeback_id = nil
     while true
       chargebacks, cursor = StarkInfra::PixChargeback.page(limit: 5, status: 'delivered', cursor: cursor)
+
       chargebacks.each do |chargeback|
-        if chargeback.sender_bank_code != bank_code
+        if chargeback.flow != flow
           chargeback_id = chargeback.id
           break
         end

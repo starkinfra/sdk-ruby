@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
-require_relative('../utils/rest')
 require_relative('certificate')
+require_relative('../utils/rest')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixDomain object
   #
-  # The PixDomain object displays the domain name and the QR Code
-  # domain certificate of Pix participants.
+  # The PixDomain object displays the domain name and the QR Code domain
+  # certificate of Pix participants.
   # All certificates must be registered with the Central Bank.
   #
   # ## Attributes (return-only):

@@ -15,7 +15,6 @@ describe(StarkInfra::PixStatement, '#pix-statement#') do
   it 'page' do
     ids = []
     cursor = nil
-    statements = nil
     (0..1).step(1) do
       statements, cursor = StarkInfra::PixStatement.page(limit: 5, cursor: cursor)
       statements.each do |statement|
@@ -47,8 +46,10 @@ describe(StarkInfra::PixStatement, '#pix-statement#') do
 
   it 'create' do
     statement = StarkInfra::PixStatement.create(ExampleGenerator.pixstatement_example)
+
     get_statement = StarkInfra::PixStatement.get(statement.id)
     expect(statement.id).must_equal(get_statement.id)
+
     csv = StarkInfra::PixStatement.csv(statement.id)
     File.binwrite('statement.zip', csv)
   end

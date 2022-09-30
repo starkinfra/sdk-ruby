@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
+require_relative('pixkey')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
-require_relative('pixkey')
+require_relative('../utils/resource')
 
 module StarkInfra
   class PixKey
@@ -54,7 +54,7 @@ module StarkInfra
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter PixKey Logs by their types. Options: 'created', 'registered', 'updated', 'failed', 'canceling', 'canceled'.
-      # - key_ids [list of strings, default nil]: list of PixKey ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - key_ids [list of strings, default nil]: list of PixKey ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:
@@ -85,8 +85,8 @@ module StarkInfra
       # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-      # - types [list of strings]: filter PixKey Logs by their types. Options: 'created', 'registered', 'updated', 'failed', 'canceling', 'canceled'.
-      # - key_ids [list of strings, default nil]: list of PixKey ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - types [list of strings, default nil]: filter PixKey Logs by their types. Options: 'created', 'registered', 'updated', 'failed', 'canceling', 'canceled'.
+      # - key_ids [list of strings, default nil]: list of PixKey ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
       # ## Return:

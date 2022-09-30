@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
+require_relative('event')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
-require_relative('event')
+require_relative('../utils/resource')
 
 module StarkInfra
   class Event
@@ -94,7 +94,8 @@ module StarkInfra
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, event_ids: nil, webhook_ids: nil, user: nil)
         after = StarkInfra::Utils::Checks.check_date(after)
         before = StarkInfra::Utils::Checks.check_date(before)
-        return StarkInfra::Utils::Rest.get_page(
+
+        StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
           after: after,

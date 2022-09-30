@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixDomain::Certificate object

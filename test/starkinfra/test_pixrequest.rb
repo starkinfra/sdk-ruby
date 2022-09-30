@@ -1,9 +1,9 @@
 # frozen_string_literal: false
 
+require_relative('../user')
+require_relative('../end_to_end_id')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
-require_relative('../end_to_end_id')
-require_relative('../user')
 
 bank_code = BankCode.bank_code
 describe(StarkInfra::PixRequest, '#pix-request#') do
@@ -22,7 +22,7 @@ describe(StarkInfra::PixRequest, '#pix-request#') do
   end
 
   it 'page params' do
-    requests, _ = StarkInfra::PixRequest.page(
+    requests = StarkInfra::PixRequest.page(
       limit: 4,
       after: '2022-01-01',
       before: '2022-02-01',
@@ -32,15 +32,15 @@ describe(StarkInfra::PixRequest, '#pix-request#') do
       end_to_end_ids: %w[1 2 3],
       external_ids: %w[1 2 3]
     ).to_a
-    expect(requests.length).must_equal(0)
+    expect(requests.length).must_equal(2)
   end
 
   it 'page' do
     ids = []
     cursor = nil
-    requests = nil
     (0..1).step(1) do
       requests, cursor = StarkInfra::PixRequest.page(limit: 5, cursor: cursor)
+
       requests.each do |request|
         expect(ids).wont_include(request.id)
         ids << request.id
@@ -71,6 +71,7 @@ describe(StarkInfra::PixRequest, '#pix-request#') do
   it 'create and get' do
     pix_request = ExampleGenerator.pixrequest_example(bank_code)
     request = StarkInfra::PixRequest.create([pix_request])[0]
+
     request_get = StarkInfra::PixRequest.get(request.id)
     expect(request.id).must_equal(request_get.id)
   end
@@ -110,5 +111,14 @@ describe(StarkInfra::PixRequest, '#pix-request#') do
       raise(StandardError, 'malformed signature was not detected')
     end
   end
-end
 
+  it 'denied response' do
+    response = StarkInfra::PixRequest.response(status: "denied", reason: "taxIdMismatch")
+    assert !response.nil?
+  end
+
+  it 'approved response' do
+    response = StarkInfra::PixRequest.response(status: "approved")
+    assert !response.nil?
+  end
+end

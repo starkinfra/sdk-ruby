@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
+require_relative('issuingcard')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
-require_relative('issuingcard')
+require_relative('../utils/resource')
 
 module StarkInfra
   class IssuingCard

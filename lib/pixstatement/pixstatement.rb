@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixStatement object
   #
-  # The PixStatement object stores information about all the transactions that happened on
-  # a specific day at the workspace. It must be created by the user before it can be
-  # accessed by the user. This feature is only available for direct participants.
+  # The PixStatement object stores information about all the transactions that
+  # happened on a specific day at your settlment account according to the Central Bank.
+  # It must be created by the user before it can be accessed.
+  # This feature is only available for direct participants.
+  #
+  # When you initialize a PixStatement, the entity will not be automatically
+  # created in the Stark Infra API. The 'create' function sends the objects
+  # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
-  # - after [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as before. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  # - before [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as after. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - after [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as before. ex: Date.new(2020, 3, 10) or '2020-03-10'
+  # - before [Date or string]: transactions that happened at this date are stored in the PixStatement, must be the same as after. ex: Date.new(2020, 3, 10) or '2020-03-10'
   # - type [string]: type of entities to include in statement. Options: 'interchange', 'interchangeTotal', 'transaction'
   #
   # ## Attributes (return-only):
@@ -132,10 +137,10 @@ module StarkInfra
         resource_name: 'PixStatement',
         resource_maker: proc { |json|
           PixStatement.new(
+            id: json['id'],
             after: json['after'],
             before: json['before'],
             type: json['type'],
-            id: json['id'],
             status: json['status'],
             transaction_count: json['transaction_count'],
             created: json['created'],

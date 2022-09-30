@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingCard object
   #
   # The IssuingCard object displays the information of the cards created in your Workspace.
   # Sensitive information will only be returned when the 'expand' parameter is used, to avoid security concerns.
+  #
+  # When you initialize a IssuingCard, the entity will not be automatically
+  # created in the Stark Infra API. The 'create' function sends the objects
+  # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
   # - holder_name [string]: card holder name. ex: 'Tony Stark'
@@ -17,9 +21,9 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - display_name [string, default nil]: card displayed name. ex: 'ANTHONY STARK'
-  # - rules [list of IssuingRule objects, default []]: [EXPANDABLE] list of card spending rules.
-  # - bin_id [string, default nil]: BIN ID to which the card is bound. ex: '53810200'
-  # - tags [list of strings, default []]: list of strings for tagging. ex: ['travel', 'food']
+  # - rules [list of IssuingRule objects, default nil]: [EXPANDABLE] list of card spending rules.
+  # - product_id [string, default nil]: card product ID to which the card is bound. ex: '53810200'
+  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
   # - street_line_1 [string, default sub-issuer street line 1]: card holder main address. ex: 'Av. Paulista, 200'
   # - street_line_2 [string, default sub-issuer street line 2]: card holder address complement. ex: 'Apto. 123'
   # - district [string, default sub-issuer district]: card holder address district / neighbourhood. ex: 'Bela Vista'
@@ -38,32 +42,31 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingCard < StarkInfra::Utils::Resource
-    attr_reader :id, :holder_id, :holder_name, :holder_tax_id, :holder_external_id, :type, :display_name, :status,
-      :rules, :bin_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :tags, :number,
-      :security_code, :expiration, :created, :updated
+    attr_reader :id, :holder_name, :holder_tax_id, :holder_external_id, :display_name, :rules, :product_id, :tags,
+                :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :holder_id,
+                :type, :status, :number, :security_code, :expiration, :created, :updated
     def initialize(
-      holder_name:, holder_tax_id:, holder_external_id:, id: nil, holder_id: nil, type: nil,
-      display_name: nil, status: nil, rules: nil, bin_id: nil, street_line_1: nil, street_line_2: nil, district: nil,
-      city: nil, state_code: nil, zip_code: nil, tags: nil, number: nil, security_code: nil, expiration: nil,
-      created: nil, updated: nil
+      holder_name: , holder_tax_id: , holder_external_id: , display_name: nil, rules: nil, product_id: nil, tags: nil,
+      street_line_1: nil, street_line_2: nil, district: nil, city: nil, state_code: nil, zip_code: nil, id: nil,
+      holder_id: nil, type: nil, status: nil, number: nil, security_code: nil, expiration: nil, created: nil, updated: nil
     )
       super(id)
       @holder_name = holder_name
       @holder_tax_id = holder_tax_id
       @holder_external_id = holder_external_id
-      @holder_id = holder_id
-      @type = type
       @display_name = display_name
-      @status = status
       @rules = StarkInfra::IssuingRule.parse_rules(rules)
-      @bin_id = bin_id
+      @product_id = product_id
+      @tags = tags
       @street_line_1 = street_line_1
       @street_line_2 = street_line_2
       @district = district
       @city = city
       @state_code = state_code
       @zip_code = zip_code
-      @tags = tags
+      @holder_id = holder_id
+      @type = type
+      @status = status
       @number = number
       @security_code = security_code
       expiration = nil if !expiration.nil? && expiration.include?('*')
@@ -112,13 +115,13 @@ module StarkInfra
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - after [DateTime or string, default nil] date filter for objects created only after specified date. ex: DateTime.new(2020, 3, 10)
-    # - before [DateTime or string, default nil] date filter for objects created only before specified date. ex: DateTime.new(2020, 3, 10)
+    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['active', 'blocked', 'canceled', 'expired']
     # - types [list of strings, default nil]: card type. ex: ['virtual']
-    # - holder_ids [list of strings]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
+    # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
-    # - expand [list of strings, default []]: fields to expand information. ex: ['rules', 'security_code', 'number', 'expiration']
+    # - expand [list of strings, default nil]: fields to expand information. ex: ['rules', 'security_code', 'number', 'expiration']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
@@ -150,13 +153,13 @@ module StarkInfra
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - after [DateTime or string, default nil] date filter for objects created only after specified date. ex: DateTime.new(2020, 3, 10)
-    # - before [DateTime or string, default nil] date filter for objects created only before specified date. ex: DateTime.new(2020, 3, 10)
+    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['active', 'blocked', 'canceled', 'expired']
     # - types [list of strings, default nil]: card type. ex: ['virtual']
-    # - holder_ids [list of strings]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
+    # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
-    # - expand [list of strings, default []]: fields to expand information. ex: ['rules', 'security_code', 'number', 'expiration']
+    # - expand [list of strings, default nil]: fields to expand information. ex: ['rules', 'security_code', 'number', 'expiration']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
@@ -232,22 +235,22 @@ module StarkInfra
         resource_maker: proc { |json|
           IssuingCard.new(
             id: json['id'],
-            holder_id: json['holder_id'],
             holder_name: json['holder_name'],
             holder_tax_id: json['holder_tax_id'],
             holder_external_id: json['holder_external_id'],
-            type: json['type'],
             display_name: json['display_name'],
-            status: json['status'],
             rules: json['rules'],
-            bin_id: json['bin_id'],
+            product_id: json['product_id'],
+            tags: json['tags'],
             street_line_1: json['street_line_1'],
             street_line_2: json['street_line_2'],
             district: json['district'],
             city: json['city'],
             state_code: json['state_code'],
             zip_code: json['zip_code'],
-            tags: json['tags'],
+            holder_id: json['holder_id'],
+            type: json['type'],
+            status: json['status'],
             number: json['number'],
             security_code: json['security_code'],
             expiration: json['expiration'],

@@ -13,6 +13,39 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- StaticBrcode resource
+- BrcodePreview resource
+- DynamicBrcode resource
+- CardMethod sub-resource
+- CreditPreview sub-resource
+- MerchantCountry sub-resource
+- MerchantCategory sub-resource
+- CreditNotePreview sub-resource
+- flow attribute to PixChargeback resource
+- tags parameter to PixClaim, PixInfraction, Pix Chargeback resources
+- tags parameter to query and page methods in PixChargeback, PixClaim and PixInfraction resources
+- agent parameter to query and page methods in PixInfraction and PixChargeback resources
+- expand parameter to create, get, query and page methods in IssuingHolder resource
+- tax_amount and nominal_interest attributes to return only in CreditNote resource
+- code attribute to IssuingProduct resource
+- zip_code, purpose, is_partial_allowed, card_tags and holder_tags attributes to IssuingPurchase resource
+- brcode, link and due attributes to IssuingInvoice resource
+### Changed
+- IssuingBin resource to IssuingProduct
+- fine and interest attributes to return only in CreditNote::Invoice sub-resource
+- expiration from returned-only attribute to optional parameter in the CreditNote resource
+- settlement parameter to funding_type and client parameter to holder_type in Issuing Product resource
+- bank_code parameter to claimer_bank_code in PixClaim resource
+- agent parameter to flow in PixClaim and PixInfraction resources
+- agent parameter to flow on query and page methods in PixClaim resource
+- Creditnote.Signer sub-resource to CreditSigner resource
+### Removed
+- IssuingAuthorization resource
+- category parameter from IssuingProduct resource
+- bank_code attribute from PixReversal resource
+- agent parameter from PixClaim.Log resource
+- bacen_id parameter from PixChargeback and PixInfraction resources
 
 ## [0.1.0] - 2022-06-03
 ### Added

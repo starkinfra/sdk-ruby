@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative('../utils/resource')
 require_relative('../utils/rest')
 require_relative('../utils/checks')
+require_relative('../utils/resource')
 
 module StarkInfra
   # # PixInfraction object
@@ -19,34 +19,34 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - description [string, default nil]: description for any details that can help with the infraction investigation.
+  # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixInfraction is created. ex: '5656565656565656'
   # - credited_bank_code [string]: bank_code of the credited Pix participant in the reported transaction. ex: '20018183'
   # - debited_bank_code [string]: bank_code of the debited Pix participant in the reported transaction. ex: '20018183'
-  # - agent [string]: Options: 'reporter' if you created the PixInfraction, 'reported' if you received the PixInfraction.
+  # - flow [string]: direction of the PixInfraction flow. Options: 'out' if you created the PixInfraction, 'in' if you received the PixInfraction.
   # - analysis [string]: analysis that led to the result.
-  # - bacen_id [string]: central bank's unique UUID that identifies the infraction report.
   # - reported_by [string]: agent that reported the PixInfraction. Options: 'debited', 'credited'.
   # - result [string]: result after the analysis of the PixInfraction by the receiving party. Options: 'agreed', 'disagreed'
   # - status [string]: current PixInfraction status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
   # - created [DateTime]: creation datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixInfraction < StarkInfra::Utils::Resource
-    attr_reader :reference_id, :type, :description, :id, :credited_bank_code, :agent, :analysis, :bacen_id,
+    attr_reader :reference_id, :type, :description, :tags, :id, :credited_bank_code, :flow, :analysis,
                 :debited_bank_code, :reported_by, :result, :status, :created, :updated
     def initialize(
-      reference_id:, type:, description:, id: nil, credited_bank_code: nil, agent: nil, analysis: nil, bacen_id: nil,
-      debited_bank_code: nil, reported_by: nil, result: nil, status: nil, created: nil, updated: nil
+      reference_id:, type:, description: nil, id: nil, tags: nil, credited_bank_code: nil, debited_bank_code: nil,
+      flow: nil, analysis: nil, reported_by: nil, result: nil, status: nil, created: nil, updated: nil
     )
       super(id)
       @reference_id = reference_id
       @type = type
       @description = description
+      @tags = tags
       @credited_bank_code = credited_bank_code
-      @agent = agent
+      @flow = flow
       @analysis = analysis
-      @bacen_id = bacen_id
       @debited_bank_code = debited_bank_code
       @reported_by = reported_by
       @result = result
@@ -98,11 +98,13 @@ module StarkInfra
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'success' or 'failed'
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - type [string]: filter for the type of retrieved PixInfractions. Options: 'fraud', 'reversal', 'reversalChargeback'
+    # - flow [string, default nil]: direction of the PixInfraction flow. Options: 'out' if you created the PixInfraction, 'in' if you received the PixInfraction.
+    # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - generator of PixInfraction objects with updated attributes
-    def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, type: nil, user: nil)
+    def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, type: nil, flow: nil, tags: nil, user: nil)
       after = StarkInfra::Utils::Checks.check_date(after)
       before = StarkInfra::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
@@ -112,6 +114,8 @@ module StarkInfra
         status: status,
         ids: ids,
         type: type,
+        flow: flow,
+        tags: tags,
         user: user,
         **resource
       )
@@ -130,12 +134,14 @@ module StarkInfra
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'success' or 'failed'
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - type [string, default nil]: filter for the type of retrieved PixInfractions. Options: 'fraud', 'reversal', 'reversalChargeback'
+    # - flow [string, default nil]: direction of the PixInfraction flow. Options: 'out' if you created the PixInfraction, 'in' if you received the PixInfraction.
+    # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - list of PixInfraction objects with updated attributes
     # - cursor to retrieve the next page of PixInfraction objects
-    def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, type: nil, user: nil)
+    def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, type: nil, user: nil)
       after = StarkInfra::Utils::Checks.check_date(after)
       before = StarkInfra::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
@@ -145,6 +151,8 @@ module StarkInfra
         before: before,
         status: status,
         ids: ids,
+        flow: flow,
+        tags: tags,
         type: type,
         user: user,
         **resource
@@ -194,11 +202,11 @@ module StarkInfra
             reference_id: json['reference_id'],
             type: json['type'],
             description: json['description'],
+            tags: json['tags'],
             credited_bank_code: json['credited_bank_code'],
-            agent: json['agent'],
-            analysis: json['analysis'],
-            bacen_id: json['bacen_id'],
             debited_bank_code: json['debited_bank_code'],
+            flow: json['flow'],
+            analysis: json['analysis'],
             reported_by: json['reported_by'],
             result: json['result'],
             status: json['status'],
