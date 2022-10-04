@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [0.2.0] - 2022-10-04
 ### Added
 - StaticBrcode resource
 - BrcodePreview resource
