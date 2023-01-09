@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative('key')
-require_relative('user/project')
-require_relative('user/organization')
 require_relative('brcodepreview/brcodepreview')
 require_relative('cardmethod/cardmethod')
 require_relative('creditnote/invoice/invoice')
@@ -50,12 +47,22 @@ require_relative('staticbrcode/staticbrcode')
 require_relative('webhook/webhook')
 require_relative('event/event')
 require_relative('event/attempt')
-require_relative('utils/endtoendid')
-require_relative('utils/returnid')
 
 # SDK to facilitate Ruby integrations with Stark Infra
 module StarkInfra
+
+  API_VERSION = 'v2'
+  SDK_VERSION = '0.2.0'
+  HOST = "infra"
+  public_constant :API_VERSION, :SDK_VERSION, :HOST;
+
   @user = nil
   @language = 'en-US'
-  class << self; attr_accessor :user, :language; end
+  @timeout = 15
+  class << self; attr_accessor :user, :language, :timeout; end
+
+  Project = StarkCore::Project
+  Organization = StarkCore::Organization
+  Key = StarkCore::Key
+  
 end

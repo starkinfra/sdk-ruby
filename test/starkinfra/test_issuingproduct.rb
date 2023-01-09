@@ -14,15 +14,14 @@ describe(StarkInfra::IssuingProduct, '#issuing-product#') do
   it 'page' do
     ids = []
     cursor = nil
-    (0..1).step(1) do
-      products, cursor = StarkInfra::IssuingProduct.page(limit: 5, cursor: cursor)
-
+    (0..2).step(1) do
+      products, cursor = StarkInfra::IssuingProduct.page(limit: 1, cursor: cursor)
       products.each do |invoice|
         expect(ids).wont_include(invoice.id)
         ids << invoice.id
       end
       break if cursor.nil?
     end
-    expect(ids.length).must_equal(10)
+    expect(ids.length).must_equal(3)
   end
 end

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # IssuingHolder object
@@ -27,7 +26,7 @@ module StarkInfra
   # - status [string]: current IssuingHolder status. ex: 'active', 'blocked', 'canceled'
   # - updated [DateTime]: latest update datetime for the IssuingHolder. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingHolder < StarkInfra::Utils::Resource
+  class IssuingHolder < StarkCore::Utils::Resource
     attr_reader :id, :name, :tax_id, :external_id, :rules, :tags, :status, :updated, :created
     def initialize(
       name:, tax_id:, external_id:, rules: nil, tags: nil, id: nil, status: nil, updated: nil, created: nil
@@ -39,8 +38,8 @@ module StarkInfra
       @rules = StarkInfra::IssuingRule.parse_rules(rules)
       @tags = tags
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create IssuingHolders
@@ -94,8 +93,8 @@ module StarkInfra
     # ## Return:
     # - generator of IssuingHolders objects with updated attributes
     def self.query(limit: nil, ids: nil, after: nil, before: nil, status: nil, tags: nil, expand: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         ids: ids,
@@ -129,8 +128,8 @@ module StarkInfra
     # - cursor to retrieve the next page of IssuingHolders objects
     def self.page(cursor: nil, limit: nil, ids: nil, after: nil, before: nil, status: nil, tags: nil, expand: nil,
                   user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

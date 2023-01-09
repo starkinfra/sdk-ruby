@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
+require('starkcore')
 
 module StarkInfra
   # # CardMethod object
@@ -14,7 +14,7 @@ module StarkInfra
   # Attributes (return-only):
   # - name [string]: method's name. ex: 'token'
   # - number [string]: method's number. ex: '81'
-  class CardMethod < StarkInfra::Utils::SubResource
+  class CardMethod < StarkCore::Utils::SubResource
     attr_reader :code, :name, :number
     def initialize(code:, name: nil, number: nil)
       @code = code

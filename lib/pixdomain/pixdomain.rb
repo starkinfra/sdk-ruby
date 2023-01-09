@@ -2,7 +2,7 @@
 
 require_relative('certificate')
 require_relative('../utils/rest')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # PixDomain object
@@ -14,7 +14,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - certificates [list of PixDomain::Certificate objects]: certificate information of the Pix participant.
   # - name [string]: current active domain (URL) of the Pix participant.
-  class PixDomain < StarkInfra::Utils::SubResource
+  class PixDomain < StarkCore::Utils::SubResource
     attr_reader :certificates, :name
     def initialize(certificates: nil, name: nil)
       @certificates = certificates
@@ -38,7 +38,7 @@ module StarkInfra
       certificate_maker = StarkInfra::Certificate.resource[:resource_maker]
       parsed_certificates = []
       certificates.each do |certificate|
-        parsed_certificates << StarkInfra::Utils::API.from_api_json(certificate_maker, certificate)
+        parsed_certificates << StarkCore::Utils::API.from_api_json(certificate_maker, certificate)
       end
       parsed_certificates
     end

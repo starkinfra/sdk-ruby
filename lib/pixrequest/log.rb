@@ -2,8 +2,7 @@
 
 require_relative('pixrequest')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   class PixRequest
@@ -18,11 +17,11 @@ module StarkInfra
     # - type [string]: type of the PixRequest event which triggered the log creation. ex: 'processing' or 'success'
     # - errors [list of strings]: list of errors linked to this PixRequest event.
     # - request [PixRequest object]: PixRequest entity to which the log refers to.
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :created, :type, :errors, :request
       def initialize(id:, created:, type:, errors:, request:)
         super(id)
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
         @type = type
         @errors = errors
         @request = request
@@ -60,8 +59,8 @@ module StarkInfra
       # ## Return:
       # - generator of Log objects with updated attributes
       def self.query(limit: nil, after: nil, before: nil, types: nil, request_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           limit: limit,
           after: after,
@@ -91,8 +90,8 @@ module StarkInfra
       # - list of Log objects with updated attributes
       # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, types: nil, request_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
@@ -115,7 +114,7 @@ module StarkInfra
               created: json['created'],
               type: json['type'],
               errors: json['errors'],
-              request: StarkInfra::Utils::API.from_api_json(request_maker, json['request'])
+              request: StarkCore::Utils::API.from_api_json(request_maker, json['request'])
             )
           }
         }

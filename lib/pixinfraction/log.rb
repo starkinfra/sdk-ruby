@@ -2,8 +2,7 @@
 
 require_relative('pixinfraction')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   class PixInfraction
@@ -19,11 +18,11 @@ module StarkInfra
     # - type [string]: type of the PixInfraction event which triggered the log creation. Options: 'created', 'failed', 'delivering', 'delivered', 'closed', 'canceled'
     # - errors [list of strings]: list of errors linked to this PixInfraction event.
     # - infraction [PixInfraction]: PixInfraction entity to which the log refers to.
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :created, :type, :errors, :infraction
       def initialize(id:, created:, type:, errors:, infraction:)
         super(id)
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
         @type = type
         @errors = errors
         @infraction = infraction
@@ -61,8 +60,8 @@ module StarkInfra
       # ## Return:
       # - list of Log objects with updated attributes
       def self.query(ids: nil, limit: nil, after: nil, before: nil, types: nil, infraction_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           ids: ids,
           limit: limit,
@@ -94,8 +93,8 @@ module StarkInfra
       # - list of Log objects with updated attributes
       # - Cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, ids: nil, limit: nil, after: nil, before: nil, types: nil, infraction_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           ids: ids,
@@ -119,7 +118,7 @@ module StarkInfra
               created: json['created'],
               type: json['type'],
               errors: json['errors'],
-              infraction: StarkInfra::Utils::API.from_api_json(infraction_maker, json['infraction'])
+              infraction: StarkCore::Utils::API.from_api_json(infraction_maker, json['infraction'])
             )
           }
         }

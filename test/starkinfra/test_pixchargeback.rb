@@ -2,6 +2,7 @@
 
 require_relative('../user')
 require_relative('../test_helper.rb')
+require('starkcore')
 require_relative('../example_generator.rb')
 
 bank_code = BankCode.bank_code
