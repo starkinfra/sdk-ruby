@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # IssuingPurchase object
@@ -46,7 +45,7 @@ module StarkInfra
   # - is_partial_allowed [bool]: true if the merchant allows partial purchases. ex: False
   # - card_tags [list of strings]: tags of the IssuingCard responsible for this purchase. ex: ['travel', 'food']
   # - holder_tags [list of strings]: tags of the IssuingHolder responsible for this purchase. ex: ['technology', 'john snow']
-  class IssuingPurchase < StarkInfra::Utils::Resource
+  class IssuingPurchase < StarkCore::Utils::Resource
     attr_reader :id, :holder_name, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
                 :issuer_currency_symbol, :merchant_amount, :merchant_currency_code, :merchant_currency_symbol,
                 :merchant_category_code, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
@@ -88,8 +87,8 @@ module StarkInfra
       @zip_code = zip_code
       @issuing_transaction_ids = issuing_transaction_ids
       @status = status
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
       @is_partial_allowed = is_partial_allowed
       @card_tags = card_tags
       @holder_tags = holder_tags
@@ -131,8 +130,8 @@ module StarkInfra
     # - generator of IssuingPurchases objects with updated attributes
     def self.query(ids: nil, limit: nil, after: nil, before: nil, end_to_end_ids: nil, holder_ids: nil, card_ids: nil,
                    status: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         ids: ids,
         limit: limit,
@@ -168,8 +167,8 @@ module StarkInfra
     # - cursor to retrieve the next page of IssuingPurchases objects
     def self.page(cursor: nil, ids: nil, limit: nil, after: nil, before: nil, end_to_end_ids: nil, holder_ids: nil,
                   card_ids: nil, status: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         ids: ids,

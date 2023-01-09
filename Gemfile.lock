@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     starkinfra (0.2.0)
-      starkbank-ecdsa (~> 0.0.5)
+      starkcore (~> 0.0.1)
 
 GEM
   remote: https://rubygems.org/

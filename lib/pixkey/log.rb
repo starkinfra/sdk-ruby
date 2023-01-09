@@ -2,8 +2,7 @@
 
 require_relative('pixkey')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   class PixKey
@@ -18,11 +17,11 @@ module StarkInfra
     # - type [string]: type of the PixKey event which triggered the log creation. Options: 'created', 'registered', 'updated', 'failed', 'canceling', 'canceled'.
     # - errors [list of strings]: list of errors linked to this PixKey event.
     # - key [PixKey]: PixKey entity to which the log refers to.
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :created, :type, :errors, :key
       def initialize(id:, created:, type:, errors:, key:)
         super(id)
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
         @type = type
         @errors = errors
         @key = key
@@ -60,8 +59,8 @@ module StarkInfra
       # ## Return:
       # - generator of Log objects with updated attributes
       def self.query(ids: nil, limit: nil, after: nil, before: nil, types: nil, key_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           ids: ids,
           limit: limit,
@@ -93,8 +92,8 @@ module StarkInfra
       # - list of Log objects with updated attributes
       # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, ids: nil, limit: nil, after: nil, before: nil, types: nil, key_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           ids: ids,
@@ -118,7 +117,7 @@ module StarkInfra
               created: json['created'],
               type: json['type'],
               errors: json['errors'],
-              key: StarkInfra::Utils::API.from_api_json(key_maker, json['key'])
+              key: StarkCore::Utils::API.from_api_json(key_maker, json['key'])
             )
           }
         }

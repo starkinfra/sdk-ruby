@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # PixChargeback object
@@ -36,7 +35,7 @@ module StarkInfra
   # - status [string]: current PixChargeback status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
   # - created [DateTime]: creation datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixChargeback < StarkInfra::Utils::Resource
+  class PixChargeback < StarkCore::Utils::Resource
     attr_reader :amount, :reference_id, :reason, :description, :tags, :id, :analysis, :sender_bank_code,
                 :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :flow, :status, :created, :updated
     def initialize(
@@ -58,8 +57,8 @@ module StarkInfra
       @result = result
       @flow = flow
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create PixChargebacks
@@ -111,8 +110,8 @@ module StarkInfra
     # ## Return:
     # - generator of PixChargeback objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -146,8 +145,8 @@ module StarkInfra
     # - list of PixChargeback objects with updated attributes
     # - cursor to retrieve the next page of PixChargeback objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

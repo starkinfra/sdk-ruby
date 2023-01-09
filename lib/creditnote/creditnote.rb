@@ -2,10 +2,9 @@
 
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../utils/checks')
+require('starkcore')
 require_relative('invoice/invoice')
 require_relative('invoice/discount')
-require_relative('../utils/resource')
 require_relative('invoice/description')
 require_relative('../creditnote/transfer')
 
@@ -55,7 +54,7 @@ module StarkInfra
   # - interest [float]: yearly effective interest rate of the credit note, in percentage. ex: 12.5
   # - created [DateTime]: creation datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class CreditNote < StarkInfra::Utils::Resource
+  class CreditNote < StarkCore::Utils::Resource
     attr_reader :template_id, :name, :tax_id, :nominal_amount, :scheduled, :invoices, :payment, :signers, :external_id,
                 :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type, :rebate_amount,
                 :tags, :expiration, :id, :amount, :document_id, :status, :transaction_ids, :workspace_id, :tax_amount,
@@ -93,8 +92,8 @@ module StarkInfra
       @tax_amount = tax_amount
       @nominal_interest = nominal_interest
       @interest = interest
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
 
       payment_info = CreditNote.parse_payment(payment, payment_type)
       @payment = payment_info['payment']
@@ -149,8 +148,8 @@ module StarkInfra
     # ## Return:
     # - generator of CreditNote objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -182,8 +181,8 @@ module StarkInfra
     # - list of CreditNote objects with updated attributes
     # - cursor to retrieve the next page of CreditNote objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
@@ -217,7 +216,7 @@ module StarkInfra
       resource_maker = { 'transfer' => Transfer.resource[:resource_maker] }
       if payment.is_a?(Hash)
         begin
-          parsed_payment = StarkInfra::Utils::API.from_api_json(resource_maker[payment_type], payment)
+          parsed_payment = StarkCore::Utils::API.from_api_json(resource_maker[payment_type], payment)
           return { 'payment' => parsed_payment, 'payment_type' => payment_type }
 
         rescue StandardError

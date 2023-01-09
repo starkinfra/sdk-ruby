@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # PixDomain::Certificate object
@@ -10,7 +10,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - content [string]: certificate of the Pix participant in PEM format.
-  class Certificate < StarkInfra::Utils::SubResource
+  class Certificate < StarkCore::Utils::SubResource
     attr_reader :content
     def initialize(content: nil)
       @content = content

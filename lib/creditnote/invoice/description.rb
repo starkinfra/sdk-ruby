@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../../utils/api')
 require_relative('../../utils/rest')
-require_relative('../../utils/sub_resource')
+require('starkcore')
 
 module StarkInfra
 
@@ -15,7 +14,7 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - value [string, default nil]: amount related to the described key. ex: 'R$100,00'
-  class Description < StarkInfra::Utils::SubResource
+  class Description < StarkCore::Utils::SubResource
     attr_reader :percentage, :due
     def initialize(key:, value: nil)
       @key = key
@@ -29,7 +28,7 @@ module StarkInfra
       parsed_descriptions = []
       descriptions.each do |description|
         unless description.is_a? Description
-          description = StarkInfra::Utils::API.from_api_json(resource_maker, description)
+          description = StarkCore::Utils::API.from_api_json(resource_maker, description)
         end
         parsed_descriptions << description
       end

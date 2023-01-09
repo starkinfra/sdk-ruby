@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../../utils/api')
 require_relative('../../utils/rest')
-require_relative('../../utils/sub_resource')
+require('starkcore')
 
 module StarkInfra
 
@@ -37,7 +36,7 @@ module StarkInfra
   # - transaction_ids [list of strings]: ledger transaction ids linked to this Invoice (if there are more than one, all but the first are reversals or failed reversal chargebacks). ex: ['19827356981273']
   # - created [DateTime]: creation datetime for the Invoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the Invoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class Invoice < StarkInfra::Utils::Resource
+  class Invoice < StarkCore::Utils::Resource
     attr_reader :amount, :id, :due, :expiration, :tags, :descriptions, :name, :tax_id, :pdf, :link, :fine, :interest,
                 :nominal_amount, :fine_amount, :interest_amount, :discount_amount, :discounts, :brcode, :status, :fee,
                 :transaction_ids, :created, :updated
@@ -69,8 +68,8 @@ module StarkInfra
       @status = status
       @fee = fee
       @transaction_ids = transaction_ids
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     def self.parse_invoices(invoices)
@@ -80,7 +79,7 @@ module StarkInfra
       parsed_invoices = []
       invoices.each do |invoice|
         unless invoice.is_a? Invoice
-          invoice = StarkInfra::Utils::API.from_api_json(resource_maker, invoice)
+          invoice = StarkCore::Utils::API.from_api_json(resource_maker, invoice)
         end
         parsed_invoices << invoice
       end

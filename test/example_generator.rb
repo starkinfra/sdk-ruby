@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require('securerandom')
-require_relative('./end_to_end_id')
+require('starkcore')
+require_relative('end_to_end_id.rb')
 require_relative('./test_helper.rb')
 
 class ExampleGenerator

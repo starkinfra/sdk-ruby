@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # IssuingRule object
@@ -25,7 +24,7 @@ module StarkInfra
   # - counter_amount [integer]: current rule spent amount. ex: 1000
   # - currency_symbol [string]: currency symbol. ex: 'R$'
   # - currency_name [string]: currency name. ex: 'Brazilian Real'
-  class IssuingRule < StarkInfra::Utils::Resource
+  class IssuingRule < StarkCore::Utils::Resource
     attr_reader :name, :interval, :amount, :currency_code, :counter_amount, :currency_name, :currency_symbol,
                 :categories, :countries, :methods
     def initialize(
@@ -52,7 +51,7 @@ module StarkInfra
       parsed_categories = []
       categories.each do |category|
         unless category.is_a? MerchantCategory
-          category = StarkInfra::Utils::API.from_api_json(resource_maker, category)
+          category = StarkCore::Utils::API.from_api_json(resource_maker, category)
         end
         parsed_categories << category
       end
@@ -66,7 +65,7 @@ module StarkInfra
       parsed_countries = []
       countries.each do |country|
         unless country.is_a? MerchantCountry
-          country = StarkInfra::Utils::API.from_api_json(resource_maker, country)
+          country = StarkCore::Utils::API.from_api_json(resource_maker, country)
         end
         parsed_countries << country
       end
@@ -80,7 +79,7 @@ module StarkInfra
       parsed_methods = []
       methods.each do |method|
         unless method.is_a? CardMethod
-          method = StarkInfra::Utils::API.from_api_json(resource_maker, method)
+          method = StarkCore::Utils::API.from_api_json(resource_maker, method)
         end
         parsed_methods << method
       end
@@ -94,7 +93,7 @@ module StarkInfra
       parsed_rules = []
       rules.each do |rule|
         unless rule.is_a? IssuingRule
-          rule = StarkInfra::Utils::API.from_api_json(rule_maker, rule)
+          rule = StarkCore::Utils::API.from_api_json(rule_maker, rule)
         end
         parsed_rules << rule
       end
