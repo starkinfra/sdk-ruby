@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # IssuingWithdrawal object
@@ -27,7 +26,7 @@ module StarkInfra
   # - issuing_transaction_id [string]: issuing ledger transaction ids linked to this IssuingWithdrawal
   # - updated [DateTime]: latest update datetime for the IssuingWithdrawal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingWithdrawal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingWithdrawal < StarkInfra::Utils::Resource
+  class IssuingWithdrawal < StarkCore::Utils::Resource
     attr_reader :amount, :external_id, :description, :tags, :id, :transaction_id, :issuing_transaction_id, :updated, :created
     def initialize(
       amount:, external_id:, description:, tags: nil, id: nil, transaction_id: nil, issuing_transaction_id: nil,
@@ -40,8 +39,8 @@ module StarkInfra
       @tags = tags
       @transaction_id = transaction_id
       @issuing_transaction_id = issuing_transaction_id
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Create an IssuingWithdrawal
@@ -91,8 +90,8 @@ module StarkInfra
     # ## Return:
     # - generator of IssuingWithdrawal objects with updated attributes
     def self.query(limit: nil, external_ids: nil, after: nil, before: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         external_ids: external_ids,
@@ -121,8 +120,8 @@ module StarkInfra
     # - list of IssuingWithdrawal objects with updated attributes
     # - cursor to retrieve the next page of IssuingWithdrawal objects
     def self.page(cursor: nil, limit: nil, external_ids: nil, after: nil, before: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

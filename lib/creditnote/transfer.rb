@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../utils/api')
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
+require('starkcore')
 
 module StarkInfra
 
@@ -32,7 +31,7 @@ module StarkInfra
   # - transaction_ids [list of strings]: ledger Transaction IDs linked to this Transfer (if there are two, the second is the chargeback). ex: ['19827356981273']
   # - created [DateTime]: creation datetime for the transfer. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the transfer. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class Transfer < StarkInfra::Utils::Resource
+  class Transfer < StarkCore::Utils::Resource
     attr_reader :id, :name, :tax_id, :bank_code, :branch_code, :account_number, :account_type, :tags, :amount, :external_id,
                 :scheduled, :description, :fee, :status, :created, :updated, :transaction_ids
     def initialize(
@@ -56,8 +55,8 @@ module StarkInfra
       @fee = fee
       @status = status
       @transaction_ids = transaction_ids
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     def self.resource

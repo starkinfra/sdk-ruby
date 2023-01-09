@@ -2,6 +2,7 @@
 
 require_relative('../user')
 require_relative('../end_to_end_id')
+require('starkcore')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
 

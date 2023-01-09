@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # PixBalance object
@@ -17,7 +16,7 @@ module StarkInfra
   # - amount [integer]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
   # - currency [string]: currency of the current workspace. Expect others to be added eventually. ex: 'BRL'
   # - updated [DateTime]: latest update datetime for the balance. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixBalance < StarkInfra::Utils::Resource
+  class PixBalance < StarkCore::Utils::Resource
     attr_reader :id, :amount, :currency, :updated
     def initialize(id: nil, amount: nil, currency: nil, updated: nil)
       super(id)

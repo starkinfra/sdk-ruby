@@ -2,8 +2,7 @@
 
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # PixReversal object
@@ -32,7 +31,7 @@ module StarkInfra
   # - flow [string]: direction of money flow. ex: 'in' or 'out'
   # - created [DateTime]: creation datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixReversal < StarkInfra::Utils::Resource
+  class PixReversal < StarkCore::Utils::Resource
     attr_reader :amount, :external_id, :end_to_end_id, :reason, :tags, :id, :return_id,
                 :fee, :status, :flow, :created, :updated
     def initialize(
@@ -49,8 +48,8 @@ module StarkInfra
       @fee = fee
       @status = status
       @flow = flow
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create PixReversals
@@ -103,8 +102,8 @@ module StarkInfra
     # ## Return:
     # - generator of PixReversal objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, return_ids: nil, external_ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -143,8 +142,8 @@ module StarkInfra
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
-        after: StarkInfra::Utils::Checks.check_date(after),
-        before: StarkInfra::Utils::Checks.check_date(before),
+        after: StarkCore::Utils::Checks.check_date(after),
+        before: StarkCore::Utils::Checks.check_date(before),
         status: status,
         tags: tags,
         ids: ids,

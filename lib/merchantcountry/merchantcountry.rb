@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
+require('starkcore')
 
 module StarkInfra
   # # MerchantCountry object
@@ -15,7 +15,7 @@ module StarkInfra
   # - name [string]: country's name. ex: 'Brazil'
   # - number [string]: country's number. ex: '076'
   # - short_code [string]: country's short code. ex: 'BR'
-  class MerchantCountry < StarkInfra::Utils::SubResource
+  class MerchantCountry < StarkCore::Utils::SubResource
     attr_reader :code, :short_code, :name, :number
     def initialize(code:, name: nil, number: nil, short_code: nil)
       @code = code

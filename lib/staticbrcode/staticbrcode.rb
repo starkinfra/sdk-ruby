@@ -2,8 +2,7 @@
 
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
+require('starkcore')
 
 module StarkInfra
   # # StaticBrcode object
@@ -31,7 +30,7 @@ module StarkInfra
   # - url [string]: url link to the BR Code image. ex: 'https://brcode-h.development.starkinfra.com/static-qrcode/97756273400d42ce9086404fe10ea0d6.png'
   # - created [DateTime]: creation datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class StaticBrcode < StarkInfra::Utils::Resource
+  class StaticBrcode < StarkCore::Utils::Resource
     attr_reader :name, :key_id, :city, :amount, :reconciliation_id, :id, :tags, :uuid, :url, :created, :updated
     def initialize(
       name:, key_id:, city:, amount:, reconciliation_id:, id: nil, tags:nil, uuid: nil, url: nil, created: nil, updated: nil
@@ -45,8 +44,8 @@ module StarkInfra
       @tags = tags
       @uuid = uuid
       @url = url
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create StaticBrcodes
@@ -96,8 +95,8 @@ module StarkInfra
     # ## Return:
     # - generator of StaticBrcode objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, uuids: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -126,8 +125,8 @@ module StarkInfra
     # - list of StaticBrcode objects with updated attributes
     # - cursor to retrieve the next page of StaticBrcode objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, tags: nil, uuids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
