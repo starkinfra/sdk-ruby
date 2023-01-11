@@ -363,4 +363,23 @@ class ExampleGenerator
     discounts = [discount1, discount2]
     discounts
   end
+
+  def self.individual_identity_example
+    StarkInfra::IndividualIdentity.new(
+      name: "Jamie Lannister",
+      tax_id: "012.345.678-90",
+      tags: ["test", "testing"]
+    )
+  end
+
+  def self.individual_document_image(image)
+    rg_images = {
+      "front" => "test/utils/identity/identity-front-face.png",
+      "back" => "test/utils/identity/identity-back-face.png",
+      "selfie" => "test/utils/identity/walter-white.png"
+    }
+    
+    file = open(rg_images[image], 'rb')
+    return picture = file.read
+  end
 end

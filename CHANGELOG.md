@@ -13,6 +13,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- IndividualDocument resource
+- IndividualIdentity resource
 
 ## [0.2.0] - 2022-10-04
 ### Added

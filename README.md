@@ -49,6 +49,9 @@ This SDK version is compatible with the Stark Infra API v2.
     - [CreditNote](#create-creditnotes): Create credit notes
   - [Credit Preview](#credit-preview)
     - [CreditNotePreview](#create-creditnotepreviews): Create credit note previews
+  - [Identity](#identity)
+    - [IndividualIdentity](#create-individualidentities): Create individual identities
+    - [IndividualDocument](#create-individualdocuments): Create individual documents
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -2090,6 +2093,227 @@ end
 ```
 
 **Note**: Instead of using CreditPreview objects, you can also pass each element in dictionary format
+
+## Identity
+
+Several operations, especially credit ones, require that the identity
+of a person or business is validated beforehand.
+
+Identities are validated according to the following sequence:
+
+1. The Identity resource is created for a specific Tax ID
+2. Documents are attached to the Identity resource
+3. The Identity resource is updated to indicate that all documents have been attached
+4. The Identity is sent for validation and returns a webhook notification to reflect
+the success or failure of the operation
+
+### Create IndividualIdentities
+
+You can create an IndividualIdentity to validate a document of a natural person
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::IndividualIdentity.create([
+  StarkInfra::IndividualIdentity.new(
+    name: 'Walter White',
+    tax_id: '012.345.678-90',
+    tags: ['breaking', 'bad']
+  )
+])
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+**Note**: Instead of using IndividualIdentity objects, you can also pass each element in dictionary format
+
+### Query IndividualIdentity
+
+You can query multiple individual identities according to filters.
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::IndividualIdentity.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'success',
+  tags: ['breaking', 'bad'],
+)
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+### Get an IndividualIdentity
+
+After its creation, information on an individual identity may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.get('5155165527080960')
+
+puts identity
+```
+
+### Update an IndividualIdentity
+
+You can update a specific identity status to "processing" for send it to validation.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.update('5155165527080960', status: 'processing')
+
+puts identity
+```
+
+**Note**: Before sending your individual identity to validation by patching its status, you must send all the required documents using the create method of the CreditDocument resource. Note that you must reference the individual identity in the create method of the CreditDocument resource by its id.
+
+### Cancel an IndividualIdentity
+
+You can cancel an individual identity before updating its status to processing.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.cancel('5155165527080960')
+
+puts identity
+```
+
+### Query IndividualIdentity logs
+
+You can query individual identity logs to better understand individual identity life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualIdentity::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualIdentity log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualIdentity::Log.get('5155165527080960')
+
+print(log)
+```
+
+### Create IndividualDocuments
+
+You can create an individual document to attach images of documents to a specific individual Identity.
+You must reference the desired individual identity by its id.
+
+```ruby
+require('starkinfra')
+
+documents = StarkInfra::IndividualDocument.create([
+  StarkInfra::IndividualDocument.new(
+    type: 'identity-front',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  ),
+  StarkInfra::IndividualDocument.new(
+    type: 'identity-back',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  ),
+  StarkInfra::IndividualDocument.new(
+    type: 'selfie',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  )
+])
+
+documents.each do |document|
+  puts document
+end
+```
+
+**Note**: Instead of using IndividualDocument objects, you can also pass each element in dictionary format
+
+### Query IndividualDocument
+
+You can query multiple individual documents according to filters.
+
+```ruby
+require('starkinfra')
+
+documents = StarkInfra::IndividualIdentity.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'success',
+  tags: ['breaking', 'bad'],
+)
+
+documents.each do |document|
+  puts document
+end
+```
+
+### Get an IndividualDocument
+
+After its creation, information on an individual document may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+document = StarkInfra::IndividualDocument.get('5155165527080960')
+
+puts document
+```
+  
+### Query IndividualDocument logs
+
+You can query individual document logs to better understand individual document life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualDocument::Log.query(
+  limit=50, 
+  after='2022-01-01',
+  before='2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualDocument log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualDocument::Log.get('5155165527080960')
+
+puts log
+```
 
 ### Webhook
 
