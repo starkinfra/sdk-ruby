@@ -88,8 +88,8 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['created', 'expired', 'overdue', 'paid']
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
@@ -117,8 +117,8 @@ module StarkInfra
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['created', 'expired', 'overdue', 'paid']
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call

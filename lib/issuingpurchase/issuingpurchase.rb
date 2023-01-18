@@ -119,8 +119,8 @@ module StarkInfra
     # ## Parameters (optional):
     # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 09)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 09)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - end_to_end_ids [list of strings, default nil]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - card_ids [list of strings, default nil]: card  IDs. ex: ['5656565656565656', '4545454545454545']
@@ -155,8 +155,8 @@ module StarkInfra
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - end_to_end_ids [list of strings, default nil]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - card_ids [list of strings, default nil]: card  IDs. ex: ['5656565656565656', '4545454545454545']

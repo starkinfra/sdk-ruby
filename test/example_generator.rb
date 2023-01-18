@@ -382,4 +382,48 @@ class ExampleGenerator
     file = open(rg_images[image], 'rb')
     return picture = file.read
   end
+
+  def self.issuing_embossingrequest_example(holder:)
+
+    card = StarkInfra::IssuingCard.create(
+      cards: [StarkInfra::IssuingCard.new(
+        holder_name: holder.name,
+        holder_tax_id: holder.tax_id,
+        holder_external_id: holder.external_id,
+        product_id: "52233227", 
+        type: "physical"
+      )]
+    ).to_a[0]
+
+    request = StarkInfra::IssuingEmbossingRequest.new(
+      card_id: card.id,
+      card_design_id: "5648359658356736", 
+      display_name_1: "teste", 
+      envelope_design_id: "5747368922185728", 
+      shipping_city: "Sao Paulo", 
+      shipping_country_code: "BRA", 
+      shipping_district: "Bela Vista", 
+      shipping_service: "loggi", 
+      shipping_state_code: "SP", 
+      shipping_street_line_1: "teste", 
+      shipping_street_line_2: "teste", 
+      shipping_tracking_number: "teste", 
+      shipping_zip_code: "12345-678",
+      embosser_id: "5746980898734080"
+    )
+
+    return request
+  end
+
+  def self.issuing_restock_example
+
+    stock = StarkInfra::IssuingStock.query(limit: 1).to_a[0]
+
+    restock = StarkInfra::IssuingRestock.new(
+      count: 100,
+      stock_id: stock.id
+    )
+
+    return restock
+  end
 end

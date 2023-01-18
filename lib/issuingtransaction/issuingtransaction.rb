@@ -53,8 +53,8 @@ module StarkInfra
     # ## Parameters (optional):
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'approved', 'canceled', 'denied', 'confirmed' or 'voided'
     # - ids [list of strings, default nil]: purchase IDs
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
@@ -86,8 +86,8 @@ module StarkInfra
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [string, default nil]: filter for status of retrieved objects. ex: 'approved', 'canceled', 'denied', 'confirmed' or 'voided'
     # - ids [list of strings, default nil]: purchase IDs
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35

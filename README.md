@@ -25,6 +25,10 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Products](#query-issuingproducts): View available sub-issuer card products (a.k.a. card number ranges or BINs)
     - [Holders](#create-issuingholders): Manage card holders
     - [Cards](#create-issuingcards): Create virtual and/or physical cards
+    - [Design](#query-issuingdesigns): View your current card or package designs
+    - [Stock](#query-issuingstocks): View your current stock of a certain IssuingDesign linked to an Embosser on the workspace
+    - [Restock](#create-issuingrestocks): Create restock orders of a specific IssuingStock object
+    - [EmbossingRequest](#create-issuingembossingrequests): Create embossing requests
     - [Purchases](#process-purchase-authorizations): Authorize and view your past purchases
     - [Invoices](#create-issuinginvoices): Add money to your issuing balance
     - [Withdrawals](#create-issuingwithdrawals): Send money back to your Workspace from your issuing balance
@@ -538,6 +542,250 @@ You can get a single log by its id.
 require('starkinfra')
 
 log = StarkInfra::IssuingCard::Log.get('5155165527080960')
+
+puts log
+```
+
+### Query IssuingDesigns
+
+You can get a list of available designs given some filters.
+
+```ruby
+require('starkinfra')
+
+designs = StarkInfra::IssuingDesign.query(
+    limit: 1
+)
+
+designs.each do |design|
+  puts design
+end
+```
+
+### Get an IssuingDesign
+
+Information on a design may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+design = StarkInfra::IssuingDesign.get("5747368922185728")
+
+puts design
+```
+
+### Query IssuingStocks
+
+You can get a list of available stocks given some filters.
+
+```ruby
+require('starkinfra')
+
+stocks = StarkInfra::IssuingStock.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+stocks.each do |stock|
+  puts stock
+end
+```
+
+### Get an IssuingStock
+
+Information on a stock may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+stock = StarkInfra::IssuingStock.get("5792731695677440")
+
+puts stock
+```
+
+### Query IssuingStock logs
+
+Logs are pretty important to understand the life cycle of a stock.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingStock::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingStock log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingStock::Log.get("5809977331548160")
+
+puts log
+```
+
+### Create IssuingRestocks
+
+You can order restocks for a specific IssuingStock.
+
+```ruby
+require('starkinfra')
+
+restocks = StarkInfra::IssuingRestock.create([
+  StarkInfra::IssuingRestock.new(
+        count: 100,
+        stock_id: "5136459887542272"
+    )
+])
+
+restocks.each do |restock|
+  puts restock
+end
+```
+
+### Query IssuingRestocks
+
+You can get a list of created restocks given some filters.
+
+```ruby
+require('starkinfra')
+
+restocks = StarkInfra::IssuingRestock.query(
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+restocks.each do |restock|
+  puts restock
+end
+```
+
+### Get an IssuingRestock
+
+After its creation, information on a restock may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+restock = StarkInfra::IssuingRestock.get("5664445921492992")
+
+puts restock
+```
+
+### Query IssuingRestock logs
+
+Logs are pretty important to understand the life cycle of a restock.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingRestock::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingRestock log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingRestock::Log.get('6310318875607040')
+
+puts log
+```
+
+### Create IssuingEmbossingRequests
+
+You can create a request to emboss a physical card.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IssuingEmbossingRequest.create([
+    StarkInfra::IssuingEmbossingRequest.new(
+        card_design_id: "5648359658356736", 
+        envelope_design_id: "5747368922185728", 
+        card_id: "5714424132272128", 
+        display_name_1: "Antonio Stark", 
+        shipping_city: "Sao Paulo",
+        shipping_country_code: "BRA",
+        shipping_district: "Bela Vista",
+        shipping_service: "loggi",
+        shipping_state_code: "SP",
+        shipping_street_line_1: "Av. Paulista, 200",
+        shipping_street_line_2: "10 andar",
+        shipping_tracking_number: "My_custom_tracking_number",
+        shipping_zip_code: "12345-678",
+        embosser_id: "5746980898734080"
+    )
+])
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Query IssuingEmbossingRequests
+
+You can get a list of created embossing requests given some filters.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IssuingEmbossingRequest.query(
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Get an IssuingEmbossingRequest
+
+After its creation, information on an embossing request may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::IssuingEmbossingRequest.get('5191752558313472')
+
+puts request
+```
+
+### Query IssuingEmbossingRequest logs
+
+Logs are pretty important to understand the life cycle of an embossing request.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingEmbossingRequest::Log.query(limit: 150)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingEmbossingRequest log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingEmbossingRequest::Log.get("6724771005857792")
 
 puts log
 ```

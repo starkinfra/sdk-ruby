@@ -50,8 +50,8 @@ module StarkInfra
       # ## Parameters (optional):
       # - ids [list of strings, default nil]: list of IssuingInvoice ids to filter logs. ex: ['5656565656565656', '4545454545454545']
       # - limit [integer, default nil]: maximum number of objects to be retrieved. Max = 100. ex: 35
-      # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-      # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+      # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+      # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter for log event types. ex: ['created', 'credited', 'expired', 'overdue', 'paid']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
       #
@@ -79,8 +79,8 @@ module StarkInfra
       # - cursor [string, default nil]: cursor returned on the previous page function call
       # - ids [list of strings, default nil]: list of IssuingInvoice ids to filter logs. ex: ['5656565656565656', '4545454545454545']
       # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-      # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-      # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+      # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+      # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter for log event types. ex: ['created', 'credited', 'expired', 'overdue', 'paid']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
       #
