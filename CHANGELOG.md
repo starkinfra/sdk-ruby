@@ -13,6 +13,20 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- IndividualDocument resource
+- IndividualIdentity resource
+- CreditHolmes resource
+- IssuingDesign resource
+- IssuingEmbossingRequest resource
+- IssuingRestock resource
+- IssuingStock resource
+- pin attribute to update method in IssuingCard resource
+- product_id attribute to IssuingPurchase resource
+- payer_id and end_to_end_id parameter to BrcodePreview resource
+- cashier_bank_code and description parameter to StaticBrcode resource
+### Changed
+- change nominal_amount and amount parameter to conditionally required to CreditNote resource
 
 ## [0.2.0] - 2022-10-04
 ### Added
@@ -46,7 +60,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - IssuingAuthorization resource
 - category parameter from IssuingProduct resource
 - bank_code attribute from PixReversal resource
-- agent parameter from PixClaim.Log resource
+- agent parameter from PixClaim::Log resource
 - bacen_id parameter from PixChargeback and PixInfraction resources
 
 ## [0.1.0] - 2022-06-03

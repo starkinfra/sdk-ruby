@@ -65,8 +65,8 @@ module StarkInfra
 
     # # Create a PixClaim object
     #
-    # Create a PixClaim to request the transfer of a Pix Key from an account
-    # hosted at another Pix participants to an account under you bank code.
+    # Create a PixClaim to request the transfer of a PixKey to an account
+    # hosted at other Pix participants in the Stark Infra API.
     #
     # ## Parameters (required):
     # - claim [PixClaim object]: PixClaim object to be created in the API.
@@ -184,7 +184,7 @@ module StarkInfra
 
     # # Update a PixClaim entity
     #
-    # Respond to a received PixClaim.
+    # Update a PixClaim parameters by passing id.
     #
     # ## Parameters (required):
     # - id [string]: PixClaim unique id. ex: '5656565656565656'
@@ -195,7 +195,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - updated PixClaim object
+    # - updated PixClaim object with updated attributes
     def self.update(id, status:, reason: nil, user: nil)
       StarkInfra::Utils::Rest.patch_id(
         id: id,

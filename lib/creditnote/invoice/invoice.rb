@@ -7,15 +7,16 @@ require_relative('../../utils/sub_resource')
 module StarkInfra
 
   # CreditNote::Invoice object
-  # Invoice object to be issued after contract signature and paid by the credit receiver.
+  #
+  # Invoice issued after the contract is signed, to be paid by the credit receiver.
   #
   # ## Parameters (required):
   # - amount [integer]: Invoice value in cents. Minimum = 1 (any value will be accepted). ex: 1234 (= R$ 12.34)
   #
   # ## Parameters (optional):
   # - due [DateTime, Date or string, default now + 2 days]: Invoice due date in UTC ISO format. DateTime.new(2020, 3, 10, 10, 30, 0, 0) for immediate invoices and '2020-10-28' for scheduled invoices
-  # - expiration [integer, default 604800]: time interval in seconds between scheduled date and expiration date. ex 123456789
-  # - tags [list of strings, default nil]: list of strings for tagging. ex: tags=['employees', 'monthly']
+  # - expiration [integer, default 604800]: time interval in seconds between scheduled date and expiration date. ex: 123456789
+  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['employees', 'monthly']
   # - descriptions [list of CreditNote::Invoice::Description objects or hash, default nil]: list Description objects. ex: [Description.new()]
   #
   # ## Attributes (return-only):

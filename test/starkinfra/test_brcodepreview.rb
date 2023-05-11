@@ -13,10 +13,10 @@ describe(StarkInfra::BrcodePreview, '#brcode-preview#') do
     brcodes = static_brcodes.concat(dynamic_brcodes)
 
     previews = StarkInfra::BrcodePreview.create(
-      [StarkInfra::BrcodePreview.new(id: brcodes[0].id),
-       StarkInfra::BrcodePreview.new(id: brcodes[1].id),
-       StarkInfra::BrcodePreview.new(id: brcodes[2].id),
-       StarkInfra::BrcodePreview.new(id: brcodes[3].id)]
+      [StarkInfra::BrcodePreview.new(id: brcodes[0].id, payer_id: "20.018.183/0001-80"),
+       StarkInfra::BrcodePreview.new(id: brcodes[1].id, payer_id: "20.018.183/0001-80"),
+       StarkInfra::BrcodePreview.new(id: brcodes[2].id, payer_id: "20.018.183/0001-80"),
+       StarkInfra::BrcodePreview.new(id: brcodes[3].id, payer_id: "20.018.183/0001-80")]
     )
 
     index = 0

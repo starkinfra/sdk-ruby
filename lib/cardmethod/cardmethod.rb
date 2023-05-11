@@ -27,7 +27,7 @@ module StarkInfra
     # Receive a generator of CardMethod objects available in the Stark Infra API
     #
     # ## Parameters (optional):
-    # - search [string, default nil]: keyword to search for code, name, number or short_code. ex: 'token'
+    # - search [string, default nil]: keyword to search for code, name, number or short_code
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:

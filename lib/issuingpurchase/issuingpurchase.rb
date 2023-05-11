@@ -12,6 +12,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingPurchase is created. ex: '5656565656565656'
   # - holder_name [string]: card holder name. ex: 'Tony Stark'
+  # - product_id [string]: unique card product number (BIN) registered within the card network. ex: "53810200"
   # - card_id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
   # - card_ending [string]: last 4 digits of the card number. ex: '1234'
   # - purpose [string]: purchase purpose. ex: 'purchase'
@@ -47,14 +48,14 @@ module StarkInfra
   # - card_tags [list of strings]: tags of the IssuingCard responsible for this purchase. ex: ['travel', 'food']
   # - holder_tags [list of strings]: tags of the IssuingHolder responsible for this purchase. ex: ['technology', 'john snow']
   class IssuingPurchase < StarkInfra::Utils::Resource
-    attr_reader :id, :holder_name, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
+    attr_reader :id, :holder_name, :product_id, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
                 :issuer_currency_symbol, :merchant_amount, :merchant_currency_code, :merchant_currency_symbol,
                 :merchant_category_code, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
                 :merchant_fee, :wallet_id, :method_code, :score, :end_to_end_id, :tags, :zip_code,
                 :issuing_transaction_ids, :status, :updated, :created, :is_partial_allowed, :card_tags, :holder_tags
 
     def initialize(
-      id: nil, holder_name: nil, card_id: nil, card_ending: nil, purpose: nil, amount: nil, tax: nil, issuer_amount: nil,
+      id: nil, holder_name: nil, product_id: nil, card_id: nil, card_ending: nil, purpose: nil, amount: nil, tax: nil, issuer_amount: nil,
       issuer_currency_code: nil, issuer_currency_symbol: nil, merchant_amount: nil, merchant_currency_code: nil,
       merchant_currency_symbol: nil, merchant_category_code: nil, merchant_country_code: nil, acquirer_id: nil,
       merchant_id: nil, merchant_name: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
@@ -63,6 +64,7 @@ module StarkInfra
     )
       super(id)
       @holder_name = holder_name
+      @product_id = product_id
       @card_id = card_id
       @card_ending = card_ending
       @purpose = purpose
@@ -112,19 +114,19 @@ module StarkInfra
       StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
     end
 
-    # # Retrieve IssuingPurchase
+    # # Retrieve IssuingPurchases
     #
     # Receive a generator of IssuingPurchases objects previously created in the Stark Infra API
     #
     # ## Parameters (optional):
-    # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 09)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 09)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - end_to_end_ids [list of strings, default nil]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - card_ids [list of strings, default nil]: card  IDs. ex: ['5656565656565656', '4545454545454545']
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['approved', 'canceled', 'denied', 'confirmed', 'voided']
+    # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:
@@ -149,18 +151,19 @@ module StarkInfra
 
     # # Retrieve paged IssuingPurchases
     #
-    # Receive a list of IssuingPurchase objects previously created in the Stark Infra API and the cursor to the next page.
+    # Receive a list of up to 100 IssuingPurchases objects previously created in the Stark Infra API and the cursor
+    # to the next page. Use this function instead of query if you want to manually page your invoices.
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
-    # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - end_to_end_ids [list of strings, default nil]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - card_ids [list of strings, default nil]: card  IDs. ex: ['5656565656565656', '4545454545454545']
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['approved', 'canceled', 'denied', 'confirmed', 'voided']
+    # - ids [list of strings, default nil]: purchase IDs. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:
@@ -213,7 +216,7 @@ module StarkInfra
       )
     end
 
-    # # Helps you respond to a IssuingPurchase authorization request
+    # # Helps you respond IssuingPurchase request
     #
     # ## Parameters (required):
     # - status [string]: sub-issuer response to the authorization. ex: 'approved' or 'denied'
@@ -247,6 +250,7 @@ module StarkInfra
           IssuingPurchase.new(
             id: json['id'],
             holder_name: json['holder_name'],
+            product_id: json['product_id'],
             card_id: json['card_id'],
             card_ending: json['card_ending'],
             purpose: json['purpose'],

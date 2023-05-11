@@ -25,6 +25,11 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Products](#query-issuingproducts): View available sub-issuer card products (a.k.a. card number ranges or BINs)
     - [Holders](#create-issuingholders): Manage card holders
     - [Cards](#create-issuingcards): Create virtual and/or physical cards
+    - [Design](#query-issuingdesigns): View your current card or package designs
+    - [EmbossingKit](#query-issuingembossingkits): View your current embossing kits
+    - [Stock](#query-issuingstocks): View your current stock of a certain IssuingDesign linked to an Embosser on the workspace
+    - [Restock](#create-issuingrestocks): Create restock orders of a specific IssuingStock object
+    - [EmbossingRequest](#create-issuingembossingrequests): Create embossing requests
     - [Purchases](#process-purchase-authorizations): Authorize and view your past purchases
     - [Invoices](#create-issuinginvoices): Add money to your issuing balance
     - [Withdrawals](#create-issuingwithdrawals): Send money back to your Workspace from your issuing balance
@@ -42,13 +47,16 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
     - [PixDomain](#query-pixdomains): View registered SPI participants certificates
-    - [StaticBrcode](#create-staticbrcodes): Create static Pix BR Codes
-    - [DynamicBrcode](#create-dynamicbrcodes): Create dynamic Pix BR Codes
+    - [StaticBrcode](#create-staticbrcodes): Create static Pix BR codes
+    - [DynamicBrcode](#create-dynamicbrcodes): Create dynamic Pix BR codes
     - [BrcodePreview](#create-brcodepreviews): Read data from BR Codes before paying them
-  - [Credit Note](#credit-note)
+  - [Lending](#lending)
     - [CreditNote](#create-creditnotes): Create credit notes
-  - [Credit Preview](#credit-preview)
-    - [CreditNotePreview](#create-creditnotepreviews): Create credit note previews
+    - [CreditPreview](#create-creditpreviews): Create credit previews
+    - [CreditHolmes](#create-creditholmes): Create credit holmes debt verification
+  - [Identity](#identity)
+    - [IndividualIdentity](#create-individualidentities): Create individual identities
+    - [IndividualDocument](#create-individualdocuments): Create individual documents
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -354,7 +362,7 @@ holders.each do |holder|
 end
 ```
 
-**Note**: Instead of using IssuingHolder objects, you can also pass each IssuingHolder element in hash format
+**Note**: Instead of using IssuingHolder objects, you can also pass each element in hash format
 
 ### Query IssuingHolders
 
@@ -539,6 +547,279 @@ log = StarkInfra::IssuingCard::Log.get('5155165527080960')
 puts log
 ```
 
+### Query IssuingDesigns
+
+You can get a list of available designs given some filters.
+
+```ruby
+require('starkinfra')
+
+designs = StarkInfra::IssuingDesign.query(
+    limit: 1
+)
+
+designs.each do |design|
+  puts design
+end
+```
+
+### Get an IssuingDesign
+
+Information on a design may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+design = StarkInfra::IssuingDesign.get("5747368922185728")
+
+puts design
+```
+
+### Query IssuingEmbossingKits
+
+You can get a list of created embossing kits given some filters.
+
+```ruby
+require('starkinfra')
+
+kits = StarkInfra::IssuingEmbossingKit.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+kits.each do |kit|
+  puts kit
+end
+```
+
+### Get an IssuingEmbossingKit
+
+After its creation, information on an embossing kit may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+kit = StarkInfra::IssuingEmbossingKit.get("5792731695677440")
+
+puts kit
+```
+
+### Query IssuingStocks
+
+You can get a list of available stocks given some filters.
+
+```ruby
+require('starkinfra')
+
+stocks = StarkInfra::IssuingStock.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+stocks.each do |stock|
+  puts stock
+end
+```
+
+### Get an IssuingStock
+
+Information on a stock may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+stock = StarkInfra::IssuingStock.get("5792731695677440")
+
+puts stock
+```
+
+### Query IssuingStock logs
+
+Logs are pretty important to understand the life cycle of a stock.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingStock::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingStock log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingStock::Log.get("5809977331548160")
+
+puts log
+```
+
+### Create IssuingRestocks
+
+You can order restocks for a specific IssuingStock.
+
+```ruby
+require('starkinfra')
+
+restocks = StarkInfra::IssuingRestock.create([
+  StarkInfra::IssuingRestock.new(
+        count: 100,
+        stock_id: "5136459887542272"
+    )
+])
+
+restocks.each do |restock|
+  puts restock
+end
+```
+
+### Query IssuingRestocks
+
+You can get a list of created restocks given some filters.
+
+```ruby
+require('starkinfra')
+
+restocks = StarkInfra::IssuingRestock.query(
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+restocks.each do |restock|
+  puts restock
+end
+```
+
+### Get an IssuingRestock
+
+After its creation, information on a restock may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+restock = StarkInfra::IssuingRestock.get("5664445921492992")
+
+puts restock
+```
+
+### Query IssuingRestock logs
+
+Logs are pretty important to understand the life cycle of a restock.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingRestock::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingRestock log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingRestock::Log.get('6310318875607040')
+
+puts log
+```
+
+### Create IssuingEmbossingRequests
+
+You can create a request to emboss a physical card.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IssuingEmbossingRequest.create([
+    StarkInfra::IssuingEmbossingRequest.new(
+        kit_id: "5648359658356736",
+        card_id: "5714424132272128", 
+        display_name_1: "Antonio Stark", 
+        shipping_city: "Sao Paulo",
+        shipping_country_code: "BRA",
+        shipping_district: "Bela Vista",
+        shipping_service: "loggi",
+        shipping_state_code: "SP",
+        shipping_street_line_1: "Av. Paulista, 200",
+        shipping_street_line_2: "10 andar",
+        shipping_tracking_number: "My_custom_tracking_number",
+        shipping_zip_code: "12345-678",
+        embosser_id: "5746980898734080"
+    )
+])
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Query IssuingEmbossingRequests
+
+You can get a list of created embossing requests given some filters.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IssuingEmbossingRequest.query(
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Get an IssuingEmbossingRequest
+
+After its creation, information on an embossing request may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::IssuingEmbossingRequest.get('5191752558313472')
+
+puts request
+```
+
+### Query IssuingEmbossingRequest logs
+
+Logs are pretty important to understand the life cycle of an embossing request.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingEmbossingRequest::Log.query(limit: 150)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingEmbossingRequest log
+
+You can get a single log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingEmbossingRequest::Log.get("6724771005857792")
+
+puts log
+```
+
 ### Process Purchase authorizations
 
 It's easy to process purchase authorizations delivered to your endpoint.
@@ -644,7 +925,7 @@ require('starkinfra')
 
 invoice = StarkInfra::IssuingInvoice.create(
   StarkInfra::IssuingInvoice.new(
-    amount: 1_000
+    amount: 1000
   )
 )
 
@@ -733,7 +1014,7 @@ withdrawal = StarkInfra::IssuingWithdrawal.create(
 puts withdrawal
 ```
 
-**Note**: Instead of using Withdrawal objects, you can also pass each withdrawal element in dictionary format
+**Note**: Instead of using IssuingWithdrawal objects, you can also pass each element in dictionary format
 
 ### Get an IssuingWithdrawal
 
@@ -811,7 +1092,7 @@ puts transaction
 
 ### Issuing Enums
 
-#### Query MerchantCategories
+### Query MerchantCategories
 
 You can query any merchant categories using this resource.
 You may also use MerchantCategories to define specific category filters in IssuingRules.
@@ -829,7 +1110,7 @@ categories.each do |category|
 end
 ```
 
-#### Query MerchantCountries
+### Query MerchantCountries
 
 You can query any merchant countries using this resource.
 You may also use MerchantCountries to define specific country filters in IssuingRules.
@@ -846,7 +1127,7 @@ countries.each do |country|
 end
 ```
 
-#### Query CardMethods
+### Query CardMethods
 
 You can query available card methods using this resource.
 You may also use CardMethods to define specific purchase method filters in IssuingRules.
@@ -866,7 +1147,8 @@ end
 ## Pix
 
 ### Create PixRequests
-You can create a Pix request to charge a user:
+
+You can create a Pix request to transfer money from one of your users to anyone else:
 
 ```ruby
 require('starkinfra')
@@ -915,7 +1197,7 @@ requests.each do |request|
 end
 ```
 
-**Note**: Instead of using Pix request objects, you can also pass each transaction element in hash format
+**Note**: Instead of using PixRequest objects, you can also pass each element in hash format
 
 ### Query PixRequests
 
@@ -946,10 +1228,11 @@ request = StarkInfra::PixRequest.get('5155165527080960')
 puts request
 ```
 
-### Process PixRequest authorization requests
+### Process inbound PixRequest authorizations
 
-It's easy to process authorization requests that arrived in your handler. Remember to pass the
-signature header so the SDK can make sure it's StarkInfra that sent you the event.
+It's easy to process authorization requests that arrived at your endpoint.
+Remember to pass the signature header so the SDK can make sure it's StarkInfra that sent you the event.
+If you do not approve or decline the authorization within 1 second, the authorization will be denied.
 
 ```ruby
 require('starkinfra')
@@ -962,6 +1245,21 @@ pix_request = StarkInfra::PixRequest.parse(
 )
 
 puts pix_request
+
+send_response( # you should also implement this method
+    StarkInfra::PixRequest.response( # this optional method just helps you build the response JSON
+            status: "approved" 
+    )  
+)
+
+# or 
+
+send_response( # you should also implement this method
+        StarkInfra::PixRequest.response( # this optional method just helps you build the response JSON
+                status: "denied",
+                reason: "orderRejected"
+        )
+)
 ```
 
 ### Query PixRequest logs
@@ -1004,7 +1302,7 @@ require('starkinfra')
 reversal = StarkInfra::PixReversal.create([
   StarkInfra::PixReversal.new(
     amount: 100,
-    end_to_end_id: StarkInfra::EndToEndId.create(bank_code),
+    end_to_end_id: 'E00000000202201060100rzsJzG9PzMg',
     external_id: 'my_external_id',
     reason: 'bankError',
   )
@@ -1044,7 +1342,7 @@ reversal = StarkInfra::PixReversal.get('5155165527080960')
 puts reversal
 ```
 
-### Process PixReversal authorization requests
+### Process inbound PixReversal authorizations
 
 It's easy to process authorization requests that arrived at your endpoint.
 Remember to pass the signature header so the SDK can make sure it's StarkInfra that sent you the event.
@@ -1061,8 +1359,22 @@ pix_reversal = StarkInfra::PixReversal.parse(
 )
 
 puts pix_reversal
-```
 
+send_response( # you should also implement this method
+        StarkInfra::PixReversal.response( # this optional method just helps you build the response JSON
+                status: "approved"
+        )
+)
+
+# or 
+
+send_response( # you should also implement this method
+        StarkInfra::PixReversal.response( # this optional method just helps you build the response JSON
+                status: "denied",
+                reason: "orderRejected"
+        )
+)
+```
 
 ### Query PixReversal logs
 
@@ -1165,7 +1477,7 @@ csv = StarkInfra::PixStatement.csv('5155165527080960')
 File.binwrite('statement.zip', csv)
 ```
 
-#### Create a PixKey
+### Create a PixKey
 
 You can create a Pix Key to link a bank account information to a key id:
 
@@ -1187,7 +1499,7 @@ key = StarkInfra::PixKey.create(
 puts key
 ```
 
-#### Query PixKeys
+### Query PixKeys
 
 You can query multiple Pix keys you own according to filters.
 
@@ -1209,7 +1521,7 @@ keys.each do |key|
 end
 ```
 
-#### Get a PixKey
+### Get a PixKey
 
 Information on a Pix key may be retrieved by its id and the tax ID of the consulting agent.
 An endToEndId must be informed so you can link any resulting purchases to this query,
@@ -1227,7 +1539,7 @@ key = StarkInfra::PixKey.get(
 puts key
 ```
 
-#### Patch a PixKey
+### Update a PixKey
 
 Update the account information linked to a Pix Key.
 
@@ -1243,7 +1555,7 @@ key = StarkInfra::PixKey.update(
 puts key
 ```
 
-#### Cancel a PixKey
+### Cancel a PixKey
 
 Cancel a specific Pix Key using its id.
 
@@ -1255,9 +1567,9 @@ key = StarkInfra::PixKey.cancel('5155165527080960')
 puts key
 ```
 
-#### Query PixKey logs
+### Query PixKey logs
 
-You can query Pix key logs to better understand a Pix key life cycle.
+You can query PixKey logs to better understand a Pix key life cycle.
 
 ```ruby
 require('starkinfra')
@@ -1276,7 +1588,7 @@ logs.each do |log|
 end
 ```
 
-#### Get a PixKey log
+### Get a PixKey log
 
 You can also get a specific log by its id.
 
@@ -1288,7 +1600,7 @@ log = StarkInfra::PixKey::Log.get('5155165527080960')
 puts log
 ```
 
-#### Create a PixClaim
+### Create a PixClaim
 
 You can create a Pix claim to request the transfer of a Pix key from another bank to one of your accounts:
 
@@ -1310,7 +1622,7 @@ claim = StarkInfra::PixClaim.create(
 puts claim
 ```
 
-#### Query PixClaims
+### Query PixClaims
 
 You can query multiple Pix claims according to filters.
 
@@ -1334,7 +1646,7 @@ claims.each do |claim|
 end
 ```
 
-#### Get a PixClaim
+### Get a PixClaim
 
 After its creation, information on a Pix claim may be retrieved by its id.
 
@@ -1346,7 +1658,7 @@ claim = StarkInfra::PixClaim.get('5155165527080960')
 puts claim
 ```
 
-#### Patch a PixClaim
+### Update a PixClaim
 
 A Pix claim can be confirmed or canceled by patching its status.
 A received Pix claim must be confirmed by the donor to be completed.
@@ -1364,7 +1676,7 @@ claim = StarkInfra::PixClaim.update(
 puts claim
 ```
 
-#### Query PixClaim logs
+### Query PixClaim logs
 
 You can query Pix claim logs to better understand Pix claim life cycles.
 
@@ -1385,7 +1697,7 @@ logs.each do |log|
 end
 ```
 
-#### Get a PixClaim log
+### Get a PixClaim log
 
 You can also get a specific log by its id.
 
@@ -1397,7 +1709,7 @@ log = StarkInfra::PixClaim::Log.get('5155165527080960')
 puts log
 ```
 
-#### Create a PixDirector
+### Create a PixDirector
 
 To register the Pix director contact information at the Central Bank, run the following:
 
@@ -1419,7 +1731,7 @@ director = StarkInfra::PixDirector.create(
 puts director
 ```
 
-#### Create PixInfractions
+### Create PixInfractions
 
 Pix Infraction reports are used to report transactions that raise fraud suspicion, to request a refund or to
 reverse a refund. Infraction reports can be created by either participant of a transaction.
@@ -1439,7 +1751,7 @@ infractions.each do |infraction|
 end
 ```
 
-#### Query PixInfractions
+### Query PixInfractions
 
 You can query multiple infraction reports according to filters.
 
@@ -1459,7 +1771,7 @@ infractions.each do |infraction|
 end
 ```
 
-#### Get a PixInfraction
+### Get a PixInfraction
 
 After its creation, information on a Pix infraction may be retrieved by its id.
 
@@ -1471,7 +1783,7 @@ infraction = StarkInfra::PixInfraction.get('5155165527080960')
 puts infraction
 ```
 
-#### Patch a PixInfraction
+### Update a PixInfraction
 
 A received Pix infraction can be confirmed or declined by patching its status.
 After a Pix infraction is patched, its status changes to closed.
@@ -1487,7 +1799,7 @@ infraction = StarkInfra::PixInfraction.update(
 puts infraction
 ```
 
-#### Cancel a PixInfraction
+### Cancel a PixInfraction
 
 Cancel a specific Pix Infraction using its id.
 
@@ -1499,7 +1811,7 @@ infraction = StarkInfra::PixInfraction.cancel('5155165527080960')
 puts infraction
 ```
 
-#### Query PixInfraction logs
+### Query PixInfraction logs
 
 You can query infraction report logs to better understand their life cycles.
 
@@ -1520,7 +1832,7 @@ logs.each do |log|
 end
 ```
 
-#### Get a PixInfraction log
+### Get a PixInfraction log
 
 You can also get a specific log by its id.
 
@@ -1532,7 +1844,7 @@ log = StarkInfra::PixInfraction::Log.get('5155165527080960')
 puts log 
 ```
 
-#### Create PixChargebacks
+### Create PixChargebacks
 
 A Pix chargeback can be created when fraud is detected on a transaction or a system malfunction
 results in an erroneous transaction.
@@ -1553,7 +1865,7 @@ chargebacks.each do |chargeback|
 end
 ```
 
-#### Query PixChargebacks
+### Query PixChargebacks
 
 You can query multiple Pix chargebacks according to filters.
 
@@ -1573,7 +1885,7 @@ chargebacks.each do |chargeback|
 end
 ```
 
-#### Get a PixChargeback
+### Get a PixChargeback
 
 After its creation, information on a Pix Chargeback may be retrieved by its.
 
@@ -1585,7 +1897,7 @@ chargeback = StarkInfra::PixChargeback.get('5155165527080960')
 puts chargeback
 ```
 
-#### Update a PixChargeback
+### Update a PixChargeback
 
 A received Pix Chargeback can be accepted or rejected by patching its status.
 After a Pix Chargeback is patched, its status changes to closed.
@@ -1602,7 +1914,7 @@ chargeback = StarkInfra::PixChargeback.update(
 puts chargeback
 ```
 
-#### Cancel a PixChargeback
+### Cancel a PixChargeback
 
 Cancel a specific Pix Chargeback using its id.
 
@@ -1614,7 +1926,7 @@ chargeback = StarkInfra::PixChargeback.cancel('5155165527080960')
 puts chargeback
 ```
 
-#### Query PixChargeback logs
+### Query PixChargeback logs
 
 You can query Pix chargeback logs to better understand Pix chargeback life cycles.
 
@@ -1635,7 +1947,7 @@ logs.each do |log|
 end
 ```
 
-#### Get a PixChargeback log
+### Get a PixChargeback log
 
 You can also get a specific log by its id.
 
@@ -1647,7 +1959,7 @@ log = StarkInfra::PixChargeback::Log.get('5155165527080960')
 puts log
 ```
 
-#### Query PixDomains
+### Query PixDomains
 
 Here you can list all Pix Domains registered at the Brazilian Central Bank. The Pix Domain object displays the domain
 name and the QR Code domain certificates of registered Pix participants able to issue dynamic QR Codes.
@@ -1655,7 +1967,7 @@ name and the QR Code domain certificates of registered Pix participants able to 
 ```ruby
 require('starkinfra')
 
-domains = StarkInfra::PixDomain.query
+domains = StarkInfra::PixDomain.query()
 
 domains.each do |domain|
   puts domain
@@ -1840,6 +2152,7 @@ send_response(  # you should also implement this method to respond the read requ
 When an Instant DynamicBrcode is read by your user, a GET request
 containing the BR Code UUID will be made to your registered URL to retrieve
 additional information needed to complete the transaction.
+
 The get request must be answered in the following format
 within 5 seconds and with an HTTP status code 200.
 
@@ -1871,6 +2184,7 @@ send_response(  # you should also implement this method to respond the read requ
 ```
 
 ## Create BrcodePreviews
+
 You can create BrcodePreviews to preview BR Codes before paying them.
 
 ```ruby
@@ -1878,7 +2192,8 @@ require('starkinfra')
 
 previews = StarkInfra::BrcodePreview.create([
   StarkInfra::BrcodePreview.new(
-    id: "00020126420014br.gov.bcb.pix0120nedstark@hotmail.com52040000530398654075000.005802BR5909Ned Stark6014Rio de Janeiro621605126674869738606304FF71"
+    id: "00020126420014br.gov.bcb.pix0120nedstark@hotmail.com52040000530398654075000.005802BR5909Ned Stark6014Rio de Janeiro621605126674869738606304FF71",
+    payer_id: "123.456.789-10"
   )
 ])
 
@@ -1887,10 +2202,28 @@ previews.each do |preview|
 end
 ```
 
-## Credit Note
+## Lending
+
+If you want to establish a lending operation, you can use Stark Infra to
+create a CCB contract. This will enable your business to lend money without
+requiring a banking license, as long as you use a Credit Fund
+or Securitization company.
+
+The required steps to initiate the operation are:
+1. Have funds in your Credit Fund or Securitization account
+2. Request the creation of an [Identity Check](#create-individualidentities)
+   for the credit receiver (make sure you have their documents and express authorization)
+3. (Optional) Create a [Credit Simulation](#create-creditpreviews)
+   with the desired installment plan to display information for the credit receiver
+4. Create a [Credit Note](#create-creditnotes)
+   with the desired installment plan
 
 ### Create CreditNotes
-You can create a CreditNote to generate a CCB contract:
+
+For lending operations, you can create a CreditNote to generate a CCB contract.
+
+Note that you must have recently created an identity check for that same Tax ID before
+being able to create a credit operation for them.
 
 ```ruby
 require('starkinfra')
@@ -2019,11 +2352,9 @@ log = StarkInfra::CreditNote::Log.get('5155165527080960')
 puts log
 ```
 
-## Credit Preview
-You can preview different types of credits before creating them (Currently we only have credit note previews):
+### Create CreditPreviews
 
-### Create CreditNotePreviews
-You can preview Credit Notes before the creation CCB contracts:
+You can preview a credit operation before creating them (Currently we only have CreditNote / CCB previews):
 
 ```ruby
 require('starkinfra')
@@ -2091,9 +2422,323 @@ end
 
 **Note**: Instead of using CreditPreview objects, you can also pass each element in dictionary format
 
+### Create CreditHolmes
+
+Before you request a credit operation, you may want to check previous credit operations
+the credit receiver has taken.
+
+For that, open up a CreditHolmes investigation to receive information on all debts and credit
+operations registered for that individual or company inside the Central Bank's SCR.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::CreditHolmes.create([
+    StarkInfra::CreditHolmes.new(
+        tax_id: "123.456.789-00",
+        competence: "2022-09"
+    ),
+    StarkInfra::CreditHolmes.new(
+        tax_id: "123.456.789-00",
+        competence: "2022-08"
+    ),
+    StarkInfra::CreditHolmes.new(
+        tax_id: "123.456.789-00",
+        competence: "2022-07"
+    )
+])
+
+holmes.each do |sherlock| 
+  print(sherlock)
+end
+```
+
+### Query CreditHolmes
+
+You can query multiple credit holmes according to filters.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::CreditHolmes.query(
+  after: "2022-06-01",
+  before: "2022-10-30",
+  status: "success"
+)
+
+holmes.each do |sherlock| 
+  print(sherlock)
+end
+```
+
+### Get a CreditHolmes
+
+After its creation, information on a credit holmes may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::CreditHolmes.get("5657818854064128")
+
+puts holmes
+```
+
+### Query CreditHolmes logs
+
+You can query credit holmes logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::CreditHolmes::Log.query(
+  limit: 50, 
+  ids: ["5729405850615808"],
+  after: "2022-01-01",
+  before: "2022-01-20",
+  types: ["created"]
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a CreditHolmes log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::CreditHolmes::Log.get("5155165527080960")
+
+puts log
+```
+
+## Identity
+
+Several operations, especially credit ones, require that the identity
+of a person or business is validated beforehand.
+
+Identities are validated according to the following sequence:
+
+1. The Identity resource is created for a specific Tax ID
+2. Documents are attached to the Identity resource
+3. The Identity resource is updated to indicate that all documents have been attached
+4. The Identity is sent for validation and returns a webhook notification to reflect
+   the success or failure of the operation
+
+### Create IndividualIdentities
+
+You can create an IndividualIdentity to validate a document of a natural person
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::IndividualIdentity.create([
+  StarkInfra::IndividualIdentity.new(
+    name: 'Walter White',
+    tax_id: '012.345.678-90',
+    tags: ['breaking', 'bad']
+  )
+])
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+**Note**: Instead of using IndividualIdentity objects, you can also pass each element in dictionary format
+
+### Query IndividualIdentity
+
+You can query multiple individual identities according to filters.
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::IndividualIdentity.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'success',
+  tags: ['breaking', 'bad'],
+)
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+### Get an IndividualIdentity
+
+After its creation, information on an individual identity may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.get('5155165527080960')
+
+puts identity
+```
+
+### Update an IndividualIdentity
+
+You can update a specific identity status to "processing" for send it to validation.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.update('5155165527080960', status: 'processing')
+
+puts identity
+```
+
+**Note**: Before sending your individual identity to validation by patching its status, you must send all the required documents using the create method of the CreditDocument resource. Note that you must reference the individual identity in the create method of the CreditDocument resource by its id.
+
+### Cancel an IndividualIdentity
+
+You can cancel an individual identity before updating its status to processing.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::IndividualIdentity.cancel('5155165527080960')
+
+puts identity
+```
+
+### Query IndividualIdentity logs
+
+You can query individual identity logs to better understand individual identity life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualIdentity::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualIdentity log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualIdentity::Log.get('5155165527080960')
+
+print(log)
+```
+
+### Create IndividualDocuments
+
+You can create an individual document to attach images of documents to a specific individual Identity.
+You must reference the desired individual identity by its id.
+
+```ruby
+require('starkinfra')
+
+documents = StarkInfra::IndividualDocument.create([
+  StarkInfra::IndividualDocument.new(
+    type: 'identity-front',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  ),
+  StarkInfra::IndividualDocument.new(
+    type: 'identity-back',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  ),
+  StarkInfra::IndividualDocument.new(
+    type: 'selfie',
+    content: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD...',
+    identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  )
+])
+
+documents.each do |document|
+  puts document
+end
+```
+
+**Note**: Instead of using IndividualDocument objects, you can also pass each element in dictionary format
+
+### Query IndividualDocuments
+
+You can query multiple individual documents according to filters.
+
+```ruby
+require('starkinfra')
+
+documents = StarkInfra::IndividualIdentity.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'success',
+  tags: ['breaking', 'bad'],
+)
+
+documents.each do |document|
+  puts document
+end
+```
+
+### Get an IndividualDocument
+
+After its creation, information on an individual document may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+document = StarkInfra::IndividualDocument.get('5155165527080960')
+
+puts document
+```
+  
+### Query IndividualDocument logs
+
+You can query individual document logs to better understand individual document life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualDocument::Log.query(
+  limit=50, 
+  after='2022-01-01',
+  before='2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualDocument log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualDocument::Log.get('5155165527080960')
+
+puts log
+```
+
 ### Webhook
 
-#### Create a webhook subscription
+### Create a webhook subscription
 
 To create a webhook subscription and be notified whenever an event occurs, run:
 
@@ -2147,8 +2792,6 @@ webhook = StarkInfra::Webhook.delete('1082736198236817')
 
 puts webhook
 ```
-
-## Webhook Events
 
 ### Process webhook events
 
@@ -2248,7 +2891,7 @@ You can also get information on failed webhook event delivery attempts.
 ```ruby
 require('starkinfra')
 
-attempts = StarkInfra::Event::Attempt.query(after: '2020-03-20');
+attempts = StarkInfra::Event::Attempt.query(after: '2020-03-20')
 
 attempts.each do |attempt|
   puts attempt

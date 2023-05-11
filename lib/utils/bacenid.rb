@@ -12,7 +12,7 @@ module StarkInfra
         11.times do
           random_string << random_source[rand(random_source.length)]
         end
-        bank_code + DateTime.now.strftime('%Y%m%d%H%M') << random_string
+        bank_code + DateTime.now.strftime('%Y%m%d%H%M').to_s << random_string
       end
     end
   end

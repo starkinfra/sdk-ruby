@@ -61,7 +61,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:
-    # - DynamicBrcode object with updated attributes
+    # - list of DynamicBrcode objects with updated attributes
     def self.create(brcodes, user: nil)
       StarkInfra::Utils::Rest.post(entities: brcodes, user: user, **resource)
     end
@@ -167,9 +167,9 @@ module StarkInfra
     # - receiver_city [string]: receiver's address city name. ex: "Sao Paulo"
     # - receiver_state_code [string]: receiver's address state code. ex: "SP"
     # - receiver_zip_code [string]: receiver's address zip code. ex: "01234-567"
-    # - expiration [integer]: time in seconds counted from the creation datetime until the DynamicBrcode expires. After expiration, the BR Code cannot be paid anymore.
     #
     # ## Parameters (optional):
+    # - expiration [integer]: time in seconds counted from the creation datetime until the DynamicBrcode expires. After expiration, the BR Code cannot be paid anymore.
     # - sender_tax_id [string, default nil]: sender's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '01.001.001/0001-01'
     # - receiver_tax_id [string, default nil]: receiver's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '012.345.678-90'
     # - fine [float, default 2.0]: Percentage charged if the sender pays after the due datetime. ex. 2.0
@@ -225,13 +225,13 @@ module StarkInfra
     # - status [string]: BR Code status. Options: 'created', 'overdue', 'paid', 'canceled' or 'expired'
     # - reconciliation_id [string]: id to be used for conciliation of the resulting Pix transaction. This id must have from to 26 to 35 alphanumeric characters' ex: "cd65c78aeb6543eaaa0170f68bd741ee"
     # - amount [integer]: positive integer that represents the amount in cents of the resulting Pix transaction. ex: 1234 (= R$ 12.34)
-    # - expiration [integer]: time in seconds counted from the creation datetime until the DynamicBrcode expires. After expiration, the BR Code cannot be paid anymore. ex: 123456789
     #
     # ## Parameters (required):
     # - cashier_type [string, default nil]: cashier's type. Required if the cashAmount is different from 0. Options: 'merchant', 'participant' and 'other'
     # - cashier_bank_code [string, default nil]: cashier's bank code. Required if the cash_amount is different from 0. ex: '20018183'
     #
     # ## Parameters (optional):
+    # - expiration [integer, default nil]: time in seconds counted from the creation datetime until the DynamicBrcode expires. After expiration, the BR Code cannot be paid anymore. ex: 123456789
     # - cash_amount [integer, default nil]: amount to be withdrawn from the cashier in cents. ex: 1000 (= R$ 10.00)
     # - sender_name [string, default nil]: sender's full name. ex: 'Anthony Edward Stark'
     # - sender_tax_id [string, default nil]: sender's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '01.001.001/0001-01'

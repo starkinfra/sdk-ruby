@@ -136,7 +136,7 @@ class ExampleGenerator
     StarkInfra::CreditNote.new(
       template_id: '5707012469948416',
       name: 'Jamie Lannister',
-      tax_id: '20.018.183/0001-80',
+      tax_id: '012.345.678-90',
       nominal_amount: 100_000,
       scheduled: (Time.now + 3 * 24 * 3600).to_date,
       invoices: invoices,
@@ -159,7 +159,7 @@ class ExampleGenerator
     {
       'template_id' => '5707012469948416',
       'name' => 'Jamie Lannister',
-      'tax_id' => '20.018.183/0001-80',
+      'tax_id' => '012.345.678-90',
       'nominal_amount' => 100_000,
       'scheduled' => (Time.now + 3 * 24 * 3600).to_date,
       'invoices' => [
@@ -213,7 +213,7 @@ class ExampleGenerator
     StarkInfra::IssuingHolder.new(
       name: 'Iron Bank S.A.',
       external_id: SecureRandom.base64,
-      tax_id: '012.345.678-90',
+      tax_id: '34.511.067/0001-02',
       tags: [
         'Traveler Employee'
       ],
@@ -247,7 +247,8 @@ class ExampleGenerator
   def self.brcodepreview_example
     brcode = StarkInfra::StaticBrcode.query(limit: 1).to_a[0]
     StarkInfra::BrcodePreview.new(
-      id: brcode.id
+      id: brcode.id,
+      payer_id: "20.018.183/0001-80"
     )
   end
 
@@ -266,6 +267,8 @@ class ExampleGenerator
       key_id: '+5511988887777',
       amount: 0,
       reconciliation_id: '123',
+      cashier_bank_code: '20018183',
+      description: 'A StaticBrcode',
       city: 'São Paulo'
     )
   end
@@ -289,7 +292,7 @@ class ExampleGenerator
       type: 'sac',
       nominal_amount: rand(1..100_000),
       scheduled: (Time.now + 3 * 24 * 3600).to_date,
-      tax_id: '20.018.183/0001-80',
+      tax_id: '012.345.678-90',
       initial_due: (Time.now + 3 * 24 * 3600).to_date,
       nominal_interest: 10,
       count: 3,
@@ -302,7 +305,7 @@ class ExampleGenerator
       type: 'price',
       nominal_amount: rand(1..100_000),
       scheduled: (Time.now + 3 * 24 * 3600).to_date,
-      tax_id: '20.018.183/0001-80',
+      tax_id: '012.345.678-90',
       initial_due: (Time.now + 3 * 24 * 3600).to_date,
       nominal_interest: 10,
       count: 3,
@@ -315,7 +318,7 @@ class ExampleGenerator
       type: 'american',
       nominal_amount: rand(1..100_000),
       scheduled: (Time.now + 3 * 24 * 3600).to_date,
-      tax_id: '20.018.183/0001-80',
+      tax_id: '012.345.678-90',
       initial_due: (Time.now + 3 * 24 * 3600).to_date,
       nominal_interest: rand(1..4.99),
       count: 3,
@@ -328,7 +331,7 @@ class ExampleGenerator
       type: 'bullet',
       nominal_amount: 100000,
       scheduled: '2023-07-10',
-      tax_id: '20.018.183/0001-80',
+      tax_id: '012.345.678-90',
       initial_due: '2023-07-20',
       nominal_interest: 10
     )
@@ -336,10 +339,10 @@ class ExampleGenerator
 
   def self.hash_sac_example
     {
-      'tax_id' => '20.018.183/0001-80',
+      'tax_id' => '012.345.678-90',
       'type' => 'sac',
-      'nominal_amount' => rand(1..100_000),
-      'rebate_amount' => rand(1..1000),
+      'nominal_amount' => rand(100..100_000),
+      'rebate_amount' => rand(100..1000),
       'nominal_interest' => rand(1..4.99),
       'scheduled' => (Time.now + 3 * 24 * 3600).to_date,
       'initial_due' => (Time.now + 3 * 24 * 3600).to_date,
@@ -362,5 +365,77 @@ class ExampleGenerator
 
     discounts = [discount1, discount2]
     discounts
+  end
+
+  def self.individual_identity_example
+    StarkInfra::IndividualIdentity.new(
+      name: "Jamie Lannister",
+      tax_id: "012.345.678-90",
+      tags: ["test", "testing"]
+    )
+  end
+
+  def self.individual_document_image(image)
+    rg_images = {
+      "front" => "test/utils/identity/identity-front-face.png",
+      "back" => "test/utils/identity/identity-back-face.png",
+      "selfie" => "test/utils/identity/walter-white.png"
+    }
+    
+    file = open(rg_images[image], 'rb')
+    return picture = file.read
+  end
+
+  def self.issuing_embossingrequest_example(holder:)
+
+    card = StarkInfra::IssuingCard.create(
+      cards: [StarkInfra::IssuingCard.new(
+        holder_name: holder.name,
+        holder_tax_id: holder.tax_id,
+        holder_external_id: holder.external_id,
+        product_id: "52233227", 
+        type: "physical"
+      )]
+    ).to_a[0]
+
+    kit = StarkInfra::IssuingEmbossingKit.query(limit: 1).to_a[0]
+
+    request = StarkInfra::IssuingEmbossingRequest.new(
+      card_id: card.id,
+      kit_id: kit.id, 
+      display_name_1: "teste", 
+      shipping_city: "Sao Paulo", 
+      shipping_country_code: "BRA", 
+      shipping_district: "Bela Vista", 
+      shipping_service: "loggi", 
+      shipping_state_code: "SP", 
+      shipping_street_line_1: "teste", 
+      shipping_street_line_2: "teste", 
+      shipping_tracking_number: "teste", 
+      shipping_zip_code: "12345-678",
+      embosser_id: "5746980898734080"
+    )
+
+    return request
+  end
+
+  def self.issuing_restock_example
+
+    stock = StarkInfra::IssuingStock.query(limit: 1).to_a[0]
+
+    restock = StarkInfra::IssuingRestock.new(
+      count: 100,
+      stock_id: stock.id
+    )
+
+    return restock
+  end
+
+  def self.credit_holmes_example
+    StarkInfra::CreditHolmes.new(
+      tax_id: '012.345.678-90',
+      competence: "2021-01",
+      tags: ["SDK Ruby Test"]
+    )
   end
 end

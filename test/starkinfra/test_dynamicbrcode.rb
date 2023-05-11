@@ -28,7 +28,7 @@ describe(StarkInfra::DynamicBrcode, '#dynamic-brcode#') do
         cursor: cursor,
         limit: 4,
         after: '2022-01-01',
-        before: '2022-02-01',
+        before: '2023-02-01',
         tags: %w[travel food]
       )
 
