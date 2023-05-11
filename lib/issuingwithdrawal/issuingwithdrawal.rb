@@ -9,10 +9,6 @@ module StarkInfra
   #
   # The IssuingWithdrawal objects created in your Workspace return cash from your Issuing balance to your Banking balance.
   #
-  # When you initialize a IssuingWithdrawal, the entity will not be automatically
-  # created in the Stark Infra API. The 'create' function sends the objects
-  # to the Stark Infra API and returns the created object.
-  #
   # ## Parameters (required):
   # - amount [integer]: IssuingWithdrawal value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
   # - external_id [string] IssuingWithdrawal external ID. ex: '12345'
@@ -82,10 +78,10 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:
@@ -106,15 +102,16 @@ module StarkInfra
 
     # # Retrieve paged IssuingWithdrawals
     #
-    # Receive a list of IssuingWithdrawals objects previously created in the Stark Infra API and the cursor to the next page.
+    # Receive a list of up to 100 IssuingWithdrawal objects previously created in the Stark Infra API and the cursor to the next page.
+    # Use this function instead of query if you want to manually page your requests.
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
-    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
+    # - external_ids [list of strings, default nil]: external IDs. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
     # ## Return:

@@ -6,6 +6,7 @@ require_relative('../utils/resource')
 
 module StarkInfra
   # # PixKey object
+  #
   # PixKeys link bank account information to key ids.
   # Key ids are a convenient way to search and pass bank account information.
   #
@@ -59,7 +60,7 @@ module StarkInfra
 
     # # Create a PixKey
     #
-    # Send a PixKey objects for creation in the Stark Infra API
+    # Create a PixKey linked to a specific account in the Stark Infra API
     #
     # ## Parameters (required):
     # - key [PixKey object]: PixKey object to be created in the API
@@ -167,7 +168,7 @@ module StarkInfra
 
     # # Update a PixKey entity
     #
-    # Respond to a received PixKey.
+    # Update a PixKey parameters by passing id.
     #
     # ## Parameters (required):
     # - id [string]: PixKey unique id. ex: '+5511989898989'
@@ -182,7 +183,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - updated PixKey object
+    # - PixKey object with updated attributes
     def self.update(id, reason:, account_created: nil, account_number: nil, account_type: nil, branch_code: nil, name: nil, user: nil)
       StarkInfra::Utils::Rest.patch_id(
         id: id,

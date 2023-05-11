@@ -19,7 +19,7 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - description [string, default nil]: description for any details that can help with the infraction investigation.
-  # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
+  # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixInfraction is created. ex: '5656565656565656'
@@ -45,9 +45,9 @@ module StarkInfra
       @description = description
       @tags = tags
       @credited_bank_code = credited_bank_code
+      @debited_bank_code = debited_bank_code
       @flow = flow
       @analysis = analysis
-      @debited_bank_code = debited_bank_code
       @reported_by = reported_by
       @result = result
       @status = status
@@ -172,7 +172,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - updated PixInfraction object
+    # - PixInfraction object with updated attributes
     def self.update(id, result:, analysis: nil, user: nil)
       StarkInfra::Utils::Rest.patch_id(id: id, result: result, analysis: analysis, user: user, **resource)
     end

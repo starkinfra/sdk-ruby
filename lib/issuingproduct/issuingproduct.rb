@@ -7,7 +7,7 @@ require_relative('../utils/resource')
 module StarkInfra
   # # IssuingProduct object
   #
-  # The IssuingProduct object displays information of avaliable card products registered to your Workspace.
+  # The IssuingProduct object displays information of registered card products to your Workspace.
   # They represent a group of cards that begin with the same numbers (id) and offer the same product to end customers.
   #
   # ## Attributes (return-only):
@@ -30,7 +30,7 @@ module StarkInfra
 
     # # Retrieve IssuingProducts
     #
-    # Receive a generator of available IssuingProduct objects previously registered to your workspace
+    # Receive a generator of IssuingProduct objects previously registered in the Stark Infra API
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35

@@ -23,7 +23,7 @@ module StarkInfra
 
     # # Retrieve PixDomains
     #
-    # Receive a generator of PixDomain objects registered at the Central Bank.
+    # Receive a generator of PixDomain objects.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call

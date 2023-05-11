@@ -11,7 +11,7 @@ module StarkInfra
   # Invoice discount information.
   #
   # ## Parameters (required):
-  # - percentage [float]: percentage of discount applied until specified due date. ex: 2.5
+  # - percentage [float]: percentage of discount applied until specified due date.
   # - due [DateTime or string]: due datetime for the discount. ex: '2020-03-10T10:30:00.000000+00:00' or DateTime.new(2020, 3, 10, 10, 30, 0, 0).
   class Discount < StarkInfra::Utils::SubResource
     attr_reader :percentage, :due

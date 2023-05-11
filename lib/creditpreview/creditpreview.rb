@@ -10,15 +10,9 @@ module StarkInfra
   # A CreditPreview is used to get information from a credit before taking it.
   # This resource can be used to preview credit notes.
   #
-  # When you initialize a CreditPreview, the entity will not be automatically
-  # created in the Stark Infra API. The 'create' function sends the objects
-  # to the Stark Infra API and returns the list of created objects.
-  #
   # ## Parameters (required):
-  # - credit [CreditNotePreview object or hash]: Information preview of the informed credit.
-  #
-  # ## Parameters (conditionally required):
-  # - type [string]: Credit type, inferred from the payment parameter if it is not a dictionary. ex: 'credit-note'
+  # - credit [CreditNotePreview object]: Information preview of the informed credit.
+  # - type [string]: Credit type. ex: "credit-note"
   class CreditPreview < StarkInfra::Utils::SubResource
     attr_reader :credit, :type
     def initialize(credit:, type: nil)

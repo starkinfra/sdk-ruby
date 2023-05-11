@@ -5,7 +5,7 @@ require_relative('../utils/checks')
 require_relative('../utils/resource')
 
 module StarkInfra
-  # # Webhook subscription object
+  # # Webhook object
   #
   # A Webhook is used to subscribe to notification events on a user-selected endpoint.
   # Currently available services for subscription are contract, credit-note, signer, issuing-card, issuing-invoice, issuing-purchase, pix-request.in, pix-request.out, pix-reversal.in, pix-reversal.out, pix-claim, pix-key, pix-chargeback, pix-infraction.
@@ -14,7 +14,7 @@ module StarkInfra
   # - url [string]: URL that will be notified when an event occurs.
   # - subscriptions [list of strings]: list of any non-empty combination of the available services. ex: ['contract', 'credit-note', 'signer', 'issuing-card', 'issuing-invoice', 'issuing-purchase', 'pix-request.in', 'pix-request.out', 'pix-reversal.in', 'pix-reversal.out', 'pix-claim', 'pix-key', 'pix-chargeback', 'pix-infraction']
   #
-  # ## Attributes:
+  # ## Attributes (return-only):
   # - id [string]: unique id returned when the webhook is created. ex: '5656565656565656'
   class Webhook < StarkInfra::Utils::Resource
     attr_reader :url, :subscriptions, :id
@@ -24,12 +24,12 @@ module StarkInfra
       @subscriptions = subscriptions
     end
 
-    # # Create Webhook subscription
+    # # Create Webhook
     #
-    # Send a single Webhook subscription for creation in the Stark Infra API
+    # Send a single Webhook for creation in the Stark Infra API
     #
     # ## Parameters (required):
-    # - webhook [Webhook object]: Webhook subscription to be created to receive Events. ex: Webhook.new()
+    # - webhook [Webhook object]: Webhook to be created to receive Events. ex: Webhook.new()
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -40,9 +40,9 @@ module StarkInfra
       StarkInfra::Utils::Rest.post_single(entity: webhook, user: user, **resource)
     end
 
-    # # Retrieve a specific Webhook subscription
+    # # Retrieve a specific Webhook
     #
-    # Receive a single Webhook subscription object previously created in the Stark Infra API by passing its id
+    # Receive a single Webhook object previously created in the Stark Infra API by passing its id
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'
@@ -56,9 +56,9 @@ module StarkInfra
       StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
     end
 
-    # # Retrieve Webhook subscriptions
+    # # Retrieve Webhooks
     #
-    # Receive a generator of Webhook subscription objects previously created in the Stark Infra API
+    # Receive a generator of Webhook objects previously created in the Stark Infra API
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35

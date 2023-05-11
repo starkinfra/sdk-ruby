@@ -22,7 +22,6 @@ module StarkInfra
   # - template_id [string]: ID of the contract template on which the credit note will be based. ex: '0123456789101112'
   # - name [string]: credit receiver's full name. ex: 'Edward Stark'
   # - tax_id [string]: credit receiver's tax ID (CPF or CNPJ). ex: '20.018.183/0001-80'
-  # - nominal_amount [integer]: amount in cents transferred to the credit receiver, before deductions. ex: 11234 (= R$ 112.34)
   # - scheduled [DateTime, Date or string]: date of transfer execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - invoices [list of CreditNote::Invoice objects]: list of Invoice objects to be created and sent to the credit receiver. ex: [Invoice.new(), Invoice.new()]
   # - payment [CreditNote::Transfer object]: payment entity to be created and sent to the credit receiver. ex: Transfer.new()
@@ -37,6 +36,8 @@ module StarkInfra
   #
   # ## Parameters (conditionally required):
   # - payment_type [string]: payment type, inferred from the payment parameter if it is not a hash. ex: 'transfer'
+  # - nominal_amount [integer]: CreditNote value in cents. The nominal_amount parameter is required when amount is not sent. ex: 1234 (= R$ 12.34)
+  # - amount [integer]: amount in cents transferred to the credit receiver, before deductions. The amount parameter is required when nominal_amount is not sent. ex: 1234 (= R$ 12.34)
   #
   # ## Parameters (optional):
   # - rebate_amount [integer, default nil]: credit analysis fee deducted from lent amount. ex: 11234 (= R$ 112.34)
@@ -45,7 +46,6 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditNote is created. ex: '5656565656565656'
-  # - amount [integer]: CreditNote value in cents. ex: 1234 (= R$ 12.34)
   # - document_id [string]: ID of the signed document to execute this CreditNote. ex: '4545454545454545'
   # - status [string]: current status of the CreditNote. ex: 'canceled', 'created', 'expired', 'failed', 'processing', 'signed', 'success'
   # - transaction_ids [list of strings]: ledger transaction ids linked to this CreditNote. ex: ['19827356981273']
@@ -56,14 +56,14 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class CreditNote < StarkInfra::Utils::Resource
-    attr_reader :template_id, :name, :tax_id, :nominal_amount, :scheduled, :invoices, :payment, :signers, :external_id,
-                :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type, :rebate_amount,
-                :tags, :expiration, :id, :amount, :document_id, :status, :transaction_ids, :workspace_id, :tax_amount,
-                :nominal_interest, :interest, :created, :updated
+    attr_reader :template_id, :name, :tax_id, :scheduled, :invoices, :payment, :signers, :external_id,
+                :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type,
+                :nominal_amount, :amount, :rebate_amount, :tags, :expiration, :id,  :document_id, :status,
+                :transaction_ids, :workspace_id, :tax_amount, :nominal_interest, :interest, :created, :updated
     def initialize(
-      template_id:, name:, tax_id:, nominal_amount:, scheduled:, invoices:, payment:,
-      signers:, external_id:, street_line_1:, street_line_2:, district:, city:, state_code:, zip_code:,
-      payment_type: nil, rebate_amount: nil, tags: nil, expiration: nil, id: nil, amount: nil,
+      template_id:, name:, tax_id:, scheduled:, invoices:, payment:, signers:, external_id:,
+      street_line_1:, street_line_2:, district:, city:, state_code:, zip_code:, payment_type: nil,
+      nominal_amount: nil, amount: nil, rebate_amount: nil, tags: nil, expiration: nil, id: nil,
       document_id: nil, status: nil, transaction_ids: nil, workspace_id: nil, tax_amount: nil,
       nominal_interest: nil, interest: nil, created: nil, updated: nil
     )
@@ -71,7 +71,6 @@ module StarkInfra
       @template_id = template_id
       @name = name
       @tax_id = tax_id
-      @nominal_amount = nominal_amount
       @scheduled = scheduled
       @invoices = Invoice.parse_invoices(invoices)
       @signers = CreditSigner.parse_signers(signers)
@@ -82,9 +81,10 @@ module StarkInfra
       @city = city
       @state_code = state_code
       @zip_code = zip_code
+      @nominal_amount = nominal_amount
+      @amount = amount
       @rebate_amount = rebate_amount
       @tags = tags
-      @amount = amount
       @expiration = expiration
       @document_id = document_id
       @status = status
@@ -141,7 +141,7 @@ module StarkInfra
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
     # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-    # - status [string, default nil]: filter for status of retrieved objects. ex: 'success' or 'failed'
+    # - status [string, default nil]: filter for status of retrieved objects. ex: ["canceled", "created", "expired", "failed", "processing", "signed", "success"]
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -173,7 +173,7 @@ module StarkInfra
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-    # - status [string, default nil]: filter for status of retrieved objects. ex: 'paid' or 'registered'
+    # - status [string, default nil]: filter for status of retrieved objects. ex: ["canceled", "created", "expired", "failed", "processing", "signed", "success"]
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -197,9 +197,9 @@ module StarkInfra
       )
     end
 
-    # # Cancel a specific CreditNote
+    # # Cancel a CreditNote entity
     #
-    # Cancel a single CreditNote object previously created in the Stark Infra API by passing its id
+    # Cancel a CreditNote entity previously created in the Stark Infra API
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'
@@ -208,7 +208,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - canceled CreditNote object with updated attributes
+    # - canceled CreditNote object
     def self.cancel(id, user: nil)
       StarkInfra::Utils::Rest.delete_id(id: id, user: user, **resource)
     end
@@ -245,7 +245,6 @@ module StarkInfra
             template_id: json['template_id'],
             name: json['name'],
             tax_id: json['tax_id'],
-            nominal_amount: json['nominal_amount'],
             scheduled: json['scheduled'],
             invoices: json['invoices'],
             payment: json['payment'],
@@ -258,15 +257,17 @@ module StarkInfra
             state_code: json['state_code'],
             zip_code: json['zip_code'],
             payment_type: json['payment_type'],
+            nominal_amount: json['nominal_amount'],
+            amount: json['amount'],
             rebate_amount: json['rebate_amount'],
             tags: json['tags'],
             expiration: json['expiration'],
-            amount: json['amount'],
             document_id: json['document_id'],
             status: json['status'],
             transaction_ids: json['transaction_ids'],
             workspace_id: json['workspace_id'],
             tax_amount: json['tax_amount'],
+            nominal_interest: json['nominal_interest'],
             interest: json['interest'],
             created: json['created'],
             updated: json['updated']

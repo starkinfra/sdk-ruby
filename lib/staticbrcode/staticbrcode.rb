@@ -22,7 +22,9 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - amount [integer, default nil]: positive integer that represents the amount in cents of the resulting Pix transaction. If the amount is zero, the sender can choose any amount in the moment of payment. ex: 1234 (= R$ 12.34)
+  # - cashier_bank_code [string, default None]: Cashier's bank code. ex: "20018183".
   # - reconciliation_id [string, default nil]: id to be used for conciliation of the resulting Pix transaction. This id must have up to 25 alphanumeric digits ex: 'ah27s53agj6493hjds6836v49'
+  # - description [string, default None]: optional description to override default description to be shown in the bank statement. ex: "Payment for service #1234"
   # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
@@ -32,9 +34,9 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class StaticBrcode < StarkInfra::Utils::Resource
-    attr_reader :name, :key_id, :city, :amount, :reconciliation_id, :id, :tags, :uuid, :url, :created, :updated
+    attr_reader :name, :key_id, :city, :amount, :cashier_bank_code, :description, :reconciliation_id, :id, :tags, :uuid, :url, :created, :updated
     def initialize(
-      name:, key_id:, city:, amount:, reconciliation_id:, id: nil, tags:nil, uuid: nil, url: nil, created: nil, updated: nil
+      name:, key_id:, city:, amount:, cashier_bank_code: nil, description: nil, reconciliation_id: nil, id: nil, tags:nil, uuid: nil, url: nil, created: nil, updated: nil
     )
       super(id)
       @name = name
@@ -42,6 +44,8 @@ module StarkInfra
       @city = city
       @amount = amount
       @reconciliation_id = reconciliation_id
+      @cashier_bank_code = cashier_bank_code
+      @description = description
       @tags = tags
       @uuid = uuid
       @url = url
@@ -151,6 +155,8 @@ module StarkInfra
             city: json['city'],
             amount: json['amount'],
             reconciliation_id: json['reconciliation_id'],
+            cashier_bank_code: json['cashier_bank_code'],
+            description: json['description'],
             tags: json['tags'],
             uuid: json['uuid'],
             url: json['url'],

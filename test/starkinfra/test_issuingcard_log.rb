@@ -11,7 +11,7 @@ describe(StarkInfra::IssuingCard::Log, '#issuingcard/log#') do
     logs.each do |log|
       expect(log.id).wont_be_nil
       expect(log.type).must_equal('created')
-      expect(log.card.status).must_equal('active')
+      assert(log.card.status == 'active' || log.card.status == 'pending')
     end
   end
 

@@ -43,7 +43,7 @@ module StarkInfra
     # # Create a PixStatement object
     #
     # Create a PixStatements linked to your workspace in the Stark Infra API
-    # 
+    #
     # ## Parameters (required):
     # - statement [PixStatement object]: PixStatement object to be created in the API.
     #

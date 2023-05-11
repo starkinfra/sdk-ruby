@@ -10,10 +10,6 @@ module StarkInfra
   # The IssuingCard object displays the information of the cards created in your Workspace.
   # Sensitive information will only be returned when the 'expand' parameter is used, to avoid security concerns.
   #
-  # When you initialize a IssuingCard, the entity will not be automatically
-  # created in the Stark Infra API. The 'create' function sends the objects
-  # to the Stark Infra API and returns the created object.
-  #
   # ## Parameters (required):
   # - holder_name [string]: card holder name. ex: 'Tony Stark'
   # - holder_tax_id [string]: card holder tax ID. ex: '012.345.678-90'
@@ -114,14 +110,14 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
-    # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['active', 'blocked', 'canceled', 'expired']
     # - types [list of strings, default nil]: card type. ex: ['virtual']
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ['tony', 'stark']
     # - expand [list of strings, default nil]: fields to expand information. ex: ['rules', 'security_code', 'number', 'expiration']
+    # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
@@ -147,14 +143,15 @@ module StarkInfra
 
     # # Retrieve paged IssuingCards
     #
-    # Receive a list of IssuingCards objects previously created in the Stark Infra API and the cursor to the next page.
+    # Receive a list of up to 100 IssuingCard objects previously created in the Stark Infra API and the cursor to the next page.
+    # Use this function instead of query if you want to manually page your identities.
     #
     # ## Parameters (optional):
     # - cursor [string, default nil]: cursor returned on the previous page function call.
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex: 35
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
-    # - after [Date or string, default nil] date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
-    # - before [Date or string, default nil] date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
+    # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
+    # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
     # - status [list of strings, default nil]: filter for status of retrieved objects. ex: ['active', 'blocked', 'canceled', 'expired']
     # - types [list of strings, default nil]: card type. ex: ['virtual']
     # - holder_ids [list of strings, default nil]: card holder IDs. ex: ['5656565656565656', '4545454545454545']
@@ -163,7 +160,7 @@ module StarkInfra
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
-    # - list of IssuingCards objects with updated attributes
+    # - list of IssuingCard objects with updated attributes
     # - cursor to retrieve the next page of IssuingCards objects
     def self.page(cursor: nil, limit: nil, ids: nil, after: nil, before: nil, status: nil, types: nil, holder_ids: nil,
                   tags: nil, expand: nil, user: nil)
@@ -194,6 +191,7 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - status [string, default nil]: You may block the IssuingCard by passing 'blocked' or activate by passing 'active' in the status
+    # - pin [string, default nil]: You may unlock your physical card by passing its PIN. This is also the PIN you use to authorize a purhcase.
     # - display_name [string, default nil]: card displayed name
     # - rules [list of IssuingRule objects, default nil]: [EXPANDABLE] list of card spending rules.
     # - tags [list of strings, default nil]: list of strings for tagging
@@ -201,10 +199,11 @@ module StarkInfra
     #
     # ## Return:
     # - target IssuingCard with updated attributes
-    def self.update(id, status: nil, display_name: nil, rules: nil, tags: nil, user: nil)
+    def self.update(id, status: nil, display_name: nil, pin: nil, rules: nil, tags: nil, user: nil)
       StarkInfra::Utils::Rest.patch_id(
         id: id,
         status: status,
+        pin: pin,
         display_name: display_name,
         rules: rules,
         tags: tags,

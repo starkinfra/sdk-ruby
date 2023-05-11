@@ -10,12 +10,12 @@ module StarkInfra
   #
   # A BrcodePreview is used to get information from a BR Code you received to check the information before paying it.
   #
-  # When you initialize a BrcodePreview, the entity will not be automatically
-  # created in the Stark Infra API. The 'create' function sends the objects
-  # to the Stark Infra API and returns the list of created objects.
-  #
-  # ## Parameters (required):
+  # Parameters (required):
   # - id [string]: BR Code string for the Pix payment. This is also de information directly encoded in a QR Code. ex: '00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A'
+  # - payer_id [string]: tax id (CPF/CNPJ) of the individual or business requesting the PixKey information. This id is used by the Central Bank to limit request rates. ex: "20.018.183/0001-80"
+  #
+  # Parameters (optional):
+  # - end_to_end_id [string]: central bank's unique transaction ID. ex: "E79457883202101262140HHX553UPqeq"
   #
   # Attributes (return-only):
   # - account_number [string]: Payment receiver account number. ex: '1234567'
@@ -39,16 +39,18 @@ module StarkInfra
   # - status [string]: Payment status. ex: 'active', 'paid', 'canceled' or 'unknown'
   # - tax_id [string]: Payment receiver tax ID. ex: '012.345.678-90'
   class BrcodePreview < StarkInfra::Utils::Resource
-    attr_reader :id, :account_number, :account_type, :amount, :amount_type, :bank_code, :branch_code, :cash_amount,
+    attr_reader :id, :payer_id, :end_to_end_id, :account_number, :account_type, :amount, :amount_type, :bank_code, :branch_code, :cash_amount,
                 :cashier_bank_code, :cashier_type, :discount_amount, :fine_amount, :key_id, :interest_amount, :name,
                 :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :tax_id
     def initialize(
-      id:, account_number: nil, account_type: nil, amount: nil, amount_type: nil, bank_code: nil,
+      id:, payer_id:, end_to_end_id: nil, account_number: nil, account_type: nil, amount: nil, amount_type: nil, bank_code: nil,
       branch_code: nil, cash_amount: nil, cashier_bank_code:nil, cashier_type:nil, discount_amount: nil,
       fine_amount: nil, key_id: nil, interest_amount: nil, name: nil, nominal_amount: nil,
       reconciliation_id: nil, reduction_amount: nil, scheduled: nil, status: nil, tax_id: nil
     )
       super(id)
+      @payer_id = payer_id
+      @end_to_end_id = end_to_end_id
       @account_number = account_number
       @account_type = account_type
       @amount = amount
@@ -60,8 +62,8 @@ module StarkInfra
       @cashier_type = cashier_type
       @discount_amount = discount_amount
       @fine_amount = fine_amount
-      @key_id = key_id
       @interest_amount = interest_amount
+      @key_id = key_id
       @name = name
       @nominal_amount = nominal_amount
       @reconciliation_id = reconciliation_id
@@ -93,6 +95,8 @@ module StarkInfra
         resource_maker: proc { |json|
           BrcodePreview.new(
             id: json['id'],
+            payer_id: json['payer_id'],
+            end_to_end_id: json['end_to_end_id'],
             account_number: json['account_number'],
             account_type: json['account_type'],
             amount: json['amount'],

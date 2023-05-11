@@ -8,6 +8,9 @@ require_relative('../utils/resource')
 module StarkInfra
   # # PixRequest object
   #
+  # PixRequests are used to receive or send instant payments to accounts
+  # hosted in any Pix participant.
+  #
   # When you initialize a PixRequest, the entity will not be automatically
   # created in the Stark Infra API. The 'create' function sends the objects
   # to the Stark Infra API and returns the list of created objects.

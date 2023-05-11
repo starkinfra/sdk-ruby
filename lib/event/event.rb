@@ -18,7 +18,7 @@ module StarkInfra
   # Events cannot be created, but may be retrieved from the Stark Infra API to
   # list all generated updates on entities.
   #
-  # ## Attributes:
+  # ## Attributes (return-only):
   # - id [string]: unique id returned when the event is created. ex: '5656565656565656'
   # - log [Log]: a Log object from one the subscription services (PixRequestLog, PixReversalLog)
   # - created [DateTime]: creation datetime for the notification event. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
