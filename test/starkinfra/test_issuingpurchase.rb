@@ -20,6 +20,7 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
 
       purchases.each do |purchase|
         expect(ids).wont_include(purchase.id)
+        expect(purchase.metadata).wont_be_nil
         ids << purchase.id
       end
       break if cursor.nil?
@@ -32,5 +33,6 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
 
     purchase = StarkInfra::IssuingPurchase.get(purchase.id)
     expect(purchase.id).wont_be_nil
+    expect(purchase.metadata).wont_be_nil
   end
 end

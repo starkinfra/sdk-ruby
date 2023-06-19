@@ -29,6 +29,7 @@ module StarkInfra
   # - acquirer_id [string]: acquirer ID. ex: '5656565656565656'
   # - merchant_id [string]: merchant ID. ex: '5656565656565656'
   # - merchant_name [string]: merchant name. ex: 'Google Cloud Platform'
+  # - metadata [dictionary object]: dictionary object used to store additional information about the IssuingPurchase object. ex: { authorizationId: 'OjZAqj' }
   # - merchant_fee [integer]: fee charged by the merchant to cover specific costs, such as ATM withdrawal logistics, etc. ex: 200 (= R$ 2.00)
   # - wallet_id [string]: virtual wallet ID. ex: '5656565656565656'
   # - method_code [string]: method code. Options: 'chip', 'token', 'server', 'manual', 'magstripe' or 'contactless'
@@ -50,7 +51,7 @@ module StarkInfra
   class IssuingPurchase < StarkInfra::Utils::Resource
     attr_reader :id, :holder_name, :product_id, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
                 :issuer_currency_symbol, :merchant_amount, :merchant_currency_code, :merchant_currency_symbol,
-                :merchant_category_code, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
+                :merchant_category_code, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name, :metadata,
                 :merchant_fee, :wallet_id, :method_code, :score, :end_to_end_id, :tags, :zip_code,
                 :issuing_transaction_ids, :status, :updated, :created, :is_partial_allowed, :card_tags, :holder_tags
 
@@ -58,7 +59,7 @@ module StarkInfra
       id: nil, holder_name: nil, product_id: nil, card_id: nil, card_ending: nil, purpose: nil, amount: nil, tax: nil, issuer_amount: nil,
       issuer_currency_code: nil, issuer_currency_symbol: nil, merchant_amount: nil, merchant_currency_code: nil,
       merchant_currency_symbol: nil, merchant_category_code: nil, merchant_country_code: nil, acquirer_id: nil,
-      merchant_id: nil, merchant_name: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
+      merchant_id: nil, merchant_name: nil, metadata: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
       end_to_end_id: nil, tags: nil, zip_code: nil, issuing_transaction_ids: nil, status: nil, updated: nil, created: nil,
       is_partial_allowed: nil, card_tags:nil, holder_tags:nil
     )
@@ -81,6 +82,7 @@ module StarkInfra
       @acquirer_id = acquirer_id
       @merchant_id = merchant_id
       @merchant_name = merchant_name
+      @metadata = metadata
       @merchant_fee = merchant_fee
       @wallet_id = wallet_id
       @method_code = method_code
@@ -131,8 +133,8 @@ module StarkInfra
     #
     # ## Return:
     # - generator of IssuingPurchases objects with updated attributes
-    def self.query(ids: nil, limit: nil, after: nil, before: nil, end_to_end_ids: nil, holder_ids: nil, card_ids: nil,
-                   status: nil, user: nil)
+    def self.query(ids: nil, limit: nil, after: nil, before: nil, end_to_end_ids: nil, holder_ids: nil, card_ids: nil, status: nil, user: nil)
+                
       after = StarkInfra::Utils::Checks.check_date(after)
       before = StarkInfra::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
@@ -267,6 +269,7 @@ module StarkInfra
             acquirer_id: json['acquirer_id'],
             merchant_id: json['merchant_id'],
             merchant_name: json['merchant_name'],
+            metadata: json['metadata'],
             merchant_fee: json['merchant_fee'],
             wallet_id: json['wallet_id'],
             method_code: json['method_code'],
