@@ -10,7 +10,6 @@ module StarkInfra
   # Displays the IssuingPurchase objects created in your Workspace.
   #
   # ## Attributes (return-only):
-  # - id [string]: unique id returned when IssuingPurchase is created. ex: '5656565656565656'
   # - holder_name [string]: card holder name. ex: 'Tony Stark'
   # - product_id [string]: unique card product number (BIN) registered within the card network. ex: "53810200"
   # - card_id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
@@ -23,45 +22,49 @@ module StarkInfra
   # - issuer_currency_symbol [string]: issuer currency symbol. ex: '$'
   # - merchant_amount [integer]: merchant amount. ex: 1234 (= R$ 12.34)
   # - merchant_currency_code [string]: merchant currency code. ex: 'USD'
+  # - merchant_category_type [string]: merchant category type. ex 'food'
   # - merchant_currency_symbol [string]: merchant currency symbol. ex: '$'
   # - merchant_category_code [string]: merchant category code. ex: 'fastFoodRestaurants'
   # - merchant_country_code [string]: merchant country code. ex: 'USA'
   # - acquirer_id [string]: acquirer ID. ex: '5656565656565656'
   # - merchant_id [string]: merchant ID. ex: '5656565656565656'
   # - merchant_name [string]: merchant name. ex: 'Google Cloud Platform'
-  # - metadata [dictionary object]: dictionary object used to store additional information about the IssuingPurchase object. ex: { authorizationId: 'OjZAqj' }
   # - merchant_fee [integer]: fee charged by the merchant to cover specific costs, such as ATM withdrawal logistics, etc. ex: 200 (= R$ 2.00)
   # - wallet_id [string]: virtual wallet ID. ex: '5656565656565656'
   # - method_code [string]: method code. Options: 'chip', 'token', 'server', 'manual', 'magstripe' or 'contactless'
   # - score [float]: internal score calculated for the authenticity of the purchase. nil in case of insufficient data. ex: 7.6
   # - end_to_end_id [string]: Unique id used to identify the transaction through all of its life cycle, even before the purchase is denied or approved and gets its usual id. ex: '679cd385-642b-49d0-96b7-89491e1249a5'
   # - tags [string]: list of strings for tagging returned by the sub-issuer during the authorization. ex: ['travel', 'food']
-  # - zip_code [string]: zip code of the merchant location. ex: '02101234'
   #
   # ## Attributes (IssuingPurchase only):
+  # - id [string]: unique id returned when IssuingPurchase is created. ex: '5656565656565656'
   # - issuing_transaction_ids [string]: ledger transaction ids linked to this Purchase
   # - status [string]: current IssuingCard status. Options: 'approved', 'canceled', 'denied', 'confirmed', 'voided'
+  # - description [string]: IssuingPurchase description. ex: 'Office Supplies'
+  # - metadata [dictionary object]: dictionary object used to store additional information about the IssuingPurchase object. ex: { authorizationId: 'OjZAqj' }
+  # - zip_code [string]: zip code of the merchant location. ex: '02101234'
   # - updated [DateTime]: latest update datetime for the IssuingPurchase. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingPurchase. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   #
   # ## Attributes (authorization request only):
   # - is_partial_allowed [bool]: true if the merchant allows partial purchases. ex: False
   # - card_tags [list of strings]: tags of the IssuingCard responsible for this purchase. ex: ['travel', 'food']
+  # - holder_id [string]: card holder ID. ex: '5656565656565656'
   # - holder_tags [list of strings]: tags of the IssuingHolder responsible for this purchase. ex: ['technology', 'john snow']
   class IssuingPurchase < StarkInfra::Utils::Resource
     attr_reader :id, :holder_name, :product_id, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
                 :issuer_currency_symbol, :merchant_amount, :merchant_currency_code, :merchant_currency_symbol,
-                :merchant_category_code, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name, :metadata,
-                :merchant_fee, :wallet_id, :method_code, :score, :end_to_end_id, :tags, :zip_code,
-                :issuing_transaction_ids, :status, :updated, :created, :is_partial_allowed, :card_tags, :holder_tags
+                :merchant_category_code, :merchant_category_type, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
+                :merchant_fee, :wallet_id, :method_code, :score, :end_to_end_id, :tags,
+                :issuing_transaction_ids, :status, :description, :metadata, :zip_code, :updated, :created, :is_partial_allowed, :card_tags, :holder_id, :holder_tags
 
     def initialize(
       id: nil, holder_name: nil, product_id: nil, card_id: nil, card_ending: nil, purpose: nil, amount: nil, tax: nil, issuer_amount: nil,
       issuer_currency_code: nil, issuer_currency_symbol: nil, merchant_amount: nil, merchant_currency_code: nil,
-      merchant_currency_symbol: nil, merchant_category_code: nil, merchant_country_code: nil, acquirer_id: nil,
-      merchant_id: nil, merchant_name: nil, metadata: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
-      end_to_end_id: nil, tags: nil, zip_code: nil, issuing_transaction_ids: nil, status: nil, updated: nil, created: nil,
-      is_partial_allowed: nil, card_tags:nil, holder_tags:nil
+      merchant_currency_symbol: nil, merchant_category_code: nil, merchant_category_type: nil, merchant_country_code: nil, acquirer_id: nil,
+      merchant_id: nil, merchant_name: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
+      end_to_end_id: nil, tags: nil, issuing_transaction_ids: nil, status: nil, description: nil, metadata: nil, zip_code: nil, updated: nil, created: nil,
+      is_partial_allowed: nil, card_tags:nil, holder_id: nil, holder_tags:nil
     )
       super(id)
       @holder_name = holder_name
@@ -78,24 +81,27 @@ module StarkInfra
       @merchant_currency_code = merchant_currency_code
       @merchant_currency_symbol = merchant_currency_symbol
       @merchant_category_code = merchant_category_code
+      @merchant_category_type = merchant_category_type
       @merchant_country_code = merchant_country_code
       @acquirer_id = acquirer_id
       @merchant_id = merchant_id
       @merchant_name = merchant_name
-      @metadata = metadata
       @merchant_fee = merchant_fee
       @wallet_id = wallet_id
       @method_code = method_code
       @score = score
       @end_to_end_id = end_to_end_id
       @tags = tags
-      @zip_code = zip_code
       @issuing_transaction_ids = issuing_transaction_ids
       @status = status
+      @description = description
+      @metadata = metadata
+      @zip_code = zip_code
       @updated = StarkInfra::Utils::Checks.check_datetime(updated)
       @created = StarkInfra::Utils::Checks.check_datetime(created)
       @is_partial_allowed = is_partial_allowed
       @card_tags = card_tags
+      @holder_id = holder_id
       @holder_tags = holder_tags
 
     end
@@ -265,6 +271,7 @@ module StarkInfra
             merchant_currency_code: json['merchant_currency_code'],
             merchant_currency_symbol: json['merchant_currency_symbol'],
             merchant_category_code: json['merchant_category_code'],
+            merchant_category_type: json['merchant_category_type'],
             merchant_country_code: json['merchant_country_code'],
             acquirer_id: json['acquirer_id'],
             merchant_id: json['merchant_id'],
@@ -276,13 +283,16 @@ module StarkInfra
             score: json['score'],
             end_to_end_id: json['end_to_end_id'],
             tags: json['tags'],
-            zip_code: json['zip_code'],
             issuing_transaction_ids: json['issuing_transaction_ids'],
             status: json['status'],
+            description: json['description'],
+            metadata: json['metadata'],
+            zip_code: json['zip_code'],
             updated: json['updated'],
             created: json['created'],
             is_partial_allowed: json['is_partial_allowed'],
             card_tags: json['card_tags'],
+            holder_id: json['holder_id'],
             holder_tags: json['holder_tags']
           )
         }
