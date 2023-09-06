@@ -13,10 +13,12 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+## Added
+- merchant_category_type, description and holder_id attributes to IssuingPurchase resource
 
 ## [0.4.0] - 2023-06-19
 ## Added
-- metadata parameter to IssuingPurchase resource
+- metadata attribute to IssuingPurchase resource
 
 ## [0.3.0] - 2023-05-11
 ### Added
