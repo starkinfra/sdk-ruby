@@ -276,7 +276,6 @@ module StarkInfra
             acquirer_id: json['acquirer_id'],
             merchant_id: json['merchant_id'],
             merchant_name: json['merchant_name'],
-            metadata: json['metadata'],
             merchant_fee: json['merchant_fee'],
             wallet_id: json['wallet_id'],
             method_code: json['method_code'],
