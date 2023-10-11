@@ -16,7 +16,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - merchant_category_type, description and holder_id attributes to IssuingPurchase resource
 ### Changed
-- sender_tax_id parameter to DynamicBrcode resource
+- sender_tax_id and receiver_tax_id parameters to DynamicBrcode resource
 
 ## [0.4.0] - 2023-06-19
 ### Added
