@@ -164,6 +164,7 @@ module StarkInfra
     # - sender_name [string]: sender's full name. ex: "Anthony Edward Stark"
     # - sender_tax_id [string]: sender's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '01.001.001/0001-01'
     # - receiver_name [string]: receiver's full name. ex: "Jamie Lannister"
+    # - receiver_tax_id [string]: receiver's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '012.345.678-90'
     # - receiver_street_line [string]: receiver's main address. ex: "Av. Paulista, 200"
     # - receiver_city [string]: receiver's address city name. ex: "Sao Paulo"
     # - receiver_state_code [string]: receiver's address state code. ex: "SP"
@@ -171,7 +172,6 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - expiration [integer]: time in seconds counted from the creation datetime until the DynamicBrcode expires. After expiration, the BR Code cannot be paid anymore.
-    # - receiver_tax_id [string, default nil]: receiver's CPF (11 digits formatted or unformatted) or CNPJ (14 digits formatted or unformatted). ex: '012.345.678-90'
     # - fine [float, default 2.0]: Percentage charged if the sender pays after the due datetime. ex. 2.0
     # - interest [float, default 1.0]: Interest percentage charged if the sender pays after the due datetime. ex: 1.5
     # - discounts [list of dictionaries, default nil]: discount amount applied if the sender pays at a specific datetime before the due datetime.
@@ -181,8 +181,8 @@ module StarkInfra
     # - Dumped JSON string that must be returned to us
     def self.response_due(
       version: , created: , due: , key_id: , status: , reconciliation_id: , nominal_amount: ,
-      sender_name: , sender_tax_id: , receiver_name: , receiver_street_line: , receiver_city: , 
-      receiver_state_code: , receiver_zip_code: , expiration: , receiver_tax_id: , fine: , interest: ,
+      sender_name: , sender_tax_id: , receiver_name: , receiver_tax_id: , receiver_street_line: ,
+      receiver_city: , receiver_state_code: , receiver_zip_code: , expiration: , fine: , interest: ,
       discounts: , description:
     )
 
@@ -197,12 +197,12 @@ module StarkInfra
         'senderName': sender_name,
         'senderTaxId': sender_tax_id,
         'receiverName': receiver_name,
+        'receiverTaxId': receiver_tax_id,
         'receiverStreetLine': receiver_street_line,
         'receiverCity': receiver_city,
         'receiverStateCode': receiver_state_code,
         'receiverZipCode': receiver_zip_code,
         'expiration': expiration,
-        'receiverTaxId': receiver_tax_id,
         'fine': fine,
         'interest': interest,
         'discounts': Discount.parse_discounts(discounts),
