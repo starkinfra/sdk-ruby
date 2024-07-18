@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixStatement object
@@ -27,17 +26,17 @@ module StarkInfra
   # - transaction_count [integer]: number of transactions that happened during the day that the PixStatement was requested. ex: 11
   # - created [DateTime]: creation datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixStatement < StarkInfra::Utils::Resource
+  class PixStatement < StarkCore::Utils::Resource
     attr_reader :after, :before, :type, :id, :status, :transaction_count, :created, :updated
     def initialize(after:, before:, type:, id: nil, status: nil, transaction_count: nil, created: nil, updated: nil)
       super(id)
-      @after = StarkInfra::Utils::Checks.check_date(after)
-      @before = StarkInfra::Utils::Checks.check_date(before)
+      @after = StarkCore::Utils::Checks.check_date(after)
+      @before = StarkCore::Utils::Checks.check_date(before)
       @type = type
       @status = status
       @transaction_count = transaction_count
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create a PixStatement object

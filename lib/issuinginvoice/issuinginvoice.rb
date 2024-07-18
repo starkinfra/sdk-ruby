@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingInvoice object
@@ -30,7 +29,7 @@ module StarkInfra
   # - issuing_transaction_id [string]: ledger transaction ids linked to this IssuingInvoice. ex: 'issuing-invoice/5656565656565656'
   # - updated [DateTime]: latest update datetime for the IssuingInvoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingInvoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingInvoice < StarkInfra::Utils::Resource
+  class IssuingInvoice < StarkCore::Utils::Resource
     attr_reader :id, :amount, :tax_id, :name, :tags, :brcode, :due, :link, :status, :issuing_transaction_id, :updated, :created
     def initialize(
       amount:, id: nil, tax_id: nil, name: nil, tags: nil, brcode: nil, due: nil, link: nil, status: nil, issuing_transaction_id: nil,
@@ -46,8 +45,8 @@ module StarkInfra
       @link = link
       @status = status
       @issuing_transaction_id = issuing_transaction_id
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Create an IssuingInvoice
@@ -97,8 +96,8 @@ module StarkInfra
     # ## Return:
     # - generator of IssuingInvoices objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -128,8 +127,8 @@ module StarkInfra
     # - list of IssuingInvoice objects with updated attributes
     # - cursor to retrieve the next page of IssuingInvoice objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

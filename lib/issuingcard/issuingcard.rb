@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingCard object
@@ -37,7 +36,7 @@ module StarkInfra
   # - expiration [DateTime]: [EXPANDABLE] masked card expiration datetime. Expand to unmask the value. ex: DateTime.new(2032, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the IssuingCard. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingCard < StarkInfra::Utils::Resource
+  class IssuingCard < StarkCore::Utils::Resource
     attr_reader :id, :holder_name, :holder_tax_id, :holder_external_id, :display_name, :rules, :product_id, :tags,
                 :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :holder_id,
                 :type, :status, :number, :security_code, :expiration, :created, :updated
@@ -66,9 +65,9 @@ module StarkInfra
       @number = number
       @security_code = security_code
       expiration = nil if !expiration.nil? && expiration.include?('*')
-      @expiration = StarkInfra::Utils::Checks.check_datetime(expiration)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @expiration = StarkCore::Utils::Checks.check_datetime(expiration)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create IssuingCards
@@ -124,8 +123,8 @@ module StarkInfra
     # - generator of IssuingCards objects with updated attributes
     def self.query(limit: nil, ids: nil, after: nil, before: nil, status: nil, types: nil, holder_ids: nil, tags: nil,
                    expand: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         ids: ids,
@@ -164,8 +163,8 @@ module StarkInfra
     # - cursor to retrieve the next page of IssuingCards objects
     def self.page(cursor: nil, limit: nil, ids: nil, after: nil, before: nil, status: nil, types: nil, holder_ids: nil,
                   tags: nil, expand: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # DynamicBrcode object
@@ -35,7 +33,7 @@ module StarkInfra
   # - url [string]: url link to the BR Code image. ex: 'https://brcode-h.development.starkinfra.com/dynamic-qrcode/901e71f2447c43c886f58366a5432c4b.png'
   # - created [DateTime]: creation datetime for the DynamicBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the DynamicBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class DynamicBrcode < StarkInfra::Utils::Resource
+  class DynamicBrcode < StarkCore::Utils::Resource
     attr_reader :name, :city, :external_id, :type, :tags, :id, :uuid, :url, :updated, :created
     def initialize(name:, city:, external_id:, type: nil, tags: nil, id: nil, uuid: nil, url: nil, updated: nil, created: nil)
       super(id)
@@ -46,8 +44,8 @@ module StarkInfra
       @tags = tags
       @uuid = uuid
       @url = url
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create DynamicBrcodes
@@ -98,8 +96,8 @@ module StarkInfra
     # ## Return:
     # - generator of DynamicBrcode objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, external_ids: nil, uuids: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -130,8 +128,8 @@ module StarkInfra
     # - list of DynamicBrcode objects with updated attributes
     # - cursor to retrieve the next page of DynamicBrcode objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, tags: nil, uuids: nil, external_ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
@@ -283,7 +281,7 @@ module StarkInfra
     # ## Return:
     # - verified Brcode's uuid.
     def self.verify(uuid:, signature:, user: nil)
-      StarkInfra::Utils::Parse.verify(content: uuid, signature: signature, user: user)
+      StarkCore::Utils::Parse.verify(content: uuid, signature: signature, user: user)
     end
 
     def self.resource
@@ -313,7 +311,7 @@ module StarkInfra
     # ## Parameters (required):
     # - percentage [integer]: discount percentage that will be applied. ex: 2.5
     # - due [DateTime or string, default now + 2 days]: Date after when the discount will be overdue in UTC ISO format. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0) or "2020-03-10T10:30:00.000000+00:00"
-    class Discount < StarkInfra::Utils::SubResource
+    class Discount < StarkCore::Utils::SubResource
       attr_reader :percentage, :due
       def initialize(percentage:, due:)
         @percentage = percentage
@@ -327,7 +325,7 @@ module StarkInfra
         discounts.each do |discount|
 
           if discount.is_a? DynamicBrcode::Discount
-            discount = StarkInfra::Utils::API.api_json(discount)
+            discount = StarkCore::Utils::API.api_json(discount)
           end
           parsed_discounts << discount
         end

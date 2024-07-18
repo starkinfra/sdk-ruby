@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
 require_relative('issuingpurchase')
-require_relative('../utils/resource')
 
 module StarkInfra
   class IssuingPurchase
@@ -19,7 +18,7 @@ module StarkInfra
     # - errors [list of strings]: list of errors linked to this IssuingPurchase event
     # - type [string]: type of the IssuingPurchase event which triggered the log creation. ex: 'approved', 'canceled', 'confirmed', 'denied', 'reversed', 'voided'.
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :purchase, :issuing_transaction_id, :errors, :type, :created
       def initialize(id: nil, purchase: nil, issuing_transaction_id: nil, errors: nil, type: nil, created: nil)
         super(id)
@@ -27,7 +26,7 @@ module StarkInfra
         @issuing_transaction_id = issuing_transaction_id
         @errors = errors
         @type = type
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
       end
 
       # # Retrieve a specific IssuingPurchase::Log
@@ -62,8 +61,8 @@ module StarkInfra
       # ## Return:
       # - generator of IssuingPurchase::Log objects with updated attributes
       def self.query(ids: nil, limit: nil, after: nil, before: nil, types: nil, purchase_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           ids: ids,
           limit: limit,
@@ -95,8 +94,8 @@ module StarkInfra
       # - list of IssuingPurchase::Log objects with updated attributes
       # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, ids: nil, limit: nil, after: nil, before: nil, types: nil, purchase_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           ids: ids,
@@ -117,7 +116,7 @@ module StarkInfra
           resource_maker: proc { |json|
             Log.new(
               id: json['id'],
-              purchase: StarkInfra::Utils::API.from_api_json(request_maker, json['purchase']),
+              purchase: StarkCore::Utils::API.from_api_json(request_maker, json['purchase']),
               issuing_transaction_id: json['issuing_transaction_id'],
               errors: json['errors'],
               type: json['type'],

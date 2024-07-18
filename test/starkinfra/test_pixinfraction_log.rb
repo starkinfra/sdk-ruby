@@ -1,6 +1,5 @@
 # frozen_string_literal: false
 
-require_relative('../user')
 require_relative('../test_helper.rb')
 
 describe(StarkInfra::PixInfraction::Log, '#pix-infraction/log#') do

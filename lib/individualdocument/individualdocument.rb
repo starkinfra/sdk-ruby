@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IndividualDocument object
@@ -29,7 +28,7 @@ module StarkInfra
   # - id [string]: unique id returned when the IndividualDocument is created. ex: "5656565656565656"
   # - status [string]: current status of the IndividualDocument. Options: "created", "canceled", "processing", "failed", "success"
   # - created [DateTime]: creation datetime for the IndividualDocument. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IndividualDocument < StarkInfra::Utils::Resource
+  class IndividualDocument < StarkCore::Utils::Resource
     attr_reader :type, :content, :content_type, :identity_id, :tags, :id, :status, :created 
     def initialize(type:, content:, content_type:, identity_id:, tags: nil, id: nil, status: nil, created: nil)
       super(id)
@@ -37,7 +36,7 @@ module StarkInfra
       @identity_id = identity_id
       @tags = tags
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
       @content = content
       @content_type = content_type
 
@@ -95,8 +94,8 @@ module StarkInfra
     # ## Return:
     # - generator of IndividualDocument objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -128,8 +127,8 @@ module StarkInfra
     # - list of IndividualDocument objects with updated attributes
     # - cursor to retrieve the next page of IndividualDocument objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

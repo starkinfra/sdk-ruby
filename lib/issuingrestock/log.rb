@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('IssuingRestock')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   class IssuingRestock
@@ -17,13 +16,13 @@ module StarkInfra
     # - restock [IssuingRestock]: IssuingRestock entity to which the log refers to.
     # - type [string]: type of the IssuingRestock event which triggered the log creation. ex: "created", "processing", "confirmed"
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :restock, :type, :created 
       def initialize(id: nil, restock: nil, type: nil, created: nil)
         super(id)
         @restock = restock
         @type = type
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
       end
 
       # # Retrieve a specific IssuingRestock::Log
@@ -60,8 +59,8 @@ module StarkInfra
       def self.query(
         limit: nil, after: nil, before: nil, types: nil, restock_ids: nil, ids: nil, user: nil
       )
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           limit: limit,
           after: after,
@@ -93,8 +92,8 @@ module StarkInfra
       # - list of IssuingRestock::Log objects with updated attributes
       # - Cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, types: nil, restock_ids: nil, ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
@@ -115,7 +114,7 @@ module StarkInfra
           resource_maker: proc { |json|
             Log.new(
               id: json['id'],
-              restock: StarkInfra::Utils::API.from_api_json(request_maker, json['restock']),
+              restock: StarkCore::Utils::API.from_api_json(request_maker, json['restock']),
               type: json['type'],
               created: json['created']
             )

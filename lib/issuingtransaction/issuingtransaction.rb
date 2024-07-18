@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingTransaction object
@@ -17,7 +16,7 @@ module StarkInfra
   # - source [string]: source of the transaction. ex: 'issuing-purchase/5656565656565656'
   # - tags [string]: list of strings inherited from the source resource. ex: ['tony', 'stark']
   # - created [DateTime]: creation datetime for the IssuingTransaction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingTransaction < StarkInfra::Utils::Resource
+  class IssuingTransaction < StarkCore::Utils::Resource
     attr_reader :id, :amount, :balance, :description, :source, :tags, :created
 
     def initialize(id: nil, amount: nil, balance: nil, description: nil, source: nil, tags: nil, created: nil)
@@ -27,7 +26,7 @@ module StarkInfra
       @description = description
       @source = source
       @tags = tags
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Retrieve a specific IssuingTransaction
@@ -63,8 +62,8 @@ module StarkInfra
     # ## Return:
     # - generator of IssuingTransaction objects with updated attributes
     def self.query(tags: nil, external_ids: nil, after: nil, before: nil, status: nil, ids: nil, limit: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         tags: tags,
         external_ids: external_ids,
@@ -99,8 +98,8 @@ module StarkInfra
     # - cursor to retrieve the next page of IssuingTransactions objects
     def self.page(cursor: nil, tags: nil, external_ids: nil, after: nil, before: nil, status: nil, ids: nil, limit: nil,
                   user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         tags: tags,

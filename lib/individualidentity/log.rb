@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
 require_relative('IndividualIdentity')
-require_relative('../utils/resource')
 
 module StarkInfra
   class IndividualIdentity
@@ -18,14 +17,14 @@ module StarkInfra
     # - errors [list of strings]: list of errors linked to this IndividualIdentity event
     # - type [string]: type of the IndividualIdentity event which triggered the log creation. ex: "created", "canceled", "processing", "failed", "success"
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :identity, :errors, :type, :created
       def initialize(id: nil, identity: nil, errors: nil, type: nil, created: nil)
         super(id)
         @identity = identity
         @errors = errors
         @type = type
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
       end
 
       # # Retrieve a specific IndividualIdentity::Log
@@ -59,8 +58,8 @@ module StarkInfra
       # ## Return:
       # - generator of IndividualIdentity::Log objects with updated attributes
       def self.query(limit: nil, after: nil, before: nil, types: nil, identity_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           limit: limit,
           after: after,
@@ -90,8 +89,8 @@ module StarkInfra
       # - list of IndividualIdentity::Log objects with updated attributes
       # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, types: nil, identity_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
@@ -111,7 +110,7 @@ module StarkInfra
           resource_maker: proc { |json|
             Log.new(
               id: json['id'],
-              identity: StarkInfra::Utils::API.from_api_json(request_maker, json['identity']),
+              identity: StarkCore::Utils::API.from_api_json(request_maker, json['identity']),
               errors: json['errors'],
               type: json['type'],
               created: json['created']

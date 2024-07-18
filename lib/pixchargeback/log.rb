@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('pixchargeback')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   class PixChargeback
@@ -19,11 +18,11 @@ module StarkInfra
     # - type [string]: type of the PixChargeback event which triggered the log creation. Options: 'created', 'failed', 'delivering', 'delivered', 'closed', 'canceled'
     # - errors [list of strings]: list of errors linked to this PixChargeback event.
     # - chargeback [PixChargeback]: PixChargeback entity to which the log refers to.
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :created, :type, :errors, :chargeback
       def initialize(id:, created:, type:, errors:, chargeback:)
         super(id)
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
         @type = type
         @errors = errors
         @chargeback = chargeback
@@ -61,8 +60,8 @@ module StarkInfra
       # ## Return:
       # - generator of PixChargeback::Log objects with updated attributes
       def self.query(ids: nil, limit: nil, after: nil, before: nil, types: nil, chargeback_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           ids: ids,
           limit: limit,
@@ -94,8 +93,8 @@ module StarkInfra
       # - list of PixChargeback::Log objects with updated attributes
       # - cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, ids: nil, limit: nil, after: nil, before: nil, types: nil, chargeback_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           ids: ids,
@@ -119,7 +118,7 @@ module StarkInfra
               created: json['created'],
               type: json['type'],
               errors: json['errors'],
-              chargeback: StarkInfra::Utils::API.from_api_json(chargeback_maker, json['chargeback'])
+              chargeback: StarkCore::Utils::API.from_api_json(chargeback_maker, json['chargeback'])
             )
           }
         }

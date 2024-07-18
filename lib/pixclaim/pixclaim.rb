@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixClaim object
@@ -36,7 +35,7 @@ module StarkInfra
   # - claimed_bank_code [string]: bank_code of the account donating the PixClaim. ex: '20018183'.
   # - created [DateTime]: creation datetime for the PixClaim. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: update datetime for the PixClaim. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixClaim < StarkInfra::Utils::Resource
+  class PixClaim < StarkCore::Utils::Resource
     attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :key_id,
                 :tags, :id, :status, :type, :key_type, :flow, :claimer_bank_code, :claimed_bank_code, :created, :updated
     def initialize(
@@ -59,8 +58,8 @@ module StarkInfra
       @flow = flow
       @claimer_bank_code = claimer_bank_code
       @claimed_bank_code = claimed_bank_code
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create a PixClaim object
@@ -119,8 +118,8 @@ module StarkInfra
       limit: nil, after: nil, before: nil, status: nil, ids: nil,
       type: nil, flow: nil, tags: nil, key_type: nil, key_id: nil, user: nil
     )
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -163,8 +162,8 @@ module StarkInfra
       cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil,
       type: nil, flow: nil, tags: nil, key_type: nil, key_id: nil, user: nil
     )
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

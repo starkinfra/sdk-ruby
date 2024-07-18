@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingBalance object
@@ -16,7 +15,7 @@ module StarkInfra
   # - amount [integer]: current issuing balance amount of the Workspace in cents. ex: 200 (= R$ 2.00)
   # - currency [string]: currency of the current Workspace. Expect others to be added eventually. ex: 'BRL'
   # - updated [DateTime]: latest update datetime for the IssuingBalance. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingBalance < StarkInfra::Utils::Resource
+  class IssuingBalance < StarkCore::Utils::Resource
     attr_reader :amount, :currency, :updated, :id
     def initialize(amount: nil, currency: nil, updated: nil, id: nil)
       super(id)
