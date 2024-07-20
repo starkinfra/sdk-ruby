@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [0.5.0] - 2024-07-20
 ### Added
 - request methods
 - merchant_category_type, description and holder_id attributes to IssuingPurchase resource
