@@ -1,9 +1,6 @@
 # frozen_string_literal: true
-
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # CreditHolmes object
@@ -29,7 +26,7 @@ module StarkInfra
   # - status [string]: current status of the CreditHolmes. ex: "created", "failed", "success"
   # - created [DateTime]: creation datetime for the CreditHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the CreditHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class CreditHolmes < StarkInfra::Utils::Resource
+  class CreditHolmes < StarkCore::Utils::Resource
     attr_reader :tax_id, :competence, :tags, :id, :result, :status, :updated, :created
     def initialize(tax_id:, competence: nil, tags: nil, id: nil, result: nil, status: nil, updated: nil, created: nil)
       super(id)
@@ -39,8 +36,8 @@ module StarkInfra
       @id = id
       @result = result
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create CreditHolmes
@@ -91,8 +88,8 @@ module StarkInfra
     # ## Return:
     # - generator of CreditHolmes objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -124,8 +121,8 @@ module StarkInfra
     # - list of CreditHolmes objects with updated attributes
     # - cursor to retrieve the next page of CreditHolmes objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

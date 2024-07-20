@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixDirector object
@@ -24,7 +24,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - status [string]: current PixDirector status. ex: 'success'
-  class PixDirector < StarkInfra::Utils::SubResource
+  class PixDirector < StarkCore::Utils::SubResource
     attr_reader :name, :tax_id, :phone, :email, :password, :team_email, :team_phones, :status
     def initialize(name:, tax_id:, phone:, email:, password:, team_email:, team_phones:, status: nil)
       @name = name

@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('issuingcard')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   class IssuingCard
@@ -17,13 +16,13 @@ module StarkInfra
     # - card [IssuingCard]: IssuingCard entity to which the log refers to.
     # - type [string]: type of the IssuingCard event which triggered the log creation. ex: 'processing' or 'success'
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-    class Log < StarkInfra::Utils::Resource
+    class Log < StarkCore::Utils::Resource
       attr_reader :id, :created, :type, :card
       def initialize(id:, created:, type:, card:)
         super(id)
         @type = type
         @card = card
-        @created = StarkInfra::Utils::Checks.check_datetime(created)
+        @created = StarkCore::Utils::Checks.check_datetime(created)
       end
 
       # # Retrieve a specific IssuingCard::Log
@@ -58,8 +57,8 @@ module StarkInfra
       # ## Return:
       # - generator of IssuingCard::Log objects with updated attributes
       def self.query(limit: nil, after: nil, before: nil, types: nil, card_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_stream(
           limit: limit,
           after: after,
@@ -90,8 +89,8 @@ module StarkInfra
       # - list of IssuingCard::Log objects with updated attributes
       # - Cursor to retrieve the next page of Log objects
       def self.page(cursor: nil, limit: nil, after: nil, before: nil, types: nil, card_ids: nil, user: nil)
-        after = StarkInfra::Utils::Checks.check_date(after)
-        before = StarkInfra::Utils::Checks.check_date(before)
+        after = StarkCore::Utils::Checks.check_date(after)
+        before = StarkCore::Utils::Checks.check_date(before)
         StarkInfra::Utils::Rest.get_page(
           cursor: cursor,
           limit: limit,
@@ -113,7 +112,7 @@ module StarkInfra
               id: json['id'],
               created: json['created'],
               type: json['type'],
-              card: StarkInfra::Utils::API.from_api_json(request_maker, json['card'])
+              card: StarkCore::Utils::API.from_api_json(request_maker, json['card'])
             )
           }
         }

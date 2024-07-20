@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
 
 module StarkInfra
   # # MerchantCategory object
@@ -19,7 +19,7 @@ module StarkInfra
   # Attributes (return-only):
   # - name [string]: category's name. ex: 'Veterinary services', 'Fast food restaurants'
   # - number [string]: category's number. ex: '742', '5814'
-  class MerchantCategory < StarkInfra::Utils::SubResource
+  class MerchantCategory < StarkCore::Utils::SubResource
     attr_reader :code, :type, :name, :number
     def initialize(code:, type:, name: nil, number: nil)
       @code = code

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixKey object
@@ -34,7 +33,7 @@ module StarkInfra
   # - bank_name [string]: name of the bank that holds the account linked to the PixKey. ex: 'StarkBank'
   # - type [string]: type of the PixKey. Options: 'cpf', 'cnpj', 'phone', 'email' and 'evp',
   # - created [DateTime]: creation datetime for the PixKey. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixKey < StarkInfra::Utils::Resource
+  class PixKey < StarkCore::Utils::Resource
     attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :id,
                 :tags, :owned, :owner_type, :status, :bank_code, :bank_name, :type, :created
     def initialize(
@@ -49,13 +48,13 @@ module StarkInfra
       @name = name
       @tax_id = tax_id
       @tags = tags
-      @owned = StarkInfra::Utils::Checks.check_datetime(owned)
+      @owned = StarkCore::Utils::Checks.check_datetime(owned)
       @owner_type = owner_type
       @status = status
       @bank_code = bank_code
       @bank_name = bank_name
       @type = type
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Create a PixKey
@@ -115,8 +114,8 @@ module StarkInfra
     # ## Return:
     # - generator of PixKey objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, type: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -150,8 +149,8 @@ module StarkInfra
     # - list of PixKey objects with updated attributes
     # - cursor to retrieve the next page of PixKey objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, type: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

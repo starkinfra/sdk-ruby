@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingEmbossingKit object
@@ -15,7 +14,7 @@ module StarkInfra
   # - designs [list of IssuingDesign objects]: list of IssuingDesign objects. ex: [IssuingDesign(), IssuingDesign()]
   # - updated [DateTime]: latest update datetime for the IssuingEmbossingKit. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingEmbossingKit. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingEmbossingKit < StarkInfra::Utils::Resource
+  class IssuingEmbossingKit < StarkCore::Utils::Resource
     attr_reader :id, :name, :designs, :updated, :created
     def initialize(
       id: nil, name: nil, designs: nil, updated: nil, created: nil
@@ -23,8 +22,8 @@ module StarkInfra
       super(id)
       @name = name
       @designs = IssuingDesign::parse_designs(designs)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Retrieve a specific IssuingEmbossingKit

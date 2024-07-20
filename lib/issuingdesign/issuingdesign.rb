@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingDesign object
@@ -16,7 +15,7 @@ module StarkInfra
   # - type [string]: card or package design type. Options: "card", "envelope"
   # - updated [DateTime]: latest update datetime for the IssuingDesign. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingDesign. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingDesign < StarkInfra::Utils::Resource
+  class IssuingDesign < StarkCore::Utils::Resource
     attr_reader :id, :name, :embosser_ids, :type, :updated, :created
     def initialize(
       id: nil, name: nil, embosser_ids: nil, type: nil, updated: nil, created: nil
@@ -25,8 +24,8 @@ module StarkInfra
       @name = name
       @embosser_ids = embosser_ids
       @type = type
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Retrieve a specific IssuingDesign
@@ -112,7 +111,7 @@ module StarkInfra
       parsed_designs = []
       designs.each do |design|
         unless design.is_a? IssuingDesign
-          design = StarkInfra::Utils::API.from_api_json(resource_maker, design)
+          design = StarkCore::Utils::API.from_api_json(resource_maker, design)
         end
         parsed_designs << design
       end

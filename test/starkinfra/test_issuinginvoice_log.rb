@@ -1,6 +1,5 @@
 # frozen_string_literal: false
 
-require_relative('../user')
 require_relative('../test_helper.rb')
 
 describe(StarkInfra::IssuingInvoice::Log, '#issuinginvoice/log#') do

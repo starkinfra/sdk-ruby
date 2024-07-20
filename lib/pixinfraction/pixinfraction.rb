@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixInfraction object
@@ -32,7 +31,7 @@ module StarkInfra
   # - status [string]: current PixInfraction status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
   # - created [DateTime]: creation datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixInfraction < StarkInfra::Utils::Resource
+  class PixInfraction < StarkCore::Utils::Resource
     attr_reader :reference_id, :type, :description, :tags, :id, :credited_bank_code, :flow, :analysis,
                 :debited_bank_code, :reported_by, :result, :status, :created, :updated
     def initialize(
@@ -51,8 +50,8 @@ module StarkInfra
       @reported_by = reported_by
       @result = result
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create PixInfractions
@@ -105,8 +104,8 @@ module StarkInfra
     # ## Return:
     # - generator of PixInfraction objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, ids: nil, type: nil, flow: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -142,8 +141,8 @@ module StarkInfra
     # - list of PixInfraction objects with updated attributes
     # - cursor to retrieve the next page of PixInfraction objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, ids: nil, flow: nil, tags: nil, type: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

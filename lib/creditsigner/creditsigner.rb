@@ -1,9 +1,6 @@
 # frozen_string_literal: true
-
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # CreditSigner object
@@ -17,7 +14,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditSigner is created. ex: '5656565656565656'
-  class CreditSigner < StarkInfra::Utils::Resource
+  class CreditSigner < StarkCore::Utils::Resource
     attr_reader :name, :contact, :method, :id
     def initialize(name:, contact:, method:, id: nil)
       super(id)
@@ -33,7 +30,7 @@ module StarkInfra
       parsed_signers = []
       signers.each do |signer|
         unless signer.is_a? CreditSigner
-          signer = StarkInfra::Utils::API.from_api_json(resource_maker, signer)
+          signer = StarkCore::Utils::API.from_api_json(resource_maker, signer)
         end
         parsed_signers << signer
       end

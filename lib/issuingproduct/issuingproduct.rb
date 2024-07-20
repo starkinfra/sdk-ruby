@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingProduct object
@@ -17,7 +16,7 @@ module StarkInfra
   # - holder_type [string]: holder type. ex: 'business', 'individual'
   # - code [string]: internal code from card flag informing the product. ex: 'MRW', 'MCO', 'MWB', 'MCS'
   # - created [DateTime]: creation datetime for the IssuingProduct. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingProduct < StarkInfra::Utils::Resource
+  class IssuingProduct < StarkCore::Utils::Resource
     attr_reader :id, :network, :funding_type, :holder_type, :code, :created
     def initialize(id: nil, network: nil, funding_type: nil, holder_type: nil, code: nil, created: nil)
       super(id)
@@ -25,7 +24,7 @@ module StarkInfra
       @funding_type = funding_type
       @holder_type = holder_type
       @code = code
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
     # # Retrieve IssuingProducts

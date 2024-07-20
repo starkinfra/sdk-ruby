@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../utils/api')
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
 
 module StarkInfra
   # # CreditNotePreview object
@@ -34,7 +33,7 @@ module StarkInfra
   # - amount [integer]: credit note value in cents. ex: 1234 (= R$ 12.34)
   # - interest [float]: yearly effective interest rate of the credit note, in percentage. ex: 12.5
   # - tax_amount [integer]: tax amount included in the credit note. ex: 100
-  class CreditNotePreview < StarkInfra::Utils::SubResource
+  class CreditNotePreview < StarkCore::Utils::SubResource
     attr_reader :type, :nominal_amount, :scheduled, :tax_id, :invoices, :nominal_interest, :initial_due, :count,
                 :initial_amount, :interval, :rebate_amount, :amount, :interest, :tax_amount
     def initialize(

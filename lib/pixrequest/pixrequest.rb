@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # PixRequest object
@@ -52,7 +51,7 @@ module StarkInfra
   # - sender_bank_code [string]: code of the sender bank institution in Brazil. ex: '20018183'
   # - created [DateTime]: creation datetime for the PixRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class PixRequest < StarkInfra::Utils::Resource
+  class PixRequest < StarkCore::Utils::Resource
     attr_reader :amount, :external_id, :sender_name, :sender_tax_id, :sender_branch_code, :sender_account_number,
                 :sender_account_type, :receiver_name, :receiver_tax_id, :receiver_bank_code, :receiver_account_number,
                 :receiver_branch_code, :receiver_account_type, :end_to_end_id, :cashier_type,
@@ -93,8 +92,8 @@ module StarkInfra
       @status = status
       @flow = flow
       @sender_bank_code = sender_bank_code
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create PixRequests
@@ -147,8 +146,8 @@ module StarkInfra
     # ## Return:
     # - generator of PixRequest objects with updated attributes
     def self.query(limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, end_to_end_ids: nil, external_ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -184,8 +183,8 @@ module StarkInfra
     # - list of PixRequest objects with updated attributes
     # - cursor to retrieve the next page of PixRequest objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, tags: nil, ids: nil, end_to_end_ids: nil, external_ids: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,
@@ -217,7 +216,7 @@ module StarkInfra
     # ## Return:
     # - Parsed PixRequest object
     def self.parse(content:, signature:, user: nil)
-      request = StarkInfra::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
+      request = StarkCore::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
 
       !request.fee.nil? ? request.fee : 0
       !request.tags.nil? ? request.tags : []

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('../utils/api')
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/sub_resource')
 
 module StarkInfra
   # # CreditPreview object
@@ -13,7 +12,7 @@ module StarkInfra
   # ## Parameters (required):
   # - credit [CreditNotePreview object]: Information preview of the informed credit.
   # - type [string]: Credit type. ex: "credit-note"
-  class CreditPreview < StarkInfra::Utils::SubResource
+  class CreditPreview < StarkCore::Utils::SubResource
     attr_reader :credit, :type
     def initialize(credit:, type: nil)
       credit_info = CreditPreview.parse_credit(credit, type)
@@ -42,7 +41,7 @@ module StarkInfra
       resource_maker = { 'credit-note' => StarkInfra::CreditNotePreview.resource[:resource_maker] }
       if credit.is_a?(Hash)
         begin
-          parsed_credit = StarkInfra::Utils::API.from_api_json(resource_maker[type], credit)
+          parsed_credit = StarkCore::Utils::API.from_api_json(resource_maker[type], credit)
           return { 'credit' => parsed_credit, 'type' => type }
 
         rescue StandardError

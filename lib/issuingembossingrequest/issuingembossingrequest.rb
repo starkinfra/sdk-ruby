@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # IssuingEmbossingRequest object
@@ -36,7 +35,7 @@ module StarkInfra
   # - status [string]: status of the IssuingEmbossingRequest. ex: "created", "processing", "success", "failed"
   # - updated [DateTime]: latest update datetime for the IssuingEmbossingRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingEmbossingRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  class IssuingEmbossingRequest < StarkInfra::Utils::Resource
+  class IssuingEmbossingRequest < StarkCore::Utils::Resource
     attr_reader :card_id, :kit_id, :display_name_1, :shipping_city, :shipping_country_code, 
                 :shipping_district, :shipping_state_code, :shipping_street_line_1, :shipping_street_line_2, 
                 :shipping_service, :shipping_tracking_number, :shipping_zip_code, :embosser_id, :display_name_2, 
@@ -68,8 +67,8 @@ module StarkInfra
       @tags = tags
       @fee = fee
       @status = status
-      @created = StarkInfra::Utils::Checks.check_datetime(created)
-      @updated = StarkInfra::Utils::Checks.check_datetime(updated)
+      @created = StarkCore::Utils::Checks.check_datetime(created)
+      @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
 
     # # Create IssuingEmbossingRequests
@@ -124,8 +123,8 @@ module StarkInfra
       limit: nil, after: nil, before: nil, status: nil, card_ids: nil, ids: nil, 
       tags: nil, user: nil
     )
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_stream(
         limit: limit,
         after: after,
@@ -159,8 +158,8 @@ module StarkInfra
     # - list of IssuingEmbossingRequests objects with updated attributes
     # - cursor to retrieve the next page of IssuingEmbossingRequests objects
     def self.page(cursor: nil, limit: nil, after: nil, before: nil, status: nil, card_ids: nil, ids: nil, tags: nil, user: nil)
-      after = StarkInfra::Utils::Checks.check_date(after)
-      before = StarkInfra::Utils::Checks.check_date(before)
+      after = StarkCore::Utils::Checks.check_date(after)
+      before = StarkCore::Utils::Checks.check_date(before)
       StarkInfra::Utils::Rest.get_page(
         cursor: cursor,
         limit: limit,

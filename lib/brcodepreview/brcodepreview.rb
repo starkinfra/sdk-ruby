@@ -1,9 +1,6 @@
 # frozen_string_literal: true
-
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/parse')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # BrcodePreview object
@@ -38,7 +35,7 @@ module StarkInfra
   # - scheduled [DateTime]: date of payment execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0).
   # - status [string]: Payment status. ex: 'active', 'paid', 'canceled' or 'unknown'
   # - tax_id [string]: Payment receiver tax ID. ex: '012.345.678-90'
-  class BrcodePreview < StarkInfra::Utils::Resource
+  class BrcodePreview < StarkCore::Utils::Resource
     attr_reader :id, :payer_id, :end_to_end_id, :account_number, :account_type, :amount, :amount_type, :bank_code, :branch_code, :cash_amount,
                 :cashier_bank_code, :cashier_type, :discount_amount, :fine_amount, :key_id, :interest_amount, :name,
                 :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :tax_id

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require('starkcore')
 require_relative('../utils/rest')
-require_relative('../utils/checks')
-require_relative('../utils/resource')
 
 module StarkInfra
   # # Webhook object
@@ -16,7 +15,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the webhook is created. ex: '5656565656565656'
-  class Webhook < StarkInfra::Utils::Resource
+  class Webhook < StarkCore::Utils::Resource
     attr_reader :url, :subscriptions, :id
     def initialize(url:, subscriptions:, id: nil)
       super(id)
