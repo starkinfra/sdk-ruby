@@ -61,6 +61,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
     - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
+  - [Request](#request): Send a custom request to Stark Infra. This can be used to access features that haven't been mapped yet.
 - [Handling errors](#handling-errors)
 - [Help and Feedback](#help-and-feedback)
 
@@ -2910,6 +2911,142 @@ require('starkinfra')
 attempt = StarkInfra::Event::Attempt.get('1616161616161616')
 
 puts attempt
+```
+
+# Request
+
+This resource allows you to send HTTP requests to StarkInfra routes.
+
+## GET
+
+You can perform a GET request to any StarkInfra route.
+
+It's possible to get a single resource using its id in the path.
+
+```ruby
+require('starkinfra')
+
+example_id = "5155165527080960"
+request = StarkInfra::Request.get(
+    path: "/pix-request/#{example_id}"
+).json
+
+puts request
+```
+
+You can also get the specific resource log,
+
+```ruby
+require('starkinfra')
+
+example_id = "5699165527090460"
+request = StarkInfra::Request.get(
+    path: "/pix-request/log/#{example_id}",
+).json
+
+puts request
+```
+
+This same method will be used to list all created items for the requested resource.
+
+```ruby
+require('starkinfra')
+
+after = "2024-01-01"
+before = "2024-02-01"
+cursor = nil
+
+request = StarkInfra::Request.get(
+    path: '/pix-request/',
+    query: {
+        "after": after,
+        "before": before,
+        "cursor": cursor
+    }
+).json
+
+puts request
+```
+
+To list logs, you will use the same logic as for getting a single log.
+
+```ruby
+require('starkinfra')
+
+after = "2024-01-01"
+before = "2024-02-01"
+cursor = nil
+
+request = StarkInfra::Request.get(
+    path: '/pix-request/log',
+    query: {
+        "after": after,
+        "before": before,
+        "cursor": cursor
+    }
+).json
+
+puts request
+```
+
+## POST
+
+You can perform a POST request to any StarkInfra route.
+
+This will create an object for each item sent in your request
+
+**Note**: It's not possible to create multiple resources simultaneously. You need to send separate requests if you want to create multiple resources, such as invoices and boletos.
+
+```ruby
+require('starkinfra')
+
+data = {
+    "holders": [
+        {
+            "name": "Jaime Lannister",
+            "externalId": "my_external_id",
+            "taxId": "012.345.678-90"
+        }
+    ]
+}
+request = StarkInfra::Request.post(
+    path: "/issuing-holder",
+    payload: data,
+).json
+puts request
+```
+
+## PATCH
+
+You can perform a PATCH request to any StarkInfra route.
+
+It's possible to update a single item of a StarkInfra resource.
+```ruby
+require('starkinfra')
+
+example_id = "5155165527080960"
+request = StarkInfra::Request.patch(
+    path: "/issuing-holder/#{example_id}",
+    body: {
+        "tags": ["Arya", "Stark"]
+    }
+).json
+puts request
+```
+
+## DELETE
+
+You can perform a DELETE request to any StarkInfra route.
+
+It's possible to delete items of StarkInfra resource.
+```ruby
+require('starkinfra')
+
+example_id = "5155165527080960"
+request = StarkInfra::Request.delete(
+    path="/issuing-holder/#{example_id}"
+).json
+puts request        
 ```
 
 # Handling errors

@@ -126,20 +126,6 @@ module StarkInfra
         )
       end
 
-      def self.post_raw(path:, payload:, user:, **query)
-        return StarkCore::Utils::Rest.post_raw(
-          host: StarkInfra::HOST,
-          sdk_version: StarkInfra::SDK_VERSION,
-          user: user ? user : StarkInfra.user,
-          path: path,
-          payload: payload,
-          api_version: StarkInfra::API_VERSION,
-          language: StarkInfra.language,
-          timeout: StarkInfra.timeout,
-          **query,
-        )
-      end
-
       def self.delete_id(resource_name:, resource_maker:, user:, id:)
         return StarkCore::Utils::Rest.delete_id(
           resource_name: resource_name,
@@ -166,6 +152,85 @@ module StarkInfra
           timeout: StarkInfra.timeout,
           id: id,
           **payload
+        )
+      end
+
+      def self.get_raw(path:, prefix: nil, raiseException: nil, user: nil, query: nil)
+        return StarkCore::Utils::Rest.get_raw(
+          host: StarkInfra::HOST,
+          sdk_version: StarkInfra::SDK_VERSION,
+          user: user ? user : StarkInfra.user,
+          path: path,
+          api_version: StarkInfra::API_VERSION,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout, 
+          prefix: prefix,
+          raiseException: raiseException,
+          query: query
+        )
+      end
+
+      def self.post_raw(path:, payload:, query: nil, prefix: nil, raiseException: nil, user:)
+
+        return StarkCore::Utils::Rest.post_raw(
+          host: StarkInfra::HOST,
+          sdk_version: StarkInfra::SDK_VERSION,
+          user: user ? user : StarkInfra.user,
+          path: path,
+          payload: payload,
+          api_version: StarkInfra::API_VERSION,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout,
+          query: query,
+          prefix: prefix,
+          raiseException: raiseException
+        )
+      end
+
+      def self.patch_raw(path:, payload:, query: nil, prefix: nil, raiseException: nil, user: nil)
+        return StarkCore::Utils::Rest.patch_raw(
+          host: StarkInfra::HOST,
+          sdk_version: StarkInfra::SDK_VERSION,
+          user: user ? user : StarkInfra.user,
+          path: path,
+          payload: payload,
+          api_version: StarkInfra::API_VERSION,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout,
+          query: query,
+          prefix: prefix,
+          raiseException: raiseException
+        )
+      end
+
+      def self.put_raw(path:, payload:, query: nil, prefix: nil, raiseException: nil, user: nil)
+        return StarkCore::Utils::Rest.put_raw(
+          host: StarkInfra::HOST,
+          sdk_version: StarkInfra::SDK_VERSION,
+          user: user ? user : StarkInfra.user,
+          path: path,
+          payload: payload,
+          api_version: StarkInfra::API_VERSION,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout,
+          query: query,
+          prefix: prefix,
+          raiseException: raiseException
+        )
+      end
+
+      def self.delete_raw(path:, query: nil, prefix: nil, raiseException: nil, user: nil)
+        return StarkCore::Utils::Rest.delete_raw(
+          host: StarkInfra::HOST,
+          sdk_version: StarkInfra::SDK_VERSION,
+          user: user ? user : StarkInfra.user,
+          path: path,
+          api_version: StarkInfra::API_VERSION,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout,
+          query: query,
+          prefix: prefix,
+          raiseException: raiseException
         )
       end
     end
