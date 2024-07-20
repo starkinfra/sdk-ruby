@@ -60,6 +60,7 @@ require_relative('staticbrcode/staticbrcode')
 require_relative('webhook/webhook')
 require_relative('event/event')
 require_relative('event/attempt')
+require_relative('request/request')
 
 # SDK to facilitate Ruby integrations with Stark Infra
 module StarkInfra
