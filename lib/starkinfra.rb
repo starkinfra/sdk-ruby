@@ -66,7 +66,7 @@ require_relative('request/request')
 module StarkInfra
 
   API_VERSION = 'v2'
-  SDK_VERSION = '0.5.0'
+  SDK_VERSION = '0.5.1'
   HOST = "infra"
   public_constant :API_VERSION, :SDK_VERSION, :HOST;
 

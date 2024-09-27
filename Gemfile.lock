@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    starkinfra (0.5.0)
+    starkinfra (0.5.1)
       starkcore (~> 0.2.2)
 
 GEM
