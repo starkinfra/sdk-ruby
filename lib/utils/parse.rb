@@ -13,7 +13,7 @@ module StarkInfra
           resource: resource,
           user: user ? user : StarkInfra.user,
           language: StarkInfra.language,
-          timeout: StarkInfra.language,
+          timeout: StarkInfra.timeout,
           key: key
         )
       end
@@ -27,7 +27,7 @@ module StarkInfra
           host: StarkInfra::HOST,
           user: user ? user : StarkInfra.user,
           language: StarkInfra.language,
-          timeout: StarkInfra.language
+          timeout: StarkInfra.timeout
         )
       end
     end

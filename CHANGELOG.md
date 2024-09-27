@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Fixed
+- timeout and resource parameter
 
 ## [0.5.0] - 2024-07-20
 ### Added
