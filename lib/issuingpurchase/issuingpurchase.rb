@@ -214,12 +214,12 @@ module StarkInfra
     # ## Return:
     # - Parsed IssuingPurchase object
     def self.parse(content:, signature:, user: nil)
-      StarkCore::Utils::Parse.parse_and_verify(
+      StarkInfra::Utils::Parse.parse_and_verify(
         content: content,
         signature: signature,
         user: user,
         key: nil,
-        **resource
+        resource: resource
       )
     end
 
