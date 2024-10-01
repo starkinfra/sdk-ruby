@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Fixed
+- camelCase files
 
 ## [0.5.1] - 2024-09-27
 ### Fixed

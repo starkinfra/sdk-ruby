@@ -5,8 +5,8 @@ require('starkcore')
 require_relative('../error')
 require_relative('../utils/rest')
 require_relative('../utils/parse')
-require_relative('../pixrequest/log')
-require_relative('../pixreversal/log')
+require_relative('../pix_request/log')
+require_relative('../pix_reversal/log')
 
 module StarkInfra
   # # Webhook Event object
