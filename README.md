@@ -46,6 +46,8 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixDirector](#create-a-pixdirector): Create a Pix Director
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
+    - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
+    - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
     - [PixDomain](#query-pixdomains): View registered SPI participants certificates
     - [StaticBrcode](#create-staticbrcodes): Create static Pix BR codes
     - [DynamicBrcode](#create-dynamicbrcodes): Create dynamic Pix BR codes
@@ -1962,6 +1964,248 @@ log = StarkInfra::PixChargeback::Log.get('5155165527080960')
 puts log
 ```
 
+### Create PixPullSubscriptions
+
+A PixPullSubscription is a recurring Pix debit authorization. It defines the frequency, amount,
+and required payer authorizations for a series of Pix debits to be pulled from the sender by the
+receiver.
+
+```ruby
+require('starkinfra')
+
+subscriptions = StarkInfra::PixPullSubscription.create([
+  StarkInfra::PixPullSubscription.new(
+    bacen_id: 'RR2410301809A4Z5IGo5PgF',
+    external_id: 'my-internal-id-1234567',
+    installment_start: '2026-06-01T00:00:00+00:00',
+    interval: 'month',
+    receiver_name: 'Edward Stark',
+    receiver_tax_id: '20.018.183/0001-80',
+    sender_account_number: '876543-2',
+    sender_bank_code: '20018183',
+    sender_branch_code: '1357-9',
+    sender_tax_id: '01234567890',
+    type: 'paymentAndOrQrcode',
+    amount: 1234,
+    description: 'Monthly subscription'
+  )
+])
+
+subscriptions.each do |subscription|
+  puts subscription
+end
+```
+
+### Query PixPullSubscriptions
+
+You can query multiple Pix Pull Subscriptions according to filters.
+
+```ruby
+require('starkinfra')
+
+subscriptions = StarkInfra::PixPullSubscription.query(
+  limit: 10,
+  after: '2026-01-01',
+  before: '2026-06-01',
+  status: ['active'],
+  tags: ['monthly']
+)
+
+subscriptions.each do |subscription|
+  puts subscription
+end
+```
+
+### Get a PixPullSubscription
+
+After its creation, information on a PixPullSubscription may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+subscription = StarkInfra::PixPullSubscription.get('5155165527080960')
+
+puts subscription
+```
+
+### Update a PixPullSubscription
+
+Update a PixPullSubscription with an arbitrary patch payload.
+
+```ruby
+require('starkinfra')
+
+subscription = StarkInfra::PixPullSubscription.update(
+  '5155165527080960',
+  patch_data: { status: 'approved' }
+)
+
+puts subscription
+```
+
+### Cancel a PixPullSubscription
+
+Cancel a specific PixPullSubscription by passing its id and a reason. The reason is sent as a
+query parameter.
+
+```ruby
+require('starkinfra')
+
+subscription = StarkInfra::PixPullSubscription.cancel(
+  '5155165527080960',
+  reason: 'accountClosed'
+)
+
+puts subscription
+```
+
+### Query PixPullSubscription logs
+
+You can query PixPullSubscription logs to better understand subscription life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixPullSubscription::Log.query(
+  limit: 50,
+  ids: ['5729405850615808'],
+  after: '2026-01-01',
+  before: '2026-06-01',
+  types: ['created', 'approved'],
+  subscription_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixPullSubscription log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixPullSubscription::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create PixPullRequests
+
+You can create PixPullRequests to trigger the automatic debit linked to an active PixPullSubscription. Each request references the parent subscription via subscription_id.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::PixPullRequest.create([
+  StarkInfra::PixPullRequest.new(
+    amount: 11234,
+    due: '2020-10-28T17:59:26.249976+00:00',
+    end_to_end_id: 'E00002649202201172211u34srod19le',
+    receiver_account_number: '876543-2',
+    receiver_account_type: 'checking',
+    receiver_bank_code: '20018183',
+    reconciliation_id: '123456',
+    subscription_id: '5656565656565656',
+    description: 'Monthly subscription charge',
+    tags: ['employees', 'monthly']
+  )
+])
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Query PixPullRequests
+
+You can query multiple PixPullRequests according to filters.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::PixPullRequest.query(
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Get a PixPullRequest
+
+After its creation, information on a PixPullRequest may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::PixPullRequest.get('5656565656565656')
+
+puts request
+```
+
+### Update a PixPullRequest
+
+Update a PixPullRequest with an arbitrary patch payload. Patch accepts at minimum status ('scheduled' or 'denied') and a conditionally-required reason.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::PixPullRequest.update(
+  '5656565656565656',
+  patch_data: { status: 'denied', reason: 'amountNotAllowed' }
+)
+puts request
+```
+
+### Cancel a PixPullRequest
+
+Cancel a specific PixPullRequest by passing its id and a reason. The reason is sent as a query parameter, not in the request body.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::PixPullRequest.cancel(
+  '5656565656565656',
+  reason: 'receiverUserRequested'
+)
+puts request
+```
+
+### Query PixPullRequest logs
+
+You can query PixPullRequest logs to better understand request life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixPullRequest::Log.query(
+  limit: 50,
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixPullRequest log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixPullRequest::Log.get('5656565656565656')
+
+puts log
+```
+
 ### Query PixDomains
 
 Here you can list all Pix Domains registered at the Brazilian Central Bank. The Pix Domain object displays the domain
@@ -2206,6 +2450,8 @@ previews.each do |preview|
   puts preview
 end
 ```
+
+When the previewed BR Code carries recurring-debit metadata, `preview.subscription` is populated with a `StarkInfra::BrcodePreview::Subscription` snapshot; otherwise it is `nil`.
 
 ## Lending
 

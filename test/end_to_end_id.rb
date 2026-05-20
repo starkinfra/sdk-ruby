@@ -27,5 +27,10 @@ module StarkInfra
 
       end_to_end_ids[0]
     end
+
+    def self.pixpullrequest_end_to_end_id(ispb)
+      chars = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
+      'E' + ispb + Time.now.utc.strftime('%Y%m%d%H%M') + (0...11).map { chars[rand(chars.length)] }.join
+    end
   end
 end

@@ -15,6 +15,11 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ## [Unreleased]
 ### Added
 - BusinessIdentity and BusinessAttachment resources
+- BrcodePreview::Subscription sub-resource
+- PixPullSubscription resource
+- PixPullRequest resource
+### Changed
+- minimum required Ruby version to 3.0
 ### Fixed
 - camelCase files
 
