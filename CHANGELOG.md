@@ -13,6 +13,10 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- IndividualAccountRequest resource
+- IndividualAccountRequest::Address sub-resource
+- IndividualAccountAttachment resource
 ### Fixed
 - camelCase files
 

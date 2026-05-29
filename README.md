@@ -57,6 +57,8 @@ This SDK version is compatible with the Stark Infra API v2.
   - [Identity](#identity)
     - [IndividualIdentity](#create-individualidentities): Create individual identities
     - [IndividualDocument](#create-individualdocuments): Create individual documents
+    - [IndividualAccountRequest](#create-individualaccountrequests): Open individual account requests
+    - [IndividualAccountAttachment](#create-individualaccountattachments): Attach documents to account requests
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -2735,6 +2737,193 @@ You can also get a specific log by its id.
 require('starkinfra')
 
 log = StarkInfra::IndividualDocument::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create IndividualAccountRequests
+
+You can open an account request for an individual by passing their identifying data, structured address and monthly income.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IndividualAccountRequest.create([
+  StarkInfra::IndividualAccountRequest.new(
+    name: 'Tony Stark',
+    tax_id: '012.345.678-90',
+    income: 1000000,
+    address: StarkInfra::IndividualAccountRequest::Address.new(
+      street: 'Rua do Estilo Barroco',
+      number: '648',
+      neighborhood: 'Santo Amaro',
+      city: 'SP',
+      state: 'SP',
+      zip_code: '05724005'
+    ),
+    tags: ['employees', 'monthly']
+  )
+])
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Query IndividualAccountRequests
+
+You can query multiple individual account requests according to filters.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::IndividualAccountRequest.query(
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Get an IndividualAccountRequest
+
+After its creation, information on an individual account request may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::IndividualAccountRequest.get('5155165527080960')
+
+puts request
+```
+
+### Update an IndividualAccountRequest
+
+You can update an individual account request by passing its id and the fields to replace.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::IndividualAccountRequest.update(
+  '5155165527080960',
+  name: 'Tony Stark Updated'
+)
+
+puts request
+```
+
+### Query IndividualAccountRequest logs
+
+You can query individual account request logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualAccountRequest::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualAccountRequest log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualAccountRequest::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create IndividualAccountAttachments
+
+You can attach supporting documents to an individual account request by passing the raw image bytes and a MIME content type.
+
+```ruby
+require('starkinfra')
+
+attachments = StarkInfra::IndividualAccountAttachment.create([
+  StarkInfra::IndividualAccountAttachment.new(
+    type: 'identity-front',
+    content: File.binread('identity-front.png'),
+    content_type: 'image/png',
+    account_request_id: '5656565656565656'
+  )
+])
+
+attachments.each do |attachment|
+  puts attachment
+end
+```
+
+### Query IndividualAccountAttachments
+
+You can query multiple individual account attachments according to filters.
+
+```ruby
+require('starkinfra')
+
+attachments = StarkInfra::IndividualAccountAttachment.query(
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+attachments.each do |attachment|
+  puts attachment
+end
+```
+
+### Get an IndividualAccountAttachment
+
+After its creation, information on an individual account attachment may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+attachment = StarkInfra::IndividualAccountAttachment.get('5155165527080960')
+
+puts attachment
+```
+
+### Cancel an IndividualAccountAttachment
+
+You can delete an individual account attachment by passing its id.
+
+```ruby
+require('starkinfra')
+
+attachment = StarkInfra::IndividualAccountAttachment.cancel('5155165527080960')
+
+puts attachment
+```
+
+### Query IndividualAccountAttachment logs
+
+You can query individual account attachment logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IndividualAccountAttachment::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IndividualAccountAttachment log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IndividualAccountAttachment::Log.get('5155165527080960')
 
 puts log
 ```
