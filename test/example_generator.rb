@@ -60,6 +60,14 @@ class ExampleGenerator
     )
   end
 
+  def self.pixfraud_example
+    StarkInfra::PixFraud.new(
+      external_id: SecureRandom.base64,
+      type: 'scam',
+      tax_id: '01234567890'
+    )
+  end
+
   def self.pixkey_example
     StarkInfra::PixKey.new(
       account_created: '2022-03-01',

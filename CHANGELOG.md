@@ -19,6 +19,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - PixPullSubscription resource
 - PixPullRequest resource
 - IssuingStockRule resource
+- PixFraud resource
 ### Changed
 - minimum required Ruby version to 3.0
 ### Fixed

@@ -46,6 +46,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixClaim](#create-a-pixclaim): Claim a Pix Key
     - [PixDirector](#create-a-pixdirector): Create a Pix Director
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
+    - [PixFraud](#create-pixfrauds): Create Pix Fraud reports
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
     - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
     - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
@@ -1925,6 +1926,103 @@ require('starkinfra')
 log = StarkInfra::PixInfraction::Log.get('5155165527080960')
 
 puts log 
+```
+
+### Create PixFrauds
+
+Pix Fraud reports are used to report a PixKey or taxId to the Central Bank when a fraud has been confirmed.
+
+```ruby
+require('starkinfra')
+
+frauds = StarkInfra::PixFraud.create([
+  StarkInfra::PixFraud.new(
+    external_id: 'E20018183202201201450u34sDGd19lz',
+    type: 'scam',
+    tax_id: '01234567890'
+  )
+])
+
+frauds.each do |fraud|
+  puts fraud
+end
+```
+
+### Query PixFrauds
+
+You can query multiple fraud reports according to filters.
+
+```ruby
+require('starkinfra')
+
+frauds = StarkInfra::PixFraud.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: ['registered'],
+  ids: ['5155165527080960']
+)
+
+frauds.each do |fraud|
+  puts fraud
+end
+```
+
+### Get a PixFraud
+
+After its creation, information on a Pix fraud may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+fraud = StarkInfra::PixFraud.get('5155165527080960')
+
+puts fraud
+```
+
+### Cancel a PixFraud
+
+Cancel a specific Pix Fraud using its id.
+
+```ruby
+require('starkinfra')
+
+fraud = StarkInfra::PixFraud.cancel('5155165527080960')
+
+puts fraud
+```
+
+### Query PixFraud logs
+
+You can query fraud report logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixFraud::Log.query(
+  limit: 50,
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['registered'],
+  fraud_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixFraud log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixFraud::Log.get('5155165527080960')
+
+puts log
 ```
 
 ### Create PixChargebacks
