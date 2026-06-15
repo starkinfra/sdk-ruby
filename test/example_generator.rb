@@ -621,4 +621,18 @@ class ExampleGenerator
       'updated' => '2020-04-10T10:30:00+00:00'
     }
   end
+  
+  def self.issuing_stock_rule_example
+    stock = StarkInfra::IssuingStock.query(limit: 1).to_a[0]
+
+    rule = StarkInfra::IssuingStockRule.new(
+      minimum_balance: 10_000,
+      stock_id: stock.id,
+      tags: %w[card corporate],
+      emails: ['john.doe@enterprise.com'],
+      phones: ['+5511912345678']
+    )
+
+    return rule
+  end
 end

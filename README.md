@@ -29,6 +29,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [EmbossingKit](#query-issuingembossingkits): View your current embossing kits
     - [Stock](#query-issuingstocks): View your current stock of a certain IssuingDesign linked to an Embosser on the workspace
     - [Restock](#create-issuingrestocks): Create restock orders of a specific IssuingStock object
+    - [StockRule](#create-issuingstockrules): Create notification rules attached to an IssuingStock object
     - [EmbossingRequest](#create-issuingembossingrequests): Create embossing requests
     - [Purchases](#process-purchase-authorizations): Authorize and view your past purchases
     - [Invoices](#create-issuinginvoices): Add money to your issuing balance
@@ -738,6 +739,83 @@ require('starkinfra')
 log = StarkInfra::IssuingRestock::Log.get('6310318875607040')
 
 puts log
+```
+
+### Create IssuingStockRules
+
+You can create notification rules attached to a specific IssuingStock.
+
+```ruby
+require('starkinfra')
+
+rules = StarkInfra::IssuingStockRule.create(
+  rules: [
+    StarkInfra::IssuingStockRule.new(
+      minimum_balance: 10000,
+      stock_id: '5136459887542272',
+      tags: ['card', 'corporate'],
+      emails: ['john.doe@enterprise.com'],
+      phones: ['+5511912345678']
+    )
+  ]
+)
+
+rules.each do |rule|
+  puts rule
+end
+```
+
+### Query IssuingStockRules
+
+You can get a list of created stock rules given some filters.
+
+```ruby
+require('starkinfra')
+
+rules = StarkInfra::IssuingStockRule.query(
+  after: '2022-01-01',
+  before: '2022-01-20'
+)
+
+rules.each do |rule|
+  puts rule
+end
+```
+
+### Get an IssuingStockRule
+
+After its creation, information on a stock rule may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+rule = StarkInfra::IssuingStockRule.get('5664445921492992')
+
+puts rule
+```
+
+### Update an IssuingStockRule
+
+You can update a specific IssuingStockRule by its id.
+
+```ruby
+require('starkinfra')
+
+rule = StarkInfra::IssuingStockRule.update('5664445921492992', minimum_balance: 20000)
+
+puts rule
+```
+
+### Cancel an IssuingStockRule
+
+You can cancel a specific IssuingStockRule by its id.
+
+```ruby
+require('starkinfra')
+
+rule = StarkInfra::IssuingStockRule.cancel('5664445921492992')
+
+puts rule
 ```
 
 ### Create IssuingEmbossingRequests
