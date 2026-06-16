@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require('starkcore')
 require_relative('../utils/rest')
 
@@ -17,7 +18,7 @@ module StarkInfra
   # - key_id [string]: Pix Key to be investigated. ex: "+5511989898989", "11.222.333/0001-00", "valid@sandbox.com"
   #
   # ## Parameters (optional):
-  # - tags [list of strings, default []]: list of strings for reference when searching for PixKeyHolmes. ex: ["travel", "food"]
+  # - tags [list of strings, default nil]: list of strings for reference when searching for PixKeyHolmes. ex: ["travel", "food"]
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixKeyHolmes is created. ex: "5656565656565656"
@@ -62,7 +63,7 @@ module StarkInfra
     # - limit [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
     # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-    # - status [list of strings, default nil]: filter for status of retrieved objects. ex: "created", "solving", "solved", "failed"
+    # - status [list of strings, default nil]: filter for status of retrieved objects. The live API accepts only "solved" or "solving" as filter values. ex: ["solved", "solving"]
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ["travel", "food"]
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -94,7 +95,7 @@ module StarkInfra
     # - limit [integer, default 100]: maximum number of objects to be retrieved. Max = 100. ex 35
     # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
     # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
-    # - status [list of strings, default nil]: filter for status of retrieved objects. ex: "created", "solving", "solved", "failed"
+    # - status [list of strings, default nil]: filter for status of retrieved objects. The live API accepts only "solved" or "solving" as filter values. ex: ["solved", "solving"]
     # - tags [list of strings, default nil]: tags to filter retrieved objects. ex: ["travel", "food"]
     # - ids [list of strings, default nil]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call

@@ -39,6 +39,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Enums](#issuing-enums): Query enums related to the issuing purchases, such as merchant categories, countries and card purchase methods
   - [Pix](#pix)
     - [PixRequests](#create-pixrequests): Create Pix transactions
+    - [PixInternalTransactionReports](#create-pixinternaltransactionreports): Report internal (off-SPI) transactions to the Central Bank
     - [PixReversals](#create-pixreversals): Reverse Pix transactions
     - [PixBalance](#get-your-pixbalance): View your account balance
     - [PixStatement](#create-a-pixstatement): Request your account statement
@@ -1373,6 +1374,95 @@ You can also get a specific log by its id.
 require('starkinfra')
 
 log = StarkInfra::PixRequest::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create PixInternalTransactionReports
+
+Report transactions that happen internally — outside of the SPI — to the Central Bank so they are reflected in the participant's statements.
+
+```ruby
+require('starkinfra')
+
+reports = StarkInfra::PixInternalTransactionReport.create([
+  StarkInfra::PixInternalTransactionReport.new(
+    amount: 1234,
+    created: '2022-02-16T17:23:53.980238+00:00',
+    end_to_end_id: 'E00000665202201201213u34sav898j',
+    method: 'manual',
+    reference_type: 'request',
+    sender_account_number: '00000-0',
+    sender_branch_code: '0000',
+    sender_account_type: 'checking',
+    sender_bank_code: '00000665',
+    sender_tax_id: '20.018.183/0001-80',
+    receiver_account_number: '00000-1',
+    receiver_branch_code: '0001',
+    receiver_account_type: 'checking',
+    receiver_bank_code: '18236120',
+    receiver_tax_id: '45.987.245/0001-92'
+  )
+])
+
+reports.each do |report|
+  puts report
+end
+```
+
+### Query PixInternalTransactionReports
+
+You can query multiple PixInternalTransactionReports according to filters.
+
+```ruby
+require('starkinfra')
+
+reports = StarkInfra::PixInternalTransactionReport.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-03-01',
+  status: ['success']
+)
+
+reports.each do |report|
+  puts report
+end
+```
+
+### Get a PixInternalTransactionReport
+
+You can get a specific PixInternalTransactionReport by its id.
+
+```ruby
+require('starkinfra')
+
+report = StarkInfra::PixInternalTransactionReport.get('5656565656565656')
+
+puts report
+```
+
+### Query PixInternalTransactionReport logs
+
+You can query PixInternalTransactionReport logs to better understand the report life cycle.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixInternalTransactionReport::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixInternalTransactionReport log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixInternalTransactionReport::Log.get('5656565656565656')
 
 puts log
 ```

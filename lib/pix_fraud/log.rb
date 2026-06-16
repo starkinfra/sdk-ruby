@@ -53,7 +53,7 @@ module StarkInfra
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter retrieved objects by their types. ex: ['created', 'failed', 'registered', 'canceled']
-      # - fraud_ids [list of strings, default nil]: list of PixFraud ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - fraud_ids [list of strings, default nil]: list of PixFraud ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - ids [list of strings, default nil]: Log ids to filter PixFraud Logs. ex: ['5656565656565656']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #
@@ -85,7 +85,7 @@ module StarkInfra
       # - after [Date or string, default nil]: date filter for objects created only after specified date. ex: Date.new(2020, 3, 10)
       # - before [Date or string, default nil]: date filter for objects created only before specified date. ex: Date.new(2020, 3, 10)
       # - types [list of strings, default nil]: filter retrieved objects by their types. ex: ['created', 'failed', 'registered', 'canceled']
-      # - fraud_ids [list of strings, default nil]: list of PixFraud ids to filter retrieved objects. ex: %w[5656565656565656 4545454545454545]
+      # - fraud_ids [list of strings, default nil]: list of PixFraud ids to filter retrieved objects. ex: ['5656565656565656', '4545454545454545']
       # - ids [list of strings, default nil]: Log ids to filter PixFraud Logs. ex: ['5656565656565656']
       # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
       #

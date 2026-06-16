@@ -50,7 +50,7 @@ module StarkInfra
     # Send a list of PixFraud objects for creation in the Stark Infra API
     #
     # ## Parameters (required):
-    # - frauds [list of PixFraud objects]: list of PixFraud objects to be created in the API. ex: [PixFraud.new()]
+    # - frauds [list of PixFraud objects]: list of PixFraud objects to be created in the API.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
