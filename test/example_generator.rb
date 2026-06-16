@@ -455,6 +455,13 @@ class ExampleGenerator
     )
   end
 
+  def self.pix_key_holmes_example
+    StarkInfra::PixKeyHolmes.new(
+      key_id: 'valid@sandbox.com',
+      tags: ["SDK Ruby Test"]
+    )
+  end
+
   def self.pixpullsubscription_example
     bank_code = BankCode.bank_code
     StarkInfra::PixPullSubscription.new(

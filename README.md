@@ -47,6 +47,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixDirector](#create-a-pixdirector): Create a Pix Director
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
     - [PixFraud](#create-pixfrauds): Create Pix Fraud reports
+    - [PixKeyHolmes](#create-pixkeyholmes): Investigate the registration status of a Pix Key
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
     - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
     - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
@@ -2023,6 +2024,45 @@ require('starkinfra')
 log = StarkInfra::PixFraud::Log.get('5155165527080960')
 
 puts log
+```
+
+### Create PixKeyHolmes
+
+A PixKeyHolmes investigates the registration status of a Pix Key in the Central Bank's DICT.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::PixKeyHolmes.create([
+  StarkInfra::PixKeyHolmes.new(
+    key_id: 'valid@sandbox.com',
+    tags: ['travel', 'food']
+  )
+])
+
+holmes.each do |sherlock|
+  puts sherlock
+end
+```
+
+### Query PixKeyHolmes
+
+You can query multiple PixKeyHolmes according to filters.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::PixKeyHolmes.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: ['solved'],
+  ids: ['5155165527080960']
+)
+
+holmes.each do |sherlock|
+  puts sherlock
+end
 ```
 
 ### Create PixChargebacks
