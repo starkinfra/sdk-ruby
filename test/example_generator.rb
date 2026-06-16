@@ -47,17 +47,32 @@ class ExampleGenerator
     pix_request = StarkInfra::PixRequest.query(limit: 1).to_a[0]
     StarkInfra::PixInfraction.new(
       reference_id: pix_request.end_to_end_id,
-      type: 'fraud',
-      description: 'ruby tests'
+      type: 'reversal',
+      description: 'ruby tests',
+      operator_email: 'ruby-sdk@starkinfra.com',
+      operator_phone: '+5511999999999'
     )
   end
 
-  def self.pixchargeback_example
-    pix_request = StarkInfra::PixRequest.query(limit: 1).to_a[0]
+  def self.pixchargeback_example(index = 0)
+    pix_request = StarkInfra::PixRequest.query(limit: index + 1).to_a[index]
+    return nil if pix_request.nil?
+
     StarkInfra::PixChargeback.new(
       amount: 1,
       reference_id: pix_request.end_to_end_id,
-      reason: 'flaw'
+      reason: 'flaw',
+      description: 'ruby tests chargeback description'
+    )
+  end
+
+  def self.pixdispute_example
+    pix_request = StarkInfra::PixRequest.query(limit: 1).to_a[0]
+    StarkInfra::PixDispute.new(
+      reference_id: pix_request.end_to_end_id,
+      method: 'scam',
+      operator_email: 'ruby-sdk@starkinfra.com',
+      operator_phone: '+5511999999999'
     )
   end
 

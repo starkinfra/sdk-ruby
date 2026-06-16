@@ -50,6 +50,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixFraud](#create-pixfrauds): Create Pix Fraud reports
     - [PixKeyHolmes](#create-pixkeyholmes): Investigate the registration status of a Pix Key
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
+    - [PixDispute](#create-pixdisputes): Create Pix Dispute investigations
     - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
     - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
     - [PixDomain](#query-pixdomains): View registered SPI participants certificates
@@ -1918,6 +1919,8 @@ infractions = StarkInfra::PixInfraction.create([
   StarkInfra::PixInfraction.new(
     reference_id: 'E20018183202201201450u34sDGd19lz',
     type: 'fraud',
+    operator_email: 'ruby-sdk@starkinfra.com',
+    operator_phone: '+5511999999999'
   )
 ])
 
@@ -2266,6 +2269,103 @@ You can also get a specific log by its id.
 require('starkinfra')
 
 log = StarkInfra::PixChargeback::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create PixDisputes
+
+A Pix Dispute requests an investigation of a Pix transaction suspected of fraud, mapping the network of linked transactions for analysis.
+
+```ruby
+require('starkinfra')
+
+disputes = StarkInfra::PixDispute.create([
+  StarkInfra::PixDispute.new(
+    reference_id: 'E20018183202201201450u34sDGd19lz',
+    method: 'scam',
+    operator_email: 'ruby-sdk@starkinfra.com',
+    operator_phone: '+5511999999999'
+  )
+])
+
+disputes.each do |dispute|
+  puts dispute
+end
+```
+
+### Query PixDisputes
+
+You can query multiple Pix disputes according to filters.
+
+```ruby
+require('starkinfra')
+
+disputes = StarkInfra::PixDispute.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: ['created'],
+  ids: ['5155165527080960']
+)
+
+disputes.each do |dispute|
+  puts dispute
+end
+```
+
+### Get a PixDispute
+
+After its creation, information on a Pix Dispute may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+dispute = StarkInfra::PixDispute.get('5155165527080960')
+
+puts dispute
+```
+
+### Cancel a PixDispute
+
+Cancel a specific Pix Dispute using its id.
+
+```ruby
+require('starkinfra')
+
+dispute = StarkInfra::PixDispute.cancel('5155165527080960')
+
+puts dispute
+```
+
+### Query PixDispute logs
+
+You can query Pix dispute logs to better understand Pix dispute life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixDispute::Log.query(
+  limit: 50,
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['analysed'],
+  dispute_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixDispute log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixDispute::Log.get('5155165527080960')
 
 puts log
 ```

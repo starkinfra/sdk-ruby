@@ -33,15 +33,25 @@ module StarkInfra
   # - result [string]: result after the analysis of the PixChargeback by the receiving party. Options: 'rejected', 'accepted', 'partiallyAccepted'
   # - flow [string]: direction of the Pix Chargeback. Options: 'in' for received chargebacks, 'out' for chargebacks you requested
   # - status [string]: current PixChargeback status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
+  # - dispute_id [string]: id of the dispute associated with the PixChargeback. ex: '5656565656565656'
+  # - is_monitoring_required [bool]: indicates if monitoring is required for this chargeback. ex: true
+  # - reversal_account_number [string]: account number for the reversal transaction. ex: '876543-2'
+  # - reversal_account_type [string]: account type for the reversal transaction. ex: 'checking'
+  # - reversal_bank_code [string]: bank code for the reversal transaction. ex: '20018183'
+  # - reversal_branch_code [string]: branch code for the reversal transaction. ex: '1357-9'
+  # - reversal_tax_id [string]: tax ID for the reversal transaction. ex: '01234567890'
   # - created [DateTime]: creation datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixChargeback < StarkCore::Utils::Resource
     attr_reader :amount, :reference_id, :reason, :description, :tags, :id, :analysis, :sender_bank_code,
-                :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :flow, :status, :created, :updated
+                :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :flow, :status,
+                :dispute_id, :is_monitoring_required, :reversal_account_number, :reversal_account_type,
+                :reversal_bank_code, :reversal_branch_code, :reversal_tax_id, :created, :updated
     def initialize(
       amount:, reference_id:, reason:, description: nil, tags: nil, id: nil, analysis: nil, sender_bank_code: nil,
       receiver_bank_code: nil, rejection_reason: nil, reversal_reference_id: nil, result: nil, flow: nil, status: nil,
-      created: nil, updated: nil
+      dispute_id: nil, is_monitoring_required: nil, reversal_account_number: nil, reversal_account_type: nil,
+      reversal_bank_code: nil, reversal_branch_code: nil, reversal_tax_id: nil, created: nil, updated: nil
     )
       super(id)
       @amount = amount
@@ -57,6 +67,13 @@ module StarkInfra
       @result = result
       @flow = flow
       @status = status
+      @dispute_id = dispute_id
+      @is_monitoring_required = is_monitoring_required
+      @reversal_account_number = reversal_account_number
+      @reversal_account_type = reversal_account_type
+      @reversal_bank_code = reversal_bank_code
+      @reversal_branch_code = reversal_branch_code
+      @reversal_tax_id = reversal_tax_id
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
@@ -226,6 +243,13 @@ module StarkInfra
             result: json['result'],
             flow: json['flow'],
             status: json['status'],
+            dispute_id: json['dispute_id'],
+            is_monitoring_required: json['is_monitoring_required'],
+            reversal_account_number: json['reversal_account_number'],
+            reversal_account_type: json['reversal_account_type'],
+            reversal_bank_code: json['reversal_bank_code'],
+            reversal_branch_code: json['reversal_branch_code'],
+            reversal_tax_id: json['reversal_tax_id'],
             created: json['created'],
             updated: json['updated']
           )

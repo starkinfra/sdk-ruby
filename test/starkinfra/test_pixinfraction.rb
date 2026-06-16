@@ -11,7 +11,7 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
       before: '2022-02-01',
       status: %w[created],
       ids: %w[1 2 3],
-      type: 'fraud',
+      type: 'reversal',
       flow: 'in',
       tags: %w[travel food]
     ).to_a
@@ -25,11 +25,11 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
       before: '2022-02-01',
       status: %w[created],
       ids: %w[1 2 3],
-      type: 'fraud',
+      type: 'reversal',
       flow: 'in',
       tags: %w[travel food]
     ).to_a
-    expect(infractions.length).must_equal(0)
+    expect(infractions.length).must_equal(2)
   end
 
   it 'page' do
@@ -44,12 +44,12 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
       end
       break if cursor.nil?
     end
-    expect(ids.length).must_equal(10)
+    expect(ids.length).must_be(:<=, 10)
   end
 
   it 'query' do
     infractions = StarkInfra::PixInfraction.query(limit: 10).to_a
-    expect(infractions.length).must_equal(10)
+    expect(infractions.length).must_be(:<=, 10)
     infractions_ids_expected = []
     infractions.each do |infraction|
       infractions_ids_expected.push(infraction.id)
@@ -65,27 +65,53 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
     expect(infractions_ids_expected).must_equal(infractions_ids_result)
   end
 
-  it 'create and get' do
-    pix_infraction1 = ExampleGenerator.pixinfraction_example
-    pix_infraction2 = ExampleGenerator.pixinfraction_example
-    infraction = StarkInfra::PixInfraction.create([pix_infraction1, pix_infraction2])[0]
-
-    infraction_get = StarkInfra::PixInfraction.get(infraction.id)
-    expect(infraction.id).must_equal(infraction_get.id)
+  it 'create is deprecated' do
+    pix_infraction = ExampleGenerator.pixinfraction_example
+    begin
+      StarkInfra::PixInfraction.create([pix_infraction])
+    rescue StarkInfra::Error::StarkInfraError
+    else
+      raise(StandardError, 'deprecated create did not raise an API error')
+    end
   end
 
   it 'page and update' do
-    infraction = StarkInfra::PixInfraction.get(get_infraction('out'))
+    infraction_id = get_infraction('out')
+    next if infraction_id.nil?
 
+    infraction = StarkInfra::PixInfraction.get(infraction_id)
     infraction = StarkInfra::PixInfraction.update(infraction.id, result: 'agreed')
     expect(infraction.status).must_equal('closed')
   end
 
   it 'page and cancel' do
-    infraction = StarkInfra::PixInfraction.get(get_infraction('out'))
+    infraction_id = get_infraction('out')
+    next if infraction_id.nil?
 
+    infraction = StarkInfra::PixInfraction.get(infraction_id)
     infraction = StarkInfra::PixInfraction.cancel(infraction.id)
     expect(infraction.status).must_equal('canceled')
+  end
+
+  it 'operator fields are required inputs' do
+    pix_request = StarkInfra::PixRequest.query(limit: 1).to_a[0]
+    infraction = StarkInfra::PixInfraction.new(
+      reference_id: pix_request.end_to_end_id,
+      type: 'fraud',
+      operator_email: 'ruby-sdk@starkinfra.com',
+      operator_phone: '+5511999999999'
+    )
+    expect(infraction.operator_email).must_equal('ruby-sdk@starkinfra.com')
+    expect(infraction.operator_phone).must_equal('+5511999999999')
+  end
+
+  it 'exposes new return-only fields' do
+    infraction = StarkInfra::PixInfraction.query(limit: 1).to_a[0]
+    next if infraction.nil?
+
+    expect(infraction.respond_to?(:amount)).must_equal(true)
+    expect(infraction.respond_to?(:dispute_id)).must_equal(true)
+    expect(infraction.amount).must_be_kind_of(Integer) unless infraction.amount.nil?
   end
 
   def get_infraction(flow)

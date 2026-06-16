@@ -52,6 +52,9 @@ require_relative('pix_chargeback/log')
 require_relative('pix_claim/pix_claim')
 require_relative('pix_claim/log')
 require_relative('pix_director/pix_director')
+require_relative('pix_dispute/pix_dispute')
+require_relative('pix_dispute/transaction')
+require_relative('pix_dispute/log')
 require_relative('pix_domain/pix_domain')
 require_relative('pix_key_holmes/pix_key_holmes')
 require_relative('pix_fraud/pix_fraud')
@@ -76,6 +79,7 @@ require_relative('webhook/webhook')
 require_relative('event/event')
 require_relative('event/attempt')
 require_relative('request/request')
+require_relative('utils/return_id')
 
 # SDK to facilitate Ruby integrations with Stark Infra
 module StarkInfra
