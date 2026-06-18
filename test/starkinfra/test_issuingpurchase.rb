@@ -1,4 +1,4 @@
-# frozen_string_literal: false
+# frozen_string_literal: true
 
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
@@ -33,5 +33,22 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
     purchase = StarkInfra::IssuingPurchase.get(purchase.id)
     expect(purchase.id).wont_be_nil
     expect(purchase.metadata).wont_be_nil
+  end
+
+  it 'query exposes installment_count' do
+    purchases = StarkInfra::IssuingPurchase.query(limit: 5)
+    purchases.each do |purchase|
+      expect(purchase.id).wont_be_nil
+      expect(purchase.respond_to?(:installment_count)).must_equal(true)
+      expect(purchase.installment_count).must_be_kind_of(Integer) unless purchase.installment_count.nil?
+    end
+  end
+
+  it 'get exposes installment_count' do
+    purchase = StarkInfra::IssuingPurchase.query(limit: 1).first
+
+    purchase = StarkInfra::IssuingPurchase.get(purchase.id)
+    expect(purchase.respond_to?(:installment_count)).must_equal(true)
+    expect(purchase.installment_count).must_be_kind_of(Integer) unless purchase.installment_count.nil?
   end
 end

@@ -24,6 +24,12 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - PixInternalTransactionReport resource
 - PixDispute resource
 - rules and debtor_workspace_id attributes to CreditNote resource
+- IssuingToken resource
+- IssuingTokenRequest sub-resource
+- IssuingTokenDesign resource
+- IssuingBillingInvoice resource
+- IssuingBillingTransaction resource
+- installment_count attribute to IssuingPurchase resource
 ### Changed
 - minimum required Ruby version to 3.0
 - dispute_id, is_monitoring_required, reversal_account_number, reversal_account_type, reversal_bank_code, reversal_branch_code and reversal_tax_id attributes to PixChargeback resource

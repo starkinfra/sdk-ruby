@@ -24,6 +24,8 @@ require_relative('individual_document/log')
 require_relative('individual_identity/individual_identity')
 require_relative('individual_identity/log')
 require_relative('issuing_balance/issuing_balance')
+require_relative('issuing_billing_invoice/issuing_billing_invoice')
+require_relative('issuing_billing_transaction/issuing_billing_transaction')
 require_relative('issuing_design/issuing_design')
 require_relative('issuing_embossing_kit/issuing_embossing_kit')
 require_relative('issuing_embossing_request/issuing_embossing_request')
@@ -43,6 +45,9 @@ require_relative('issuing_product/issuing_product')
 require_relative('issuing_purchase/issuing_purchase')
 require_relative('issuing_purchase/log')
 require_relative('issuing_rule/issuing_rule')
+require_relative('issuing_token/issuing_token')
+require_relative('issuing_token_request/issuing_token_request')
+require_relative('issuing_token_design/issuing_token_design')
 require_relative('issuing_transaction/issuing_transaction')
 require_relative('issuing_withdrawal/issuing_withdrawal')
 require_relative('merchant_category/merchant_category')
@@ -82,7 +87,6 @@ require_relative('event/attempt')
 require_relative('request/request')
 require_relative('utils/return_id')
 
-# SDK to facilitate Ruby integrations with Stark Infra
 module StarkInfra
 
   API_VERSION = 'v2'
