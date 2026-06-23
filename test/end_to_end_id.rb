@@ -4,6 +4,14 @@ require('date')
 require('starkinfra')
 
 module StarkInfra
+  module EndToEndId
+    def self.create(bank_code)
+      random_source = [*'0'..'9', *'a'..'z', *'A'..'Z']
+      random_string = Array.new(11) { random_source.sample }.join
+      "E#{bank_code}#{Time.now.utc.strftime('%Y%m%d%H%M')}#{random_string}"
+    end
+  end
+
   module EndToEndIdTest
     def self.get_to_reverse
       cursor = nil
