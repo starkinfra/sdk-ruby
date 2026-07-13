@@ -375,6 +375,13 @@ class ExampleGenerator
     )
   end
 
+  def self.business_identity_example
+    StarkInfra::BusinessIdentity.new(
+      tax_id: "20.018.183/0001-80",
+      tags: ["test", "testing"]
+    )
+  end
+
   def self.individual_document_image(image)
     rg_images = {
       "front" => "test/utils/identity/identity-front-face.png",

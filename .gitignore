@@ -61,3 +61,6 @@ build-iPhoneSimulator/
 # .rubocop-https?--*
 .rubocop_todo.yml
 .rubocop.yml
+
+#vscode
+.vscode/

@@ -7,6 +7,7 @@ require_relative('../utils/rest')
 require_relative('../utils/parse')
 require_relative('../pix_request/log')
 require_relative('../pix_reversal/log')
+require_relative('../business_identity/log')
 
 module StarkInfra
   # # Webhook Event object
@@ -44,6 +45,7 @@ module StarkInfra
         'issuing-invoice': StarkInfra::IssuingInvoice::Log.resource,
         'issuing-purchase': StarkInfra::IssuingPurchase::Log.resource,
         'credit-note': StarkInfra::CreditNote::Log.resource,
+        'business-identity': StarkInfra::BusinessIdentity::Log.resource,
       }[subscription.to_sym]
 
       @log = log
