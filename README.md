@@ -2918,6 +2918,12 @@ notes = StarkInfra::CreditNote.create([
         method: 'link'
       )
     ],
+    rules: [
+      StarkInfra::CreditNote::Rule.new(
+        key: 'invoiceCreationMode',
+        value: 'scheduled'
+      )
+    ],
     external_id: '1234',
     street_line_1: 'Rua ABC',
     street_line_2: 'Ap 123',

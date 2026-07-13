@@ -158,6 +158,14 @@ class ExampleGenerator
         method: 'link'
       )
     ]
+
+    rules = [
+      StarkInfra::CreditNote::Rule.new(
+        key: 'invoiceCreationMode',
+        value: 'scheduled'
+      )
+    ]
+
     StarkInfra::CreditNote.new(
       template_id: '5707012469948416',
       name: 'Jamie Lannister',
@@ -176,7 +184,8 @@ class ExampleGenerator
       state_code: 'SP',
       zip_code: '01234-567',
       tags: ['iron'],
-      rebate_amount: 0
+      rebate_amount: 0,
+      rules: rules
     )
   end
 
@@ -189,7 +198,7 @@ class ExampleGenerator
       'scheduled' => (Time.now + 3 * 24 * 3600).to_date,
       'invoices' => [
         {
-          'amount' => 50_000,
+          'amount' => 120_000,
           'due' => (Time.now + 60 * 24 * 3600).to_date
         }
       ],
@@ -211,6 +220,12 @@ class ExampleGenerator
           'name' => 'Jamie Lannister 2',
           'contact' => rand(10_000_000...99_999_999).to_s + '@invaliddomain.com',
           'method' => 'link'
+        }
+      ],
+      'rules' => [
+        {
+          'key' => 'invoiceCreationMode',
+          'value' => 'scheduled'
         }
       ],
       'external_id' => SecureRandom.base64,

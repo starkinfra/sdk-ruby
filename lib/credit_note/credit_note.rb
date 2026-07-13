@@ -42,6 +42,7 @@ module StarkInfra
   # - rebate_amount [integer, default nil]: credit analysis fee deducted from lent amount. ex: 11234 (= R$ 112.34)
   # - tags [list of strings, default nil]: list of strings for reference when searching for CreditNotes. ex: ['employees', 'monthly']
   # - expiration [integer, default 604800]: time interval in seconds between scheduled date and expiration date. ex: 123456789
+  # - rules [list of CreditNote::Rule, default []]: list of CreditNote::Rule objects for modifying transfer behavior. ex: [CreditNote::Rule(key='invoiceCreationMode', value='scheduled')]
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditNote is created. ex: '5656565656565656'
@@ -52,19 +53,20 @@ module StarkInfra
   # - tax_amount [integer]: tax amount included in the CreditNote. ex: 100
   # - nominal_interest [float]: yearly nominal interest rate of the CreditNote, in percentage. ex: 11.5
   # - interest [float]: yearly effective interest rate of the credit note, in percentage. ex: 12.5
+  # - debtor_workspace_id [string]: ID of the debtor's Workspace, when it differs from the Workspace that generated this CreditNote. ex: '4545454545454545'
   # - created [DateTime]: creation datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the CreditNote. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class CreditNote < StarkCore::Utils::Resource
     attr_reader :template_id, :name, :tax_id, :scheduled, :invoices, :payment, :signers, :external_id,
                 :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type,
-                :nominal_amount, :amount, :rebate_amount, :tags, :expiration, :id,  :document_id, :status,
-                :transaction_ids, :workspace_id, :tax_amount, :nominal_interest, :interest, :created, :updated
+                :nominal_amount, :amount, :rebate_amount, :tags, :expiration, :rules, :id, :document_id, :status,
+                :transaction_ids, :workspace_id, :tax_amount, :nominal_interest, :interest, :debtor_workspace_id, :created, :updated
     def initialize(
       template_id:, name:, tax_id:, scheduled:, invoices:, payment:, signers:, external_id:,
       street_line_1:, street_line_2:, district:, city:, state_code:, zip_code:, payment_type: nil,
-      nominal_amount: nil, amount: nil, rebate_amount: nil, tags: nil, expiration: nil, id: nil,
+      nominal_amount: nil, amount: nil, rebate_amount: nil, tags: nil, expiration: nil, rules: nil, id: nil,
       document_id: nil, status: nil, transaction_ids: nil, workspace_id: nil, tax_amount: nil,
-      nominal_interest: nil, interest: nil, created: nil, updated: nil
+      nominal_interest: nil, interest: nil, debtor_workspace_id: nil, created: nil, updated: nil
     )
       super(id)
       @template_id = template_id
@@ -85,6 +87,7 @@ module StarkInfra
       @rebate_amount = rebate_amount
       @tags = tags
       @expiration = expiration
+      @rules = Rule.parse_rules(rules)
       @document_id = document_id
       @status = status
       @transaction_ids = transaction_ids
@@ -92,6 +95,7 @@ module StarkInfra
       @tax_amount = tax_amount
       @nominal_interest = nominal_interest
       @interest = interest
+      @debtor_workspace_id = debtor_workspace_id
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
 
@@ -261,6 +265,7 @@ module StarkInfra
             rebate_amount: json['rebate_amount'],
             tags: json['tags'],
             expiration: json['expiration'],
+            rules: json['rules'],
             document_id: json['document_id'],
             status: json['status'],
             transaction_ids: json['transaction_ids'],
@@ -268,6 +273,7 @@ module StarkInfra
             tax_amount: json['tax_amount'],
             nominal_interest: json['nominal_interest'],
             interest: json['interest'],
+            debtor_workspace_id: json['debtor_workspace_id'],
             created: json['created'],
             updated: json['updated']
           )
