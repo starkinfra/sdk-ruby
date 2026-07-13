@@ -2,6 +2,7 @@
 
 require('securerandom')
 require_relative('./end_to_end_id')
+require_relative('./utils/bacen_id')
 require_relative('./bacen_id')
 require_relative('./test_helper.rb')
 
@@ -57,6 +58,14 @@ class ExampleGenerator
       amount: 1,
       reference_id: pix_request.end_to_end_id,
       reason: 'flaw'
+    )
+  end
+
+  def self.pixfraud_example
+    StarkInfra::PixFraud.new(
+      external_id: SecureRandom.base64,
+      type: 'scam',
+      tax_id: '01234567890'
     )
   end
 
@@ -444,6 +453,55 @@ class ExampleGenerator
       tax_id: '012.345.678-90',
       competence: "2021-01",
       tags: ["SDK Ruby Test"]
+    )
+  end
+
+  def self.pix_key_holmes_example
+    StarkInfra::PixKeyHolmes.new(
+      key_id: 'valid@sandbox.com',
+      tags: ["SDK Ruby Test"]
+    )
+  end
+
+  def self.pixinternaltransactionreport_example(bank_code)
+    StarkInfra::PixInternalTransactionReport.new(
+      amount: 1,
+      created: '2022-02-16T17:23:53.980238+00:00',
+      end_to_end_id: BacenId.create('E', bank_code),
+      method: 'manual',
+      reference_type: 'request',
+      sender_account_number: '00000-0',
+      sender_branch_code: '0000',
+      sender_account_type: 'checking',
+      sender_bank_code: bank_code,
+      sender_tax_id: '09.346.601/0001-25',
+      receiver_account_number: '00000-1',
+      receiver_branch_code: '0001',
+      receiver_account_type: 'checking',
+      receiver_bank_code: '18236120',
+      receiver_tax_id: '45.987.245/0001-92'
+    )
+  end
+
+  def self.pixinternaltransactionreport_reversal_example(bank_code)
+    StarkInfra::PixInternalTransactionReport.new(
+      amount: 1,
+      created: '2022-02-16T17:23:53.980238+00:00',
+      end_to_end_id: BacenId.create('E', bank_code),
+      method: 'dict',
+      reference_type: 'reversal',
+      sender_account_number: '00000-0',
+      sender_branch_code: '0000',
+      sender_account_type: 'checking',
+      sender_bank_code: bank_code,
+      sender_tax_id: '09.346.601/0001-25',
+      receiver_account_number: '00000-1',
+      receiver_branch_code: '0001',
+      receiver_account_type: 'checking',
+      receiver_bank_code: '18236120',
+      receiver_tax_id: '45.987.245/0001-92',
+      receiver_key_id: '+5511989898989',
+      return_id: BacenId.create('D', bank_code)
     )
   end
 

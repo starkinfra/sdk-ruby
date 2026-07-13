@@ -39,6 +39,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Enums](#issuing-enums): Query enums related to the issuing purchases, such as merchant categories, countries and card purchase methods
   - [Pix](#pix)
     - [PixRequests](#create-pixrequests): Create Pix transactions
+    - [PixInternalTransactionReports](#create-pixinternaltransactionreports): Report internal (off-SPI) transactions to the Central Bank
     - [PixReversals](#create-pixreversals): Reverse Pix transactions
     - [PixBalance](#get-your-pixbalance): View your account balance
     - [PixStatement](#create-a-pixstatement): Request your account statement
@@ -46,6 +47,8 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixClaim](#create-a-pixclaim): Claim a Pix Key
     - [PixDirector](#create-a-pixdirector): Create a Pix Director
     - [PixInfraction](#create-pixinfractions): Create Pix Infraction reports
+    - [PixFraud](#create-pixfrauds): Create Pix Fraud reports
+    - [PixKeyHolmes](#create-pixkeyholmes): Investigate the registration status of a Pix Key
     - [PixChargeback](#create-pixchargebacks): Create Pix Chargeback requests
     - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
     - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
@@ -1375,6 +1378,95 @@ log = StarkInfra::PixRequest::Log.get('5155165527080960')
 puts log
 ```
 
+### Create PixInternalTransactionReports
+
+Report transactions that happen internally — outside of the SPI — to the Central Bank so they are reflected in the participant's statements.
+
+```ruby
+require('starkinfra')
+
+reports = StarkInfra::PixInternalTransactionReport.create([
+  StarkInfra::PixInternalTransactionReport.new(
+    amount: 1234,
+    created: '2022-02-16T17:23:53.980238+00:00',
+    end_to_end_id: 'E00000665202201201213u34sav898j',
+    method: 'manual',
+    reference_type: 'request',
+    sender_account_number: '00000-0',
+    sender_branch_code: '0000',
+    sender_account_type: 'checking',
+    sender_bank_code: '00000665',
+    sender_tax_id: '20.018.183/0001-80',
+    receiver_account_number: '00000-1',
+    receiver_branch_code: '0001',
+    receiver_account_type: 'checking',
+    receiver_bank_code: '18236120',
+    receiver_tax_id: '45.987.245/0001-92'
+  )
+])
+
+reports.each do |report|
+  puts report
+end
+```
+
+### Query PixInternalTransactionReports
+
+You can query multiple PixInternalTransactionReports according to filters.
+
+```ruby
+require('starkinfra')
+
+reports = StarkInfra::PixInternalTransactionReport.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-03-01',
+  status: ['success']
+)
+
+reports.each do |report|
+  puts report
+end
+```
+
+### Get a PixInternalTransactionReport
+
+You can get a specific PixInternalTransactionReport by its id.
+
+```ruby
+require('starkinfra')
+
+report = StarkInfra::PixInternalTransactionReport.get('5656565656565656')
+
+puts report
+```
+
+### Query PixInternalTransactionReport logs
+
+You can query PixInternalTransactionReport logs to better understand the report life cycle.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixInternalTransactionReport::Log.query(limit: 50)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixInternalTransactionReport log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixInternalTransactionReport::Log.get('5656565656565656')
+
+puts log
+```
+
 ### Create PixReversals
 
 You can reverse a PixRequest either partially or totally using a PixReversal.
@@ -1925,6 +2017,142 @@ require('starkinfra')
 log = StarkInfra::PixInfraction::Log.get('5155165527080960')
 
 puts log 
+```
+
+### Create PixFrauds
+
+Pix Fraud reports are used to report a PixKey or taxId to the Central Bank when a fraud has been confirmed.
+
+```ruby
+require('starkinfra')
+
+frauds = StarkInfra::PixFraud.create([
+  StarkInfra::PixFraud.new(
+    external_id: 'E20018183202201201450u34sDGd19lz',
+    type: 'scam',
+    tax_id: '01234567890'
+  )
+])
+
+frauds.each do |fraud|
+  puts fraud
+end
+```
+
+### Query PixFrauds
+
+You can query multiple fraud reports according to filters.
+
+```ruby
+require('starkinfra')
+
+frauds = StarkInfra::PixFraud.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: ['registered'],
+  ids: ['5155165527080960']
+)
+
+frauds.each do |fraud|
+  puts fraud
+end
+```
+
+### Get a PixFraud
+
+After its creation, information on a Pix fraud may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+fraud = StarkInfra::PixFraud.get('5155165527080960')
+
+puts fraud
+```
+
+### Cancel a PixFraud
+
+Cancel a specific Pix Fraud using its id.
+
+```ruby
+require('starkinfra')
+
+fraud = StarkInfra::PixFraud.cancel('5155165527080960')
+
+puts fraud
+```
+
+### Query PixFraud logs
+
+You can query fraud report logs to better understand their life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixFraud::Log.query(
+  limit: 50,
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['registered'],
+  fraud_ids: ['5155165527080960']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixFraud log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixFraud::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create PixKeyHolmes
+
+A PixKeyHolmes investigates the registration status of a Pix Key in the Central Bank's DICT.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::PixKeyHolmes.create([
+  StarkInfra::PixKeyHolmes.new(
+    key_id: 'valid@sandbox.com',
+    tags: ['travel', 'food']
+  )
+])
+
+holmes.each do |sherlock|
+  puts sherlock
+end
+```
+
+### Query PixKeyHolmes
+
+You can query multiple PixKeyHolmes according to filters.
+
+```ruby
+require('starkinfra')
+
+holmes = StarkInfra::PixKeyHolmes.query(
+  limit: 1,
+  after: '2022-01-01',
+  before: '2022-01-12',
+  status: ['solved'],
+  ids: ['5155165527080960']
+)
+
+holmes.each do |sherlock|
+  puts sherlock
+end
 ```
 
 ### Create PixChargebacks
