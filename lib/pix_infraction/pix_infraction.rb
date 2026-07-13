@@ -15,6 +15,8 @@ module StarkInfra
   # ## Parameters (required):
   # - reference_id [string]: end_to_end_id or return_id of the transaction being reported. ex: 'E20018183202201201450u34sDGd19lz'
   # - type [string]: type of infraction report. Options: 'fraud', 'reversal', 'reversalChargeback'
+  # - operator_email [string]: contact email of the operator responsible for the PixInfraction. ex: 'ruby-sdk@starkinfra.com'
+  # - operator_phone [string]: contact phone number of the operator responsible for the PixInfraction. ex: '+5511999999999'
   #
   # ## Parameters (optional):
   # - description [string, default nil]: description for any details that can help with the infraction investigation.
@@ -29,18 +31,24 @@ module StarkInfra
   # - reported_by [string]: agent that reported the PixInfraction. Options: 'debited', 'credited'.
   # - result [string]: result after the analysis of the PixInfraction by the receiving party. Options: 'agreed', 'disagreed'
   # - status [string]: current PixInfraction status. Options: 'created', 'failed', 'delivered', 'closed', 'canceled'.
+  # - amount [integer]: amount in cents of the reported transaction. ex: 11234 (= R$ 112.34)
+  # - dispute_id [string]: id of the PixDispute associated with the PixInfraction. ex: '5656565656565656'
   # - created [DateTime]: creation datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixInfraction < StarkCore::Utils::Resource
-    attr_reader :reference_id, :type, :description, :tags, :id, :credited_bank_code, :flow, :analysis,
-                :debited_bank_code, :reported_by, :result, :status, :created, :updated
+    attr_reader :reference_id, :type, :operator_email, :operator_phone, :description, :tags, :id, :credited_bank_code,
+                :flow, :analysis, :debited_bank_code, :reported_by, :result, :status, :amount, :dispute_id,
+                :created, :updated
     def initialize(
-      reference_id:, type:, description: nil, id: nil, tags: nil, credited_bank_code: nil, debited_bank_code: nil,
-      flow: nil, analysis: nil, reported_by: nil, result: nil, status: nil, created: nil, updated: nil
+      reference_id:, type:, operator_email:, operator_phone:, description: nil, id: nil, tags: nil,
+      credited_bank_code: nil, debited_bank_code: nil, flow: nil, analysis: nil, reported_by: nil, result: nil,
+      status: nil, amount: nil, dispute_id: nil, created: nil, updated: nil
     )
       super(id)
       @reference_id = reference_id
       @type = type
+      @operator_email = operator_email
+      @operator_phone = operator_phone
       @description = description
       @tags = tags
       @credited_bank_code = credited_bank_code
@@ -50,6 +58,8 @@ module StarkInfra
       @reported_by = reported_by
       @result = result
       @status = status
+      @amount = amount
+      @dispute_id = dispute_id
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
@@ -200,6 +210,8 @@ module StarkInfra
             id: json['id'],
             reference_id: json['reference_id'],
             type: json['type'],
+            operator_email: json['operator_email'],
+            operator_phone: json['operator_phone'],
             description: json['description'],
             tags: json['tags'],
             credited_bank_code: json['credited_bank_code'],
@@ -209,6 +221,8 @@ module StarkInfra
             reported_by: json['reported_by'],
             result: json['result'],
             status: json['status'],
+            amount: json['amount'],
+            dispute_id: json['dispute_id'],
             created: json['created'],
             updated: json['updated']
           )

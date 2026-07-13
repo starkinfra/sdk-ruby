@@ -9,6 +9,7 @@ require_relative('../pix_pull_request/log')
 require_relative('../pix_pull_subscription/log')
 require_relative('../pix_request/log')
 require_relative('../pix_reversal/log')
+require_relative('../pix_dispute/log')
 require_relative('../business_identity/log')
 
 module StarkInfra
@@ -39,6 +40,7 @@ module StarkInfra
         'pix-claim': StarkInfra::PixClaim::Log.resource,
         'pix-chargeback': StarkInfra::PixChargeback::Log.resource,
         'pix-infraction': StarkInfra::PixInfraction::Log.resource,
+        'pix-dispute': StarkInfra::PixDispute::Log.resource,
         'pix-pull-request': StarkInfra::PixPullRequest::Log.resource,
         'pix-pull-subscription': StarkInfra::PixPullSubscription::Log.resource,
         'pix-request.in': StarkInfra::PixRequest::Log.resource,
