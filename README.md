@@ -57,6 +57,8 @@ This SDK version is compatible with the Stark Infra API v2.
   - [Identity](#identity)
     - [IndividualIdentity](#create-individualidentities): Create individual identities
     - [IndividualDocument](#create-individualdocuments): Create individual documents
+    - [BusinessIdentity](#create-businessidentities): Create business identities
+    - [BusinessAttachment](#create-businessattachments): Create business attachments
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -2739,6 +2741,213 @@ log = StarkInfra::IndividualDocument::Log.get('5155165527080960')
 puts log
 ```
 
+### Create BusinessIdentities
+
+You can create a BusinessIdentity to validate a document of a company
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::BusinessIdentity.create([
+  StarkInfra::BusinessIdentity.new(
+    tax_id: '20.018.183/0001-80',
+    tags: ['breaking', 'bad']
+  )
+])
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+**Note**: Instead of using BusinessIdentity objects, you can also pass each element in dictionary format
+
+### Query BusinessIdentities
+
+You can query multiple business identities according to filters.
+
+```ruby
+require('starkinfra')
+
+identities = StarkInfra::BusinessIdentity.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'success',
+  tags: ['breaking', 'bad'],
+)
+
+identities.each do |identity|
+  puts identity
+end
+```
+
+### Get a BusinessIdentity
+
+After its creation, information on a business identity may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::BusinessIdentity.get('5155165527080960')
+
+puts identity
+```
+
+### Update a BusinessIdentity
+
+You can update a specific identity status to "processing" for send it to validation.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::BusinessIdentity.update('5155165527080960', status: 'processing')
+
+puts identity
+```
+
+**Note**: Before sending your business identity to validation by patching its status, you must send all the required attachments using the create method of the BusinessAttachment resource. Note that you must reference the business identity in the create method of the BusinessAttachment resource by its id.
+
+### Cancel a BusinessIdentity
+
+You can cancel a business identity before updating its status to processing.
+
+```ruby
+require('starkinfra')
+
+identity = StarkInfra::BusinessIdentity.cancel('5155165527080960')
+
+puts identity
+```
+
+### Query BusinessIdentity logs
+
+You can query business identity logs to better understand business identity life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::BusinessIdentity::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a BusinessIdentity log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::BusinessIdentity::Log.get('5155165527080960')
+
+print(log)
+```
+
+### Create BusinessAttachments
+
+You can create a business attachment to attach files of documents to a specific business Identity.
+You must reference the desired business identity by its id.
+
+```ruby
+require('starkinfra')
+
+attachments = StarkInfra::BusinessAttachment.create([
+  StarkInfra::BusinessAttachment.new(
+    name: 'articles-of-incorporation.png',
+    content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+    business_identity_id: '5155165527080960',
+    tags: ['breaking', 'bad']
+  )
+])
+
+attachments.each do |attachment|
+  puts attachment
+end
+```
+
+**Note**: Instead of using BusinessAttachment objects, you can also pass each element in dictionary format
+
+### Query BusinessAttachments
+
+You can query multiple business attachments according to filters.
+
+```ruby
+require('starkinfra')
+
+attachments = StarkInfra::BusinessAttachment.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  status: 'approved',
+  tags: ['breaking', 'bad'],
+)
+
+attachments.each do |attachment|
+  puts attachment
+end
+```
+
+### Get a BusinessAttachment
+
+After its creation, information on a business attachment may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+attachment = StarkInfra::BusinessAttachment.get('5155165527080960')
+
+puts attachment
+```
+
+### Cancel a BusinessAttachment
+
+You can cancel a business attachment before its business identity is sent to validation.
+
+```ruby
+require('starkinfra')
+
+attachment = StarkInfra::BusinessAttachment.cancel('5155165527080960')
+
+puts attachment
+```
+
+### Query BusinessAttachment logs
+
+You can query business attachment logs to better understand business attachment life cycles. 
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::BusinessAttachment::Log.query(
+  limit: 50, 
+  after: '2022-01-01',
+  before: '2022-01-20',
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a BusinessAttachment log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::BusinessAttachment::Log.get('5155165527080960')
+
+puts log
+```
+
 ### Webhook
 
 ### Create a webhook subscription
@@ -2751,7 +2960,7 @@ require('starkinfra')
 webhook = StarkInfra::Webhook.create(
   StarkInfra::Webhook.new(
   url: 'https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec',
-  subscriptions: %w[pix-infraction pix-chargeback]
+  subscriptions: %w[pix-infraction pix-chargeback business-identity]
   )
 )
 
@@ -2832,6 +3041,8 @@ elsif event.subscription == 'issuing-invoice'
   puts event.log.invoice
 elsif event.subscription == 'issuing-purchase'
   puts event.log.purchase
+elsif event.subscription == 'business-identity'
+  puts event.log.identity
 end
 ```
 

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require_relative('brcode_preview/brcode_preview')
+require_relative('business_attachment/business_attachment')
+require_relative('business_attachment/log')
+require_relative('business_identity/business_identity')
+require_relative('business_identity/log')
 require_relative('card_method/card_method')
 require_relative('credit_note/invoice/invoice')
 require_relative('credit_note/invoice/description')

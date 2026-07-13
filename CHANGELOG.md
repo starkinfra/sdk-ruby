@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- BusinessIdentity and BusinessAttachment resources
 ### Fixed
 - camelCase files
 
