@@ -34,16 +34,17 @@ module StarkInfra
   # - reduction_amount [integer]: Reduction value to discount from nominal_amount. ex: 1000
   # - scheduled [DateTime]: date of payment execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0).
   # - status [string]: Payment status. ex: 'active', 'paid', 'canceled' or 'unknown'
+  # - subscription [BrcodePreview::Subscription, default nil]: snapshot of the recurring-debit subscription attached to the BR Code, when present. Nil for one-shot BR Codes.
   # - tax_id [string]: Payment receiver tax ID. ex: '012.345.678-90'
   class BrcodePreview < StarkCore::Utils::Resource
     attr_reader :id, :payer_id, :end_to_end_id, :account_number, :account_type, :amount, :amount_type, :bank_code, :branch_code, :cash_amount,
                 :cashier_bank_code, :cashier_type, :discount_amount, :fine_amount, :key_id, :interest_amount, :name,
-                :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :tax_id
+                :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :subscription, :tax_id
     def initialize(
       id:, payer_id:, end_to_end_id: nil, account_number: nil, account_type: nil, amount: nil, amount_type: nil, bank_code: nil,
       branch_code: nil, cash_amount: nil, cashier_bank_code:nil, cashier_type:nil, discount_amount: nil,
       fine_amount: nil, key_id: nil, interest_amount: nil, name: nil, nominal_amount: nil,
-      reconciliation_id: nil, reduction_amount: nil, scheduled: nil, status: nil, tax_id: nil
+      reconciliation_id: nil, reduction_amount: nil, scheduled: nil, status: nil, subscription: nil, tax_id: nil
     )
       super(id)
       @payer_id = payer_id
@@ -67,6 +68,7 @@ module StarkInfra
       @reduction_amount = reduction_amount
       @scheduled = scheduled
       @status = status
+      @subscription = subscription
       @tax_id = tax_id
     end
 
@@ -113,6 +115,7 @@ module StarkInfra
             reduction_amount: json['reduction_amount'],
             scheduled: json['scheduled'],
             status: json['status'],
+            subscription: BrcodePreview::Subscription.parse_subscription(json['subscription']),
             tax_id: json['tax_id']
           )
         }

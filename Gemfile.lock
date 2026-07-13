@@ -38,6 +38,3 @@ DEPENDENCIES
   rake (~> 13.0)
   rubocop (~> 0.81)
   starkinfra!
-
-BUNDLED WITH
-   2.1.4

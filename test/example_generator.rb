@@ -2,6 +2,7 @@
 
 require('securerandom')
 require_relative('./end_to_end_id')
+require_relative('./bacen_id')
 require_relative('./test_helper.rb')
 
 class ExampleGenerator
@@ -444,5 +445,180 @@ class ExampleGenerator
       competence: "2021-01",
       tags: ["SDK Ruby Test"]
     )
+  end
+
+  def self.pixpullsubscription_example
+    bank_code = BankCode.bank_code
+    StarkInfra::PixPullSubscription.new(
+      bacen_id: BacenId.pixpullsubscription_bacen_id(bank_code),
+      external_id: SecureRandom.base64,
+      installment_start: Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+      interval: 'month',
+      receiver_bank_code: bank_code,
+      receiver_name: 'Stark Bank',
+      receiver_tax_id: '39.908.427/0001-28',
+      sender_account_number: '55213',
+      sender_bank_code: '20018183',
+      sender_branch_code: '356',
+      sender_tax_id: '99.999.919/9999-79',
+      sender_final_name: 'STARK SCD S.A.',
+      sender_final_tax_id: '39908427000128',
+      type: 'push',
+      amount: 52064,
+      pull_retry_limit: 3,
+      description: 'A Lannister always pays his debts',
+      reference_code: '36135971',
+      tags: ['ruby', 'sdk', 'test']
+    )
+  end
+
+  def self.pixpullrequest_example
+    ispb = BankCode.bank_code
+    subscription = StarkInfra::PixPullSubscription.query(limit: 1, status: 'active').to_a[0]
+    StarkInfra::PixPullRequest.new(
+      amount: 1234,
+      due: (Time.now + 3 * 24 * 3600).utc.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+      end_to_end_id: StarkInfra::EndToEndIdTest.pixpullrequest_end_to_end_id(ispb),
+      receiver_account_number: '876543-2',
+      receiver_account_type: 'checking',
+      receiver_bank_code: ispb,
+      reconciliation_id: SecureRandom.hex(12),
+      subscription_id: subscription.nil? ? '5656565656565656' : subscription.id,
+      attempt_type: 'default',
+      description: 'Ruby SDK PixPullRequest test',
+      receiver_branch_code: '1357-9',
+      tags: ['ruby', 'sdk', 'test']
+    )
+  end
+
+  def self.brcodepreview_subscription_payload
+    {
+      'amount' => 1000,
+      'amountMinLimit' => 500,
+      'bacenId' => 'RR2222222220250101000000000abcdef',
+      'created' => '2020-03-10T10:30:00+00:00',
+      'description' => 'Monthly subscription for premium plan',
+      'installmentEnd' => '2021-03-10T10:30:00+00:00',
+      'installmentStart' => '2020-03-10T10:30:00+00:00',
+      'interval' => 'monthly',
+      'pullRetryLimit' => 3,
+      'receiverBankCode' => '20018183',
+      'receiverName' => 'Anthony Edward Stark',
+      'receiverTaxId' => '012.345.678-90',
+      'referenceCode' => 'contract-2020-0001',
+      'senderFinalName' => 'Jamie Lannister',
+      'senderFinalTaxId' => '20.018.183/0001-80',
+      'status' => 'active',
+      'type' => 'paymentAndOrQrcode',
+      'updated' => '2020-04-10T10:30:00+00:00'
+    }
+  end
+
+  def self.brcodepreview_payload(subscription_value)
+    {
+      'id' => '00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a85204000053039865802BR5908Tony6009Sao Paulo62090505123456304B14A',
+      'payerId' => '20.018.183/0001-80',
+      'endToEndId' => 'E20018183202003101030000000abcdef',
+      'accountNumber' => '1234567',
+      'accountType' => 'checking',
+      'amount' => 1000,
+      'amountType' => 'fixed',
+      'bankCode' => '20018183',
+      'branchCode' => '0001',
+      'cashAmount' => 0,
+      'cashierBankCode' => nil,
+      'cashierType' => nil,
+      'discountAmount' => 0,
+      'fineAmount' => 0,
+      'keyId' => '+5511989898989',
+      'interestAmount' => 0,
+      'name' => 'Anthony Edward Stark',
+      'nominalAmount' => 1000,
+      'reconciliationId' => 'cd65c78aeb6543eaaa0170f68bd741ee',
+      'reductionAmount' => 0,
+      'scheduled' => '2020-03-10T10:30:00+00:00',
+      'status' => 'active',
+      'subscription' => subscription_value,
+      'taxId' => '012.345.678-90'
+    }
+  end
+
+  def self.pixpullrequest_payload
+    {
+      'id' => '5656565656565656',
+      'amount' => 11_234,
+      'due' => '2020-10-28T17:59:26+00:00',
+      'endToEndId' => 'E00002649202201172211u34srod19le',
+      'receiverAccountNumber' => '876543-2',
+      'receiverAccountType' => 'checking',
+      'receiverBankCode' => '20018183',
+      'reconciliationId' => '123456',
+      'subscriptionId' => '5656565656565656',
+      'attemptType' => 'default',
+      'description' => 'Payment for service #1234',
+      'receiverBranchCode' => '1357-9',
+      'tags' => %w[employees monthly],
+      'status' => 'created',
+      'flow' => 'out',
+      'receiverName' => 'Edward Stark',
+      'receiverTaxId' => '01234567890',
+      'senderBankCode' => '20018183',
+      'senderFinalName' => 'Edward Stark',
+      'senderTaxId' => '20.018.183/0001-80',
+      'subscriptionBacenId' => 'RR2222222220250101000000000abcdef',
+      'created' => '2020-03-10T10:30:00+00:00',
+      'updated' => '2020-04-10T10:30:00+00:00'
+    }
+  end
+
+  def self.pixpullrequest_log_request_payload
+    {
+      'id' => '5656565656565656',
+      'amount' => 11_234,
+      'due' => '2020-10-28T17:59:26+00:00',
+      'endToEndId' => 'E00002649202201172211u34srod19le',
+      'receiverAccountNumber' => '876543-2',
+      'receiverAccountType' => 'checking',
+      'receiverBankCode' => '20018183',
+      'reconciliationId' => '123456',
+      'subscriptionId' => '5656565656565656',
+      'status' => 'created',
+      'flow' => 'out',
+      'created' => '2020-03-10T10:30:00+00:00',
+      'updated' => '2020-04-10T10:30:00+00:00'
+    }
+  end
+
+  def self.pixpullsubscription_payload
+    {
+      'id' => '5656565656565656',
+      'bacenId' => 'RR2222222220250101000000000abcdef',
+      'externalId' => 'my-internal-id-123456',
+      'installmentStart' => '2020-03-10T10:30:00+00:00',
+      'installmentEnd' => '2021-03-10T10:30:00+00:00',
+      'interval' => 'month',
+      'receiverName' => 'Anthony Edward Stark',
+      'receiverTaxId' => '012.345.678-90',
+      'senderAccountNumber' => '876543-2',
+      'senderBankCode' => '20018183',
+      'senderBranchCode' => '1357-9',
+      'senderTaxId' => '20.018.183/0001-80',
+      'type' => 'paymentAndOrQrcode',
+      'amount' => 1234,
+      'amountMinLimit' => 500,
+      'description' => 'Payment for service #1234',
+      'due' => '2020-10-28T17:59:26+00:00',
+      'receiverBankCode' => '20018183',
+      'referenceCode' => 'contract-123',
+      'pullRetryLimit' => 3,
+      'senderCityCode' => '1234567',
+      'senderFinalName' => 'Edward Stark',
+      'senderFinalTaxId' => '01234567890',
+      'tags' => %w[employees monthly],
+      'status' => 'active',
+      'flow' => 'out',
+      'created' => '2020-03-10T10:30:00+00:00',
+      'updated' => '2020-04-10T10:30:00+00:00'
+    }
   end
 end

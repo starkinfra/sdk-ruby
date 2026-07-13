@@ -72,6 +72,28 @@ describe(StarkInfra::Event, '#event#') do
     expect(event.log).wont_be_nil
   end
 
+  it 'parse a pix-pull-subscription event with the right signature' do
+    event = StarkInfra::Event.parse(
+      content: '{"event": {"created": "2026-03-17T20:24:02.006080+00:00", "id": "5739991880695808", "log": {"created": "2026-03-17T20:23:58.050406+00:00", "errors": [], "id": "5340798381981696", "reason": "", "subscription": {"amount": 52064, "amountMinLimit": 0, "bacenId": "RR321606372026170317231564231", "created": "2026-03-17T20:23:57.255567+00:00", "description": "A Lannister always pays his debts", "due": "2026-04-17T02:59:59.999000+00:00", "externalId": "606512134", "flow": "out", "id": "5656970050666496", "installmentEnd": "", "installmentStart": "2026-03-18T02:59:59.999999+00:00", "interval": "month", "pullRetryLimit": 3, "receiverBankCode": "32160637", "receiverName": "Stark Bank", "receiverTaxId": "39.908.427/0001-28", "referenceCode": "36135971", "senderAccountNumber": "55213", "senderBankCode": null, "senderBranchCode": "356", "senderCityCode": "", "senderFinalName": "STARK SCD S.A.", "senderFinalTaxId": "39.908.427/0001-28", "senderTaxId": "99.999.919/9999-79", "status": "created", "tags": [], "type": "push", "updated": "2026-03-17T20:23:58.050421+00:00"}, "type": "delivering"}, "subscription": "pix-pull-subscription", "workspaceId": "4828094443552768"}}',
+      signature: 'MEUCIQCCZWR4+JYoDNENLnRbSCGGZf+atOaG4q8jWB3ADgc+DQIgIZ1LuXLZ06pke2qzaMNTlDLwcriuH+S3ve1aTQeqNK0='
+    )
+    expect(event.subscription).must_equal('pix-pull-subscription')
+    expect(event.log).must_be_kind_of(StarkInfra::PixPullSubscription::Log)
+    expect(event.log.subscription).must_be_kind_of(StarkInfra::PixPullSubscription)
+    expect(event.log.type).must_equal('delivering')
+  end
+
+  it 'parse a pix-pull-request event with the right signature' do
+    event = StarkInfra::Event.parse(
+      content: '{"event": {"created": "2026-03-17T22:17:48.687366+00:00", "id": "5980132964564992", "log": {"created": "2026-03-17T22:17:44.741312+00:00", "description": "The Pix Pull Request was created in Stark Infra.", "errors": [], "id": "4777799707525120", "reason": "", "request": {"amount": 79562, "attemptType": "default", "created": "2026-03-17T22:17:44.727124+00:00", "description": "Monthly fare", "due": "2026-03-18T19:17:44.382949+00:00", "endToEndId": "E32160637202617031917FXbuEOeqxTE", "flow": "out", "id": "5859939668983808", "receiverAccountNumber": "00000000", "receiverAccountType": "payment", "receiverBankCode": "32160637", "receiverBranchCode": "", "receiverName": "Stark Bank", "receiverTaxId": "39.908.427/0001-28", "reconciliationId": "20260317191744.382994-03001917VKqeyyGMWvK", "senderBankCode": null, "senderFinalName": "STARK SCD S.A.", "senderFinalTaxId": "39.908.427/0001-28", "senderTaxId": "99.999.919/9999-79", "status": "created", "subscriptionBacenId": "RR321606372026170319175775651", "subscriptionId": "6366699370577920", "tags": [], "updated": "2026-03-17T22:17:45.560279+00:00"}, "type": "created"}, "subscription": "pix-pull-request", "workspaceId": "4828094443552768"}}',
+      signature: 'MEUCIQDPci6mVcRQUqQazbol04cYvz8Ffuhh0birk4+8jSUH4AIgKlLhIH5zKzu+4jQlyabvSJin+8+5kJKiJpoqSQPCITg='
+    )
+    expect(event.subscription).must_equal('pix-pull-request')
+    expect(event.log).must_be_kind_of(StarkInfra::PixPullRequest::Log)
+    expect(event.log.request).must_be_kind_of(StarkInfra::PixPullRequest)
+    expect(event.log.type).must_equal('created')
+  end
+
   it 'parse with wrong signature' do
     begin
       StarkInfra::Event.parse(
