@@ -15,15 +15,17 @@ module StarkInfra
   # - funding_type [string]: type of funding used for payment. ex: 'credit', 'debit'
   # - holder_type [string]: holder type. ex: 'business', 'individual'
   # - code [string]: internal code from card flag informing the product. ex: 'MRW', 'MCO', 'MWB', 'MCS'
+  # - customer_type [string]: Same as holderType. Kept for backward compatibility
   # - created [DateTime]: creation datetime for the IssuingProduct. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingProduct < StarkCore::Utils::Resource
-    attr_reader :id, :network, :funding_type, :holder_type, :code, :created
-    def initialize(id: nil, network: nil, funding_type: nil, holder_type: nil, code: nil, created: nil)
+    attr_reader :id, :network, :funding_type, :holder_type, :code, :customer_type, :created
+    def initialize(id: nil, network: nil, funding_type: nil, holder_type: nil, code: nil, customer_type: nil, created: nil)
       super(id)
       @network = network
       @funding_type = funding_type
       @holder_type = holder_type
       @code = code
+      @customer_type = customer_type
       @created = StarkCore::Utils::Checks.check_datetime(created)
     end
 
@@ -76,6 +78,7 @@ module StarkInfra
             funding_type: json['funding_type'],
             holder_type: json['holder_type'],
             code: json['code'],
+            customer_type: json['customer_type'],
             created: json['created']
           )
         }

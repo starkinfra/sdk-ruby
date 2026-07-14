@@ -19,13 +19,15 @@ module StarkInfra
   # Attributes (return-only):
   # - name [string]: category's name. ex: 'Veterinary services', 'Fast food restaurants'
   # - number [string]: category's number. ex: '742', '5814'
+  # - group [string]: category's group. ex: 'pets', 'food'
   class MerchantCategory < StarkCore::Utils::SubResource
-    attr_reader :code, :type, :name, :number
-    def initialize(code:, type:, name: nil, number: nil)
+    attr_reader :code, :type, :name, :number, :group
+    def initialize(code:, type:, name: nil, number: nil, group: nil)
       @code = code
       @type = type
       @name = name
       @number = number
+      @group = group
     end
 
     # # Retrieve MerchantCategories
@@ -54,7 +56,8 @@ module StarkInfra
             code: json['code'],
             type: json['type'],
             name: json['name'],
-            number: json['number']
+            number: json['number'],
+            group: json['group']
           )
         }
       }

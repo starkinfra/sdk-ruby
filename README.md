@@ -35,7 +35,12 @@ This SDK version is compatible with the Stark Infra API v2.
     - [Invoices](#create-issuinginvoices): Add money to your issuing balance
     - [Withdrawals](#create-issuingwithdrawals): Send money back to your Workspace from your issuing balance
     - [Balance](#get-your-issuingbalance): View your issuing balance
+    - [BillingInvoices](#query-issuingbillinginvoices): View the billing invoices of your issuing operation
+    - [BillingTransactions](#query-issuingbillingtransactions): View the transactions that compose your billing invoices
     - [Transactions](#query-issuingtransactions): View the transactions that have affected your issuing balance
+    - [Tokens](#query-issuingtokens): Manage the digital wallet tokens of your cards
+    - [TokenRequests](#create-an-issuingtokenrequest): Generate the payload to proceed with card tokenization
+    - [TokenDesigns](#query-issuingtokendesigns): View the token designs available to tokenize your cards
     - [Enums](#issuing-enums): Query enums related to the issuing purchases, such as merchant categories, countries and card purchase methods
   - [Pix](#pix)
     - [PixRequests](#create-pixrequests): Create Pix transactions
@@ -970,6 +975,7 @@ require('starkinfra')
 purchase = StarkInfra::IssuingPurchase.get('5155165527080960')
 
 puts purchase
+puts purchase.installment_count
 ```
 
 ### Query IssuingPurchase logs
@@ -1145,6 +1151,68 @@ balance = StarkInfra::IssuingBalance.get()
 puts balance
 ```
 
+### Query IssuingBillingInvoices
+
+You can query the billing invoices of your issuing operation:
+
+```ruby
+require('starkinfra')
+
+invoices = StarkInfra::IssuingBillingInvoice.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+invoices.each do |invoice|
+  puts invoice
+end
+```
+
+### Get an IssuingBillingInvoice
+
+You can get a specific billing invoice by its id:
+
+```ruby
+require('starkinfra')
+
+invoice = StarkInfra::IssuingBillingInvoice.get('5656565656565656')
+
+puts invoice
+```
+
+### Query IssuingBillingTransactions
+
+You can query the transactions that compose your billing invoices:
+
+```ruby
+require('starkinfra')
+
+transactions = StarkInfra::IssuingBillingTransaction.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-03-01'
+)
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
+### Query paged IssuingBillingTransactions
+
+If you want to manually page your billing transactions, you can use the page function:
+
+```ruby
+require('starkinfra')
+
+transactions, cursor = StarkInfra::IssuingBillingTransaction.page(limit: 5)
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
 ### Query IssuingTransactions
 
 To understand your balance changes (issuing statement), you can query
@@ -1175,6 +1243,159 @@ require('starkinfra')
 transaction = StarkInfra::IssuingTransaction.get('5155165527080960')
 
 puts transaction
+```
+
+### Query IssuingTokens
+
+You can query the digital wallet tokens of your cards:
+
+```ruby
+require('starkinfra')
+
+tokens = StarkInfra::IssuingToken.query(
+  limit: 10,
+  after: '2022-01-01',
+  before: '2022-01-20'
+)
+
+tokens.each do |token|
+  puts token
+end
+```
+
+### Get an IssuingToken
+
+You can get a specific token by its id:
+
+```ruby
+require('starkinfra')
+
+token = StarkInfra::IssuingToken.get('5656565656565656')
+
+puts token
+```
+
+### Update an IssuingToken
+
+You can update a specific token by its id:
+
+```ruby
+require('starkinfra')
+
+token = StarkInfra::IssuingToken.update('5656565656565656', status: 'blocked')
+
+puts token
+```
+
+### Cancel an IssuingToken
+
+You can cancel a specific token by its id:
+
+```ruby
+require('starkinfra')
+
+token = StarkInfra::IssuingToken.cancel('5656565656565656')
+
+puts token
+```
+
+### Process Token authorization requests
+
+It's easy to process authorization requests that arrived at your registered endpoint. Remember to pass the
+content in its raw form and the digital signature you received in your request headers.
+
+```ruby
+require('starkinfra')
+
+request = listen() # this is the method you made to get the events posted to your webhook endpoint
+
+token = StarkInfra::IssuingToken.parse(
+  content: request.body.read,
+  signature: request.headers['Digital-Signature']
+)
+
+puts token
+
+response = StarkInfra::IssuingToken.response_authorization(
+  status: 'approved',
+  activation_methods: [
+    { type: 'app', value: 'com.example.app' },
+    { type: 'text', value: '** *****-5678' }
+  ],
+  design_id: '5656565656565656'
+)
+
+puts response
+```
+
+### Process Token activation requests
+
+It's easy to process activation requests that arrived at your registered endpoint.
+
+```ruby
+require('starkinfra')
+
+response = StarkInfra::IssuingToken.response_activation(status: 'approved')
+
+puts response
+```
+
+### Create an IssuingTokenRequest
+
+You can create a single IssuingTokenRequest to generate the payload needed to proceed with the card tokenization.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::IssuingTokenRequest.create(
+  StarkInfra::IssuingTokenRequest.new(
+    card_id: '5656565656565656',
+    wallet_id: 'google',
+    method_code: 'app'
+  )
+)
+
+puts request
+```
+
+### Query IssuingTokenDesigns
+
+You can get a list of available token designs given some filters.
+
+```ruby
+require('starkinfra')
+
+designs = StarkInfra::IssuingTokenDesign.query(
+  limit: 1
+)
+
+designs.each do |design|
+  puts design
+end
+```
+
+### Get an IssuingTokenDesign
+
+Information on a token design may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+design = StarkInfra::IssuingTokenDesign.get('5656565656565656')
+
+puts design
+```
+
+### Get an IssuingTokenDesign pdf
+
+You can retrieve the IssuingTokenDesign pdf file by its id.
+
+```ruby
+require('starkinfra')
+
+pdf = StarkInfra::IssuingTokenDesign.pdf('5656565656565656')
+
+File.binwrite('issuing_token_design.pdf', pdf)
 ```
 
 ### Issuing Enums

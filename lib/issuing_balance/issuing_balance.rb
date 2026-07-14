@@ -13,13 +13,17 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingBalance is created. ex: '5656565656565656'
   # - amount [integer]: current issuing balance amount of the Workspace in cents. ex: 200 (= R$ 2.00)
+  # - limit [integer]: Spending limit of the balance
+  # - max_limit [integer]: Maximum spending limit. This field is currently always equal to limit
   # - currency [string]: currency of the current Workspace. Expect others to be added eventually. ex: 'BRL'
   # - updated [DateTime]: latest update datetime for the IssuingBalance. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingBalance < StarkCore::Utils::Resource
-    attr_reader :amount, :currency, :updated, :id
-    def initialize(amount: nil, currency: nil, updated: nil, id: nil)
+    attr_reader :amount, :limit, :max_limit, :currency, :updated, :id
+    def initialize(amount: nil, limit: nil, max_limit: nil, currency: nil, updated: nil, id: nil)
       super(id)
       @amount = amount
+      @limit = limit
+      @max_limit = max_limit
       @currency = currency
       @updated = updated
     end
@@ -44,6 +48,8 @@ module StarkInfra
           IssuingBalance.new(
             id: json['id'],
             amount: json['amount'],
+            limit: json['limit'],
+            max_limit: json['max_limit'],
             currency: json['currency'],
             updated: json['updated']
           )

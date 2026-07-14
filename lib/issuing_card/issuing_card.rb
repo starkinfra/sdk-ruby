@@ -31,6 +31,7 @@ module StarkInfra
   # - holder_id [string]: card holder unique id. ex: '5656565656565656'
   # - type [string]: card type. ex: 'virtual'
   # - status [string]: current IssuingCard status. ex: 'active', 'blocked', 'canceled', 'expired'.
+  # - is_pin_defined [boolean]: Whether the card has a PIN defined. Returned only when "expand=isPinDefined" is informed in the request
   # - number [string]: [EXPANDABLE] masked card number. Expand to unmask the value. ex: '123'.
   # - security_code [string]: [EXPANDABLE] masked card verification value (cvv). Expand to unmask the value. ex: '123'.
   # - expiration [DateTime]: [EXPANDABLE] masked card expiration datetime. Expand to unmask the value. ex: DateTime.new(2032, 3, 10, 10, 30, 0, 0)
@@ -39,11 +40,11 @@ module StarkInfra
   class IssuingCard < StarkCore::Utils::Resource
     attr_reader :id, :holder_name, :holder_tax_id, :holder_external_id, :display_name, :rules, :product_id, :tags,
                 :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :holder_id,
-                :type, :status, :number, :security_code, :expiration, :created, :updated
+                :type, :status, :is_pin_defined, :number, :security_code, :expiration, :created, :updated
     def initialize(
       holder_name: , holder_tax_id: , holder_external_id: , display_name: nil, rules: nil, product_id: nil, tags: nil,
       street_line_1: nil, street_line_2: nil, district: nil, city: nil, state_code: nil, zip_code: nil, id: nil,
-      holder_id: nil, type: nil, status: nil, number: nil, security_code: nil, expiration: nil, created: nil, updated: nil
+      holder_id: nil, type: nil, status: nil, is_pin_defined: nil, number: nil, security_code: nil, expiration: nil, created: nil, updated: nil
     )
       super(id)
       @holder_name = holder_name
@@ -62,6 +63,7 @@ module StarkInfra
       @holder_id = holder_id
       @type = type
       @status = status
+      @is_pin_defined = is_pin_defined
       @number = number
       @security_code = security_code
       expiration = nil if !expiration.nil? && expiration.include?('*')
@@ -249,6 +251,7 @@ module StarkInfra
             holder_id: json['holder_id'],
             type: json['type'],
             status: json['status'],
+            is_pin_defined: json['is_pin_defined'],
             number: json['number'],
             security_code: json['security_code'],
             expiration: json['expiration'],

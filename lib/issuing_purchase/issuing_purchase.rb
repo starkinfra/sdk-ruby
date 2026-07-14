@@ -14,6 +14,7 @@ module StarkInfra
   # - card_id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
   # - card_ending [string]: last 4 digits of the card number. ex: '1234'
   # - purpose [string]: purchase purpose. ex: 'purchase'
+  # - installment_count [integer]: quantity of installments to be confirmed. Minimum = 1. ex: 12
   # - amount [integer]: IssuingPurchase value in cents. Minimum = 0. ex: 1234 (= R$ 12.34)
   # - tax [integer]: IOF amount taxed for international purchases. ex: 1234 (= R$ 12.34)
   # - issuer_amount [integer]: issuer amount. ex: 1234 (= R$ 12.34)
@@ -24,6 +25,7 @@ module StarkInfra
   # - merchant_category_type [string]: merchant category type. ex 'food'
   # - merchant_currency_symbol [string]: merchant currency symbol. ex: '$'
   # - merchant_category_code [string]: merchant category code. ex: 'fastFoodRestaurants'
+  # - merchant_category_number [integer]: MCC number of the merchant category. ex: 5814
   # - merchant_country_code [string]: merchant country code. ex: 'USA'
   # - acquirer_id [string]: acquirer ID. ex: '5656565656565656'
   # - merchant_id [string]: merchant ID. ex: '5656565656565656'
@@ -39,6 +41,7 @@ module StarkInfra
   # - id [string]: unique id returned when IssuingPurchase is created. ex: '5656565656565656'
   # - issuing_transaction_ids [string]: ledger transaction ids linked to this Purchase
   # - status [string]: current IssuingCard status. Options: 'approved', 'canceled', 'denied', 'confirmed', 'voided'
+  # - confirmed [DateTime]: Confirmation datetime. Null until the purchase is confirmed. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - description [string]: IssuingPurchase description. ex: 'Office Supplies'
   # - metadata [dictionary object]: dictionary object used to store additional information about the IssuingPurchase object. ex: { authorizationId: 'OjZAqj' }
   # - zip_code [string]: zip code of the merchant location. ex: '02101234'
@@ -51,18 +54,18 @@ module StarkInfra
   # - holder_id [string]: card holder ID. ex: '5656565656565656'
   # - holder_tags [list of strings]: tags of the IssuingHolder responsible for this purchase. ex: ['technology', 'john snow']
   class IssuingPurchase < StarkCore::Utils::Resource
-    attr_reader :id, :holder_name, :product_id, :card_id, :card_ending, :purpose, :amount, :tax, :issuer_amount, :issuer_currency_code,
+    attr_reader :id, :holder_name, :product_id, :card_id, :card_ending, :purpose, :installment_count, :amount, :tax, :issuer_amount, :issuer_currency_code,
                 :issuer_currency_symbol, :merchant_amount, :merchant_currency_code, :merchant_currency_symbol,
-                :merchant_category_code, :merchant_category_type, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
+                :merchant_category_code, :merchant_category_number, :merchant_category_type, :merchant_country_code, :acquirer_id, :merchant_id, :merchant_name,
                 :merchant_fee, :wallet_id, :method_code, :score, :end_to_end_id, :tags,
-                :issuing_transaction_ids, :status, :description, :metadata, :zip_code, :updated, :created, :is_partial_allowed, :card_tags, :holder_id, :holder_tags
+                :issuing_transaction_ids, :status, :confirmed, :description, :metadata, :zip_code, :updated, :created, :is_partial_allowed, :card_tags, :holder_id, :holder_tags
 
     def initialize(
-      id: nil, holder_name: nil, product_id: nil, card_id: nil, card_ending: nil, purpose: nil, amount: nil, tax: nil, issuer_amount: nil,
+      id: nil, holder_name: nil, product_id: nil, card_id: nil, card_ending: nil, purpose: nil, installment_count: nil, amount: nil, tax: nil, issuer_amount: nil,
       issuer_currency_code: nil, issuer_currency_symbol: nil, merchant_amount: nil, merchant_currency_code: nil,
-      merchant_currency_symbol: nil, merchant_category_code: nil, merchant_category_type: nil, merchant_country_code: nil, acquirer_id: nil,
+      merchant_currency_symbol: nil, merchant_category_code: nil, merchant_category_number: nil, merchant_category_type: nil, merchant_country_code: nil, acquirer_id: nil,
       merchant_id: nil, merchant_name: nil, merchant_fee: nil, wallet_id: nil, method_code: nil, score: nil,
-      end_to_end_id: nil, tags: nil, issuing_transaction_ids: nil, status: nil, description: nil, metadata: nil, zip_code: nil, updated: nil, created: nil,
+      end_to_end_id: nil, tags: nil, issuing_transaction_ids: nil, status: nil, confirmed: nil, description: nil, metadata: nil, zip_code: nil, updated: nil, created: nil,
       is_partial_allowed: nil, card_tags:nil, holder_id: nil, holder_tags:nil
     )
       super(id)
@@ -71,6 +74,7 @@ module StarkInfra
       @card_id = card_id
       @card_ending = card_ending
       @purpose = purpose
+      @installment_count = installment_count
       @amount = amount
       @tax = tax
       @issuer_amount = issuer_amount
@@ -80,6 +84,7 @@ module StarkInfra
       @merchant_currency_code = merchant_currency_code
       @merchant_currency_symbol = merchant_currency_symbol
       @merchant_category_code = merchant_category_code
+      @merchant_category_number = merchant_category_number
       @merchant_category_type = merchant_category_type
       @merchant_country_code = merchant_country_code
       @acquirer_id = acquirer_id
@@ -93,6 +98,7 @@ module StarkInfra
       @tags = tags
       @issuing_transaction_ids = issuing_transaction_ids
       @status = status
+      @confirmed = StarkCore::Utils::Checks.check_datetime(confirmed)
       @description = description
       @metadata = metadata
       @zip_code = zip_code
@@ -238,7 +244,7 @@ module StarkInfra
     # ## Return:
     # - Dumped JSON string that must be returned to us on the IssuingPurchase request
     def self.response(
-      status:, reason:, amount:, tags:
+      status:, reason: nil, amount: nil, tags: nil
     )
       params = {
         'status': status,
@@ -261,6 +267,7 @@ module StarkInfra
             card_id: json['card_id'],
             card_ending: json['card_ending'],
             purpose: json['purpose'],
+            installment_count: json['installment_count'],
             amount: json['amount'],
             tax: json['tax'],
             issuer_amount: json['issuer_amount'],
@@ -270,6 +277,7 @@ module StarkInfra
             merchant_currency_code: json['merchant_currency_code'],
             merchant_currency_symbol: json['merchant_currency_symbol'],
             merchant_category_code: json['merchant_category_code'],
+            merchant_category_number: json['merchant_category_number'],
             merchant_category_type: json['merchant_category_type'],
             merchant_country_code: json['merchant_country_code'],
             acquirer_id: json['acquirer_id'],
@@ -283,6 +291,7 @@ module StarkInfra
             tags: json['tags'],
             issuing_transaction_ids: json['issuing_transaction_ids'],
             status: json['status'],
+            confirmed: json['confirmed'],
             description: json['description'],
             metadata: json['metadata'],
             zip_code: json['zip_code'],

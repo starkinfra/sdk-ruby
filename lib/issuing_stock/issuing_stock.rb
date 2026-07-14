@@ -13,17 +13,19 @@ module StarkInfra
   # - balance [integer]: [EXPANDABLE] current stock balance. ex: 1000
   # - design_id [string]: IssuingDesign unique id. ex: "5656565656565656"
   # - embosser_id [string]: Embosser unique id. ex: "5656565656565656"
+  # - embosser_name [string]: Name of the embosser that holds this stock
   # - updated [DateTime]: latest update datetime for the IssuingStock. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingStock. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingStock < StarkCore::Utils::Resource
-    attr_reader :id, :balance, :design_id, :embosser_id, :updated, :created
+    attr_reader :id, :balance, :design_id, :embosser_id, :embosser_name, :updated, :created
     def initialize(
-      id: nil, balance: nil, design_id: nil, embosser_id: nil, updated: nil, created: nil 
+      id: nil, balance: nil, design_id: nil, embosser_id: nil, embosser_name: nil, updated: nil, created: nil
     )
       super(id)
       @balance = balance
       @design_id = design_id
       @embosser_id = embosser_id
+      @embosser_name = embosser_name
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
       @created = StarkCore::Utils::Checks.check_datetime(created)
     end
@@ -127,6 +129,7 @@ module StarkInfra
             balance: json['balance'],
             design_id: json['design_id'],
             embosser_id: json['embosser_id'],
+            embosser_name: json['embosser_name'],
             updated: json['updated'],
             created: json['created']
           )

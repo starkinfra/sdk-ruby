@@ -24,12 +24,14 @@ module StarkInfra
   # - counter_amount [integer]: current rule spent amount. ex: 1000
   # - currency_symbol [string]: currency symbol. ex: 'R$'
   # - currency_name [string]: currency name. ex: 'Brazilian Real'
+  # - schedule [string]: Optional schedule dictating when the rule can be used. Some examples: 'everyday from 09:00 to 18:00 in America/Sao_Paulo' - every day, 09:00-18:00 Sao Paulo time; 'every monday, wednesday, friday from 08:00 to 12:00 in America/Sao_Paulo' - only those weekdays, mornings; 'every saturday, sunday' - weekends, all day, in UTC
+  # - purposes [list of strings]: Optional list of transaction purposes the rule applies to. Options: 'purchase', 'withdrawal', 'verification'. The rule then limits only purchases of those purposes; omit it to allow any purposes. Example: ['purchase', 'verification'] if you want us to automatically deny withdrawal.
   class IssuingRule < StarkCore::Utils::Resource
     attr_reader :name, :interval, :amount, :currency_code, :counter_amount, :currency_name, :currency_symbol,
-                :categories, :countries, :methods
+                :categories, :countries, :methods, :schedule, :purposes
     def initialize(
       name:, amount:, id: nil, interval: nil, currency_code: nil, categories: nil, countries: nil, methods: nil,
-      counter_amount: nil, currency_symbol: nil, currency_name: nil
+      counter_amount: nil, currency_symbol: nil, currency_name: nil, schedule: nil, purposes: nil
     )
       super(id)
       @name = name
@@ -42,6 +44,8 @@ module StarkInfra
       @counter_amount = counter_amount
       @currency_symbol = currency_symbol
       @currency_name = currency_name
+      @schedule = schedule
+      @purposes = purposes
     end
 
     def self.parse_categories(categories)
@@ -114,7 +118,9 @@ module StarkInfra
             methods: json['methods'],
             counter_amount: json['counter_amount'],
             currency_symbol: json['currency_symbol'],
-            currency_name: json['currency_name']
+            currency_name: json['currency_name'],
+            schedule: json['schedule'],
+            purposes: json['purposes']
           )
         }
       }
