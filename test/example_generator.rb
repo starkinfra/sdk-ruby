@@ -11,18 +11,20 @@ class ExampleGenerator
     StarkInfra::PixRequest.new(
       amount: 10_000,
       external_id: SecureRandom.base64,
-      sender_account_number: '00000-0',
+      sender_account_number: '00000',
       sender_branch_code: '0000',
       sender_account_type: 'checking',
       sender_name: 'joao',
       sender_tax_id: '09.346.601/0001-25',
       receiver_bank_code: '00000000',
-      receiver_account_number: '00000-1',
+      receiver_account_number: '00000',
       receiver_branch_code: '0001',
       receiver_account_type: 'checking',
       receiver_name: 'maria',
       receiver_tax_id: '45.987.245/0001-92',
-      end_to_end_id: StarkInfra::EndToEndId.create(bank_code)
+      end_to_end_id: StarkInfra::EndToEndId.create(bank_code),
+      priority: 'low',
+      reason: 'subscriptionFlaw'
     )
   end
 

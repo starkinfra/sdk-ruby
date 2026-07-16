@@ -30,6 +30,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - IssuingBillingInvoice resource
 - IssuingBillingTransaction resource
 - installment_count attribute to IssuingPurchase resource
+- priority and reason attributes to PixRequest resource
 ### Changed
 - minimum required Ruby version to 3.0
 - dispute_id, is_monitoring_required, reversal_account_number, reversal_account_type, reversal_bank_code, reversal_branch_code and reversal_tax_id attributes to PixChargeback resource

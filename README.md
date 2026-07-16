@@ -1479,6 +1479,8 @@ requests = StarkInfra::PixRequest.create(
       receiver_tax_id: '45.987.245/0001-92',
       end_to_end_id: 'E20018183202201201450u34sDGd19lz',
       description: 'For saving my life',
+      reason: 'subcriptionFlaw',
+      priority: 'low',
     ),
     StarkInfra::PixRequest.new(
       amount: 200,  # (R$ 2.00)
@@ -1496,6 +1498,8 @@ requests = StarkInfra::PixRequest.create(
       receiver_tax_id: '012.345.678-90',
       end_to_end_id: 'E20018183202201201450u34sDGd19lz',
       tags: ['Needle', 'sword'],
+      reason: 'subcriptionFlaw',
+      priority: 'low',
     )
   ]
 )
