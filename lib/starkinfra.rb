@@ -90,7 +90,7 @@ require_relative('utils/return_id')
 module StarkInfra
 
   API_VERSION = 'v2'
-  SDK_VERSION = '0.5.1'
+  SDK_VERSION = '0.6.0'
   HOST = "infra"
   public_constant :API_VERSION, :SDK_VERSION, :HOST;
 
