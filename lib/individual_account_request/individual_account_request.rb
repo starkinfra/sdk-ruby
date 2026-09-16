@@ -28,13 +28,14 @@ module StarkInfra
   # - status [string]: current status of the IndividualAccountRequest. Options: 'approved', 'created', 'denied', 'processing', 'updated'
   # - account_type [string]: account type of the request. Always 'individual' for this resource. ex: 'individual'
   # - flags [list of strings]: server-side review flags. Empty unless the request triggered a manual-review condition.
+  # - validator_link [string]: webview link to be delivered to the taker to complete biometrics and document capture.
   # - created [DateTime]: creation datetime for the IndividualAccountRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the IndividualAccountRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IndividualAccountRequest < StarkCore::Utils::Resource
-    attr_reader :name, :tax_id, :address, :income, :tags, :id, :status, :account_type, :flags, :created, :updated
+    attr_reader :name, :tax_id, :address, :income, :tags, :id, :status, :account_type, :flags, :validator_link, :created, :updated
     def initialize(
       name:, tax_id:, address:, income:, tags: nil,
-      id: nil, status: nil, account_type: nil, flags: nil, created: nil, updated: nil
+      id: nil, status: nil, account_type: nil, flags: nil, validator_link: nil, created: nil, updated: nil
     )
       super(id)
       @name = name
@@ -45,6 +46,7 @@ module StarkInfra
       @status = status
       @account_type = account_type
       @flags = flags
+      @validator_link = validator_link
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
     end
@@ -202,6 +204,7 @@ module StarkInfra
             status: json['status'],
             account_type: json['account_type'],
             flags: json['flags'],
+            validator_link: json['validator_link'],
             created: json['created'],
             updated: json['updated']
           )
@@ -221,15 +224,19 @@ module StarkInfra
     # - city [string]: city. ex: 'SP'
     # - state [string]: state (BR 2-letter code). ex: 'SP'
     # - zip_code [string]: ZIP code (BR CEP). ex: '05724005'
+    #
+    # ## Parameters (optional):
+    # - complement [string, default nil]: address complement. ex: 'Apto. 123'
     class Address < StarkCore::Utils::SubResource
-      attr_reader :street, :number, :neighborhood, :city, :state, :zip_code
-      def initialize(street: nil, number: nil, neighborhood: nil, city: nil, state: nil, zip_code: nil)
+      attr_reader :street, :number, :neighborhood, :city, :state, :zip_code, :complement
+      def initialize(street: nil, number: nil, neighborhood: nil, city: nil, state: nil, zip_code: nil, complement: nil)
         @street = street
         @number = number
         @neighborhood = neighborhood
         @city = city
         @state = state
         @zip_code = zip_code
+        @complement = complement
       end
 
       def self.parse_address(address)
@@ -248,7 +255,8 @@ module StarkInfra
               neighborhood: json['neighborhood'],
               city: json['city'],
               state: json['state'],
-              zip_code: json['zip_code']
+              zip_code: json['zip_code'],
+              complement: json['complement']
             )
           }
         }
