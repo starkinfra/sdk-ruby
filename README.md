@@ -1304,6 +1304,36 @@ token = StarkInfra::IssuingToken.cancel('5656565656565656')
 puts token
 ```
 
+### Query IssuingToken logs
+
+You can query IssuingToken logs to better understand IssuingToken life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::IssuingToken::Log.query(
+  limit: 50,
+  after: '2022-01-01',
+  before: '2022-01-20'
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get an IssuingToken log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::IssuingToken::Log.get('5155165527080960')
+
+puts log
+```
+
 ### Process Token authorization requests
 
 It's easy to process authorization requests that arrived at your registered endpoint. Remember to pass the
@@ -3611,7 +3641,7 @@ require('starkinfra')
 
 logs = StarkInfra::CreditHolmes::Log.query(
   limit: 50, 
-  ids: ["5729405850615808"],
+  holmes_ids: ["5729405850615808"],
   after: "2022-01-01",
   before: "2022-01-20",
   types: ["created"]
