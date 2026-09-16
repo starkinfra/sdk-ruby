@@ -14,6 +14,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+- CreditHolmes::Log sub-resource
+- IssuingToken::Log sub-resource
 - Ledger resource
 - Ledger Log sub-resource
 - LedgerTransaction resource
