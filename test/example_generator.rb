@@ -725,4 +725,22 @@ class ExampleGenerator
 
     return rule
   end
+
+  def self.ledger_example
+    StarkInfra::Ledger.new(
+      external_id: SecureRandom.base64,
+      rules: [StarkInfra::Ledger::Rule.new(key: 'minimumBalance', value: 0)],
+      tags: %w[ruby sdk test]
+    )
+  end
+
+  def self.ledger_transaction_example(ledger_id)
+    StarkInfra::LedgerTransaction.new(
+      amount: 100,
+      ledger_id: ledger_id,
+      external_id: SecureRandom.base64,
+      source: 'sdk-ruby-test',
+      tags: %w[ruby sdk test]
+    )
+  end
 end
