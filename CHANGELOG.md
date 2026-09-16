@@ -26,6 +26,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - pdf and payment methods to CreditNote resource
 - resend_token method to CreditSigner resource
 - update method to IssuingPurchase resource
+- IndividualAccountRequest resource
+- IndividualAccountRequest::Address sub-resource
+- IndividualAccountAttachment resource
 
 ## [0.6.0] - 2026-07-16
 ### Added
