@@ -424,6 +424,36 @@ class ExampleGenerator
     )
   end
 
+  def self.business_account_request_example
+    StarkInfra::BusinessAccountRequest.new(
+      name: 'Stark Bank S.A.',
+      tax_id: '20.018.183/0001-80',
+      address: StarkInfra::BusinessAccountRequest::Address.new(
+        street: 'Av. Faria Lima',
+        number: '2000',
+        neighborhood: 'Itaim Bibi',
+        city: 'Sao Paulo',
+        state: 'SP',
+        zip_code: '04538-132',
+        complement: 'Sala 42'
+      ),
+      revenue: 100_000_000,
+      owners: [
+        StarkInfra::BusinessAccountRequest::Owner.new(
+          tax_id: '012.345.678-90',
+          name: 'Jamie Lannister',
+          role: 'partner'
+        ),
+        StarkInfra::BusinessAccountRequest::Owner.new(
+          tax_id: '812.531.960-36',
+          name: 'Cersei Lannister',
+          role: 'representative'
+        )
+      ],
+      tags: ['employees', 'monthly']
+    )
+  end
+
   def self.individual_document_image(image)
     rg_images = {
       "front" => "test/utils/identity/identity-front-face.png",

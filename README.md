@@ -75,6 +75,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [IndividualDocument](#create-individualdocuments): Create individual documents
     - [BusinessIdentity](#create-businessidentities): Create business identities
     - [BusinessAttachment](#create-businessattachments): Create business attachments
+    - [BusinessAccountRequest](#create-businessaccountrequests): Open a Stark Infra account for a company
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -4057,6 +4058,116 @@ You can also get a specific log by its id.
 require('starkinfra')
 
 log = StarkInfra::BusinessAttachment::Log.get('5155165527080960')
+
+puts log
+```
+
+### Create BusinessAccountRequests
+
+You can create a BusinessAccountRequest to open a Stark Infra account for a company. Each of the company's owners completes an identity verification through a webview, delivered as the owner's `validator_link`. The approval flow runs asynchronously.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::BusinessAccountRequest.create([
+  StarkInfra::BusinessAccountRequest.new(
+    name: 'Stark Bank S.A.',
+    tax_id: '20.018.183/0001-80',
+    address: StarkInfra::BusinessAccountRequest::Address.new(
+      street: 'Av. Faria Lima',
+      number: '2000',
+      neighborhood: 'Itaim Bibi',
+      city: 'Sao Paulo',
+      state: 'SP',
+      zip_code: '04538-132',
+      complement: 'Sala 42'
+    ),
+    revenue: 100000000,
+    owners: [
+      StarkInfra::BusinessAccountRequest::Owner.new(
+        tax_id: '012.345.678-90',
+        name: 'Jamie Lannister',
+        role: 'partner'
+      ),
+      StarkInfra::BusinessAccountRequest::Owner.new(
+        tax_id: '812.531.960-36',
+        name: 'Cersei Lannister',
+        role: 'representative'
+      )
+    ],
+    tags: ['employees', 'monthly']
+  )
+])
+
+requests.each do |request|
+  puts request
+end
+```
+
+**Note**: Instead of using BusinessAccountRequest, Address and Owner objects, you can also pass each element in dictionary format
+
+### Query BusinessAccountRequests
+
+You can query multiple business account requests according to filters.
+
+```ruby
+require('starkinfra')
+
+requests = StarkInfra::BusinessAccountRequest.query(
+  limit: 10,
+  after: '2020-04-01',
+  before: '2020-04-30',
+  status: 'approved',
+  tags: ['employees', 'monthly']
+)
+
+requests.each do |request|
+  puts request
+end
+```
+
+### Get a BusinessAccountRequest
+
+After its creation, information on a business account request may be retrieved by its id. Use it to read the per-owner verification status.
+
+```ruby
+require('starkinfra')
+
+request = StarkInfra::BusinessAccountRequest.get('5155165527080960')
+
+request.owners.each do |owner|
+  puts owner.name + ' ' + owner.status
+end
+```
+
+Each owner also carries a `validator_link`, the webview where that owner completes biometrics and document capture. Treat it as a credential: deliver it to its owner through a secure channel, and never log it or write it to disk.
+
+### Query BusinessAccountRequest logs
+
+You can query business account request logs to better understand business account request life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::BusinessAccountRequest::Log.query(
+  limit: 50,
+  after: '2020-01-01',
+  before: '2020-01-20'
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a BusinessAccountRequest log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::BusinessAccountRequest::Log.get('5155165527080960')
 
 puts log
 ```
