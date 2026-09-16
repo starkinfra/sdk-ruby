@@ -39,6 +39,7 @@ This SDK version is compatible with the Stark Infra API v2.
     - [BillingTransactions](#query-issuingbillingtransactions): View the transactions that compose your billing invoices
     - [Transactions](#query-issuingtransactions): View the transactions that have affected your issuing balance
     - [Tokens](#query-issuingtokens): Manage the digital wallet tokens of your cards
+    - [TokenActivation](#process-token-activations): Get notified on how to inform the activation code to the holder
     - [TokenRequests](#create-an-issuingtokenrequest): Generate the payload to proceed with card tokenization
     - [TokenDesigns](#query-issuingtokendesigns): View the token designs available to tokenize your cards
     - [Enums](#issuing-enums): Query enums related to the issuing purchases, such as merchant categories, countries and card purchase methods
@@ -1282,6 +1283,24 @@ tokens = StarkInfra::IssuingToken.query(
 tokens.each do |token|
   puts token
 end
+```
+
+### Process Token activations
+
+It's easy to process token activation notifications delivered to your endpoint.
+Remember to pass the signature header so the SDK can make sure it's Stark Infra that sent you the event.
+
+```ruby
+require('starkinfra')
+
+request = listen() # this is the method you made to get the events posted to your tokenActivationUrl endpoint
+
+authorization = StarkInfra::IssuingTokenActivation.parse(
+  content: request.body.read,
+  signature: request.headers['Digital-Signature']
+)
+
+puts authorization
 ```
 
 ### Get an IssuingToken
