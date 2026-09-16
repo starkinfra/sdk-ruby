@@ -26,7 +26,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the IndividualIdentity is created. ex: "5656565656565656"
-  # - status [string]: current status of the IndividualIdentity. Options: "created", "canceled", "processing", "failed", "success"
+  # - status [string]: current status of the IndividualIdentity. Options: "created", "processing", "pending", "success", "failed" — there is no "canceled" value; canceling an identity moves it to "failed".
   # - created [DateTime]: creation datetime for the IndividualIdentity. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IndividualIdentity < StarkCore::Utils::Resource
     attr_reader :name, :tax_id, :tags, :id, :status, :created

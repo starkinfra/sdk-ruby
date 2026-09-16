@@ -17,10 +17,10 @@ module StarkInfra
   # ## Parameters (required):
   # - amount [integer]: amount in cents to be reversed. ex: 11234 (= R$ 112.34)
   # - reference_id [string]: end_to_end_id or return_id of the transaction to be reversed. ex: 'E20018183202201201450u34sDGd19lz'
-  # - reason [string]: reason why the reversal was requested. Options: 'fraud', 'flaw', 'reversalChargeback'
+  # - reason [string]: reason why the reversal was requested. Options: 'flaw', 'fraud', 'subscriptionFlaw' (the API also assigns 'reversalChargeback' automatically when a chargeback stems from a closed Pix Infraction, but it cannot be passed on creation).
   #
   # ## Parameters (optional):
-  # - description [string, default nil]: description for the PixChargeback. ex: 'Payment for service #1234'
+  # - description [string, default nil]: description for the PixChargeback. Required when reason is 'flaw'. ex: 'Payment for service #1234'
   # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):
@@ -184,10 +184,10 @@ module StarkInfra
     #
     # ## Parameters (required):
     # - id [string]: PixChargeback unique id. ex: '5656565656565656'
-    # - result [string]: result after the analysis of the PixChargeback. Options: 'rejected', 'accepted', 'partiallyAccepted'.
+    # - result [string]: result of the chargeback analysis to submit. Options: 'agreed', 'disagreed', 'partiallyAgreed'.
     #
     # ## Parameters (conditionally required):
-    # - rejection_reason [string, default nil]: if the PixChargeback is rejected a reason is required. Options: 'noBalance', 'accountClosed', 'unableToReverse',
+    # - rejection_reason [string, default nil]: if the PixChargeback's result is 'rejected', a reason is required. Options: 'other', 'noBalance', 'accountClosed', 'invalidRequest' ('unableToReverse' is not a valid value).
     # - reversal_reference_id [string, default nil]: return_id of the reversal transaction. ex: 'D20018183202201201450u34sDGd19lz'
     #
     # ## Parameters (optional):

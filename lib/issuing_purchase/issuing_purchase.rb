@@ -13,7 +13,7 @@ module StarkInfra
   # - product_id [string]: unique card product number (BIN) registered within the card network. ex: "53810200"
   # - card_id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
   # - card_ending [string]: last 4 digits of the card number. ex: '1234'
-  # - purpose [string]: purchase purpose. ex: 'purchase'
+  # - purpose [string]: purchase purpose. Options: 'purchase', 'withdrawal', 'verification', 'purchaseRefund', 'cashbackPurchase', 'paymentTransaction'.
   # - installment_count [integer]: quantity of installments to be confirmed. Minimum = 1. ex: 12
   # - amount [integer]: IssuingPurchase value in cents. Minimum = 0. ex: 1234 (= R$ 12.34)
   # - tax [integer]: IOF amount taxed for international purchases. ex: 1234 (= R$ 12.34)

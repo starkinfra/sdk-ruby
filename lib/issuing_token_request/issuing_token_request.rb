@@ -10,7 +10,7 @@ module StarkInfra
   #
   # ## Parameters (required):
   # - card_id [string]: card id to be tokenized. ex: '5734340247945216'
-  # - wallet_id [string]: desired wallet to be integrated. ex: 'google'
+  # - wallet_id [string]: desired wallet to be integrated. Options: 'apple', 'google', 'merchant'.
   # - method_code [string]: method code. ex: 'app' or 'manual'
   #
   # ## Attributes (return-only):

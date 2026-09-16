@@ -34,7 +34,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixPullRequest is created. ex: '5656565656565656'
-  # - status [string]: current PixPullRequest status. Options: 'created', 'processing', 'scheduled', 'denied', 'success', 'canceled', 'expired'
+  # - status [string]: current PixPullRequest status. Options: 'created', 'processing', 'scheduled', 'denied', 'success', 'failed', 'canceled', 'expired'.
   # - flow [string]: direction of money flow. Options: 'in', 'out'
   # - receiver_name [string]: receiver's full name (filled in by the Pix infrastructure during settlement). ex: 'Edward Stark'
   # - receiver_tax_id [string]: receiver's tax ID (CPF or CNPJ). ex: '01234567890' or '20.018.183/0001-80'
@@ -85,7 +85,10 @@ module StarkInfra
 
     # # Create PixPullRequests
     #
-    # Send a list of PixPullRequest objects for creation in the Stark Infra API
+    # Send a list of 1 to 100 PixPullRequest objects for creation in the Stark Infra API. Stark Infra verifies
+    # that the parent subscription is approved, the amount is within its authorized limit, the settlement date
+    # matches the subscription's charge cycle, payer/receiver details match the contract, the request is made
+    # between 10 and 2 days before settlement, and there is no other scheduled request for the same cycle.
     #
     # ## Parameters (required):
     # - requests [list of PixPullRequest objects]: list of PixPullRequest objects to be created in the API
@@ -211,7 +214,7 @@ module StarkInfra
     #
     # ## Parameters (required):
     # - id [string]: PixPullRequest unique id. ex: '5656565656565656'
-    # - reason [string]: reason for the cancellation. As receiver: 'accountClosed', 'receiverOrganizationClosed', 'receiverInternalError', 'fraud', 'receiverUserRequested'. As sender: 'accountClosed', 'senderDeceased', 'fraud', 'senderUserRequested'.
+    # - reason [string]: cancellation reason. As sender: 'accountClosed', 'accountBlocked', 'pixRequestFailed', 'other', 'senderUserRequested'. As receiver: 'accountClosed', 'accountBlocked', 'other', 'receiverUserRequested'.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call

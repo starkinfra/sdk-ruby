@@ -8,7 +8,7 @@ module StarkInfra
   #
   # The IssuingStockRule object displays the notification rules attached to an IssuingStock.
   # When the linked stock balance reaches the minimum_balance, the recipients listed in
-  # emails and phones are notified.
+  # emails and phones are notified. Each IssuingStock can have only one active IssuingStockRule at a time.
   #
   # ## Parameters (required):
   # - minimum_balance [integer]: stock balance threshold that triggers a notification. ex: 10000
@@ -16,8 +16,8 @@ module StarkInfra
   #
   # ## Parameters (optional):
   # - tags [list of strings, default nil]: list of strings for tagging. ex: ['card', 'corporate']
-  # - emails [list of strings, default nil]: emails notified when the stock reaches the minimum balance. ex: ['john.doe@enterprise.com']
-  # - phones [list of strings, default nil]: phones notified when the stock reaches the minimum balance. ex: ['+5511912345678']
+  # - emails [list of up to 10 strings, default nil]: emails notified when the stock reaches the minimum balance. ex: ['john.doe@enterprise.com']
+  # - phones [list of up to 10 strings, default nil]: phones notified when the stock reaches the minimum balance. ex: ['+5511912345678']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingStockRule is created. ex: '5664445921492992'
@@ -43,7 +43,8 @@ module StarkInfra
 
     # # Create IssuingStockRules
     #
-    # Send a list of IssuingStockRule objects for creation in the Stark Infra API
+    # Send a list of IssuingStockRule objects for creation in the Stark Infra API. At least one of emails or
+    # phones must be informed per rule.
     #
     # ## Parameters (required):
     # - rules [list of IssuingStockRule objects]: list of IssuingStockRule objects to be created in the API
@@ -177,7 +178,7 @@ module StarkInfra
 
     # # Cancel an IssuingStockRule entity
     #
-    # Cancel an IssuingStockRule entity previously created in the Stark Infra API
+    # Cancel an IssuingStockRule entity previously created in the Stark Infra API. This action is irreversible.
     #
     # ## Parameters (required):
     # - id [string]: IssuingStockRule unique id. ex: '5664445921492992'

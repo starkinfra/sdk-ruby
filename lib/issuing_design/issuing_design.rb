@@ -104,6 +104,15 @@ module StarkInfra
       StarkInfra::Utils::Rest.get_content(id: id, user: user, sub_resource_name: 'pdf', **resource)
     end
 
+    # # Parse IssuingDesigns
+    #
+    # Converts a list of hashes into a list of IssuingDesign objects.
+    #
+    # ## Parameters (required):
+    # - designs [list of hashes]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed IssuingDesign objects
     def self.parse_designs(designs)
       resource_maker = StarkInfra::IssuingDesign.resource[:resource_maker]
       return designs if designs.nil?

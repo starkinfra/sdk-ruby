@@ -44,7 +44,8 @@ module StarkInfra
 
     # # Create IssuingHolders
     #
-    # Send a list of IssuingHolder objects for creation in the Stark Infra API
+    # Send a list of IssuingHolder objects for creation in the Stark Infra API. Use this method to create up
+    # to 100 new IssuingHolders at a time.
     #
     # ## Parameters (required):
     # - holders [list of IssuingHolder objects]: list of IssuingHolder objects to be created in the API
@@ -147,13 +148,13 @@ module StarkInfra
 
     # # Update IssuingHolder entity
     #
-    # Update an IssuingHolder by passing id, if it hasn't been paid yet.
+    # Update an IssuingHolder by passing id. A canceled holder can no longer be updated.
     #
     # ## Parameters (required):
     # - id [string]: IssuingHolder id. ex: '5656565656565656'
     #
     # ## Parameters (optional):
-    # - status [string, default nil]: You may block the IssuingHolder by passing 'blocked' in the status
+    # - status [string, default nil]: status to update the holder to. Options: 'active', 'blocked'.
     # - name [string, default nil]: card holder name.
     # - tags [list of strings, default nil]: list of strings for tagging
     # - rules [list of IssuingRule objects, default nil]: list of objects that represent the holder's spending rules.
@@ -175,7 +176,7 @@ module StarkInfra
 
     # # Cancel an IssuingHolder entity
     #
-    # Cancel an IssuingHolder entity previously created in the Stark Infra API
+    # Cancel an IssuingHolder entity previously created in the Stark Infra API. This action is irreversible.
     #
     # ## Parameters (required):
     # - id [string]: IssuingHolder unique id. ex: '5656565656565656'

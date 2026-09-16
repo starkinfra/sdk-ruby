@@ -11,18 +11,18 @@ module StarkInfra
     #
     # ## Attributes (return-only):
     # - end_to_end_id [string]: central bank's unique transaction id. ex: 'E20018183202201201450u34sDGd19lz'
-    # - amount [integer]: refundable amount in cents. ex: 11234 (= R$ 112.34)
-    # - nominal_amount [integer]: transaction amount in cents. ex: 11234 (= R$ 112.34)
+    # - amount [integer]: transaction amount in cents. ex: 11234 (= R$ 112.34)
+    # - nominal_amount [integer]: refundable amount in cents of the transaction. ex: 11234 (= R$ 112.34)
     # - receiver_type [string]: receiver's type. Options: 'individual', 'business'
     # - receiver_tax_id_created [string]: receiver's taxId creation date (business type only).
     # - receiver_account_created [string]: receiver's account creation date.
     # - receiver_bank_code [string]: receiver's bank code. ex: '20018183'
-    # - receiver_id [string]: identifier of the accountholder in the graph.
+    # - receiver_id [string]: Bacen-generated pseudo ID for the receiver, used only for transaction-tracking context (not a real account identifier).
     # - sender_type [string]: sender's type. Options: 'individual', 'business'
     # - sender_tax_id_created [string]: sender's taxId creation date (business type only).
     # - sender_account_created [string]: sender's account creation date.
     # - sender_bank_code [string]: sender's bank code. ex: '20018183'
-    # - sender_id [string]: identifier of the accountholder in the graph.
+    # - sender_id [string]: Bacen-generated pseudo ID for the sender, used only for transaction-tracking context (not a real account identifier).
     # - settled [DateTime]: settled datetime of the transaction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
     class Transaction < StarkCore::Utils::SubResource
       attr_reader :end_to_end_id, :amount, :nominal_amount, :receiver_type, :receiver_tax_id_created,

@@ -25,11 +25,11 @@ module StarkInfra
   # - city [string, default sub-issuer city]: card holder address city. ex: 'Rio de Janeiro'
   # - state_code [string, default sub-issuer state code]: card holder address state. ex: 'GO'
   # - zip_code [string, default sub-issuer zip code]: card holder address zip code. ex: '01311-200'
+  # - type [string, default 'virtual']: card type, settable on creation. Options: 'virtual', 'physical'. ex: 'virtual'
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingCard is created. ex: '5656565656565656'
   # - holder_id [string]: card holder unique id. ex: '5656565656565656'
-  # - type [string]: card type. ex: 'virtual'
   # - status [string]: current IssuingCard status. ex: 'active', 'blocked', 'canceled', 'expired'.
   # - is_pin_defined [boolean]: Whether the card has a PIN defined. Returned only when "expand=isPinDefined" is informed in the request
   # - number [string]: [EXPANDABLE] masked card number. Expand to unmask the value. ex: '123'.
@@ -74,7 +74,8 @@ module StarkInfra
 
     # # Create IssuingCards
     #
-    # Send a list of IssuingCard objects for creation in the Stark Infra API
+    # Send a list of IssuingCard objects for creation in the Stark Infra API. Use this method to create up
+    # to 100 new IssuingCards at a time.
     #
     # ## Parameters (required):
     # - cards [list of IssuingCard objects]: list of IssuingCard objects to be created in the API
@@ -192,7 +193,7 @@ module StarkInfra
     #
     # ## Parameters (optional):
     # - status [string, default nil]: You may block the IssuingCard by passing 'blocked' or activate by passing 'active' in the status
-    # - pin [string, default nil]: You may unlock your physical card by passing its PIN. This is also the PIN you use to authorize a purhcase.
+    # - pin [string, default nil]: numeric string of 4 to 6 digits, used to unlock a physical card and authorize purchases. Write-only — never returned; check expand: ['isPinDefined'] to see whether a PIN is set. A pending physical card must also receive this PIN to be activated: passing it alone activates the card, and setting status to 'active' on a pending physical card without a PIN is rejected.
     # - display_name [string, default nil]: card displayed name
     # - rules [list of IssuingRule objects, default nil]: [EXPANDABLE] list of card spending rules.
     # - tags [list of strings, default nil]: list of strings for tagging
@@ -215,7 +216,7 @@ module StarkInfra
 
     # # Cancel an IssuingCard entity
     #
-    # Cancel an IssuingCard entity previously created in the Stark Infra API
+    # Cancel an IssuingCard entity previously created in the Stark Infra API. This action is irreversible.
     #
     # ## Parameters (required):
     # - id [string]: IssuingCard unique id. ex: '5656565656565656'

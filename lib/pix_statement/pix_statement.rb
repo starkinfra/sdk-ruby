@@ -22,7 +22,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixStatement is created. ex: '5656565656565656'
-  # - status [string]: current PixStatement status. ex: 'success' or 'failed'
+  # - status [string]: current PixStatement status. Options: 'created', 'looking', 'success', 'failed'.
   # - transaction_count [integer]: number of transactions that happened during the day that the PixStatement was requested. ex: 11
   # - created [DateTime]: creation datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
@@ -117,7 +117,7 @@ module StarkInfra
 
     # # # Retrieve a .cvs PixStatement
     #
-    # Retrieve a specific PixStatement by its ID in a .csv file.
+    # Retrieve a specific PixStatement's CSV file by its ID. The file is returned compressed in gzip format.
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'

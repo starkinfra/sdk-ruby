@@ -132,7 +132,7 @@ module StarkInfra
 
     # # Delete a notification Event
     #
-    # Delete a notification Event entity previously created in the Stark Infra API by its ID
+    # Delete a notification Event entity previously created in the Stark Infra API by its ID. This action cannot be undone.
     #
     # ## Parameters (required):
     # - id [string]: Event unique id. ex: '5656565656565656'
@@ -152,7 +152,7 @@ module StarkInfra
     # If is_delivered is true, the event will no longer be returned on queries with is_delivered=false.
     #
     # ## Parameters (required):
-    # - id [list of strings]: Event unique ids. ex: '5656565656565656'
+    # - id [string]: Event unique id. ex: '5656565656565656'
     # - is_delivered [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
     #
     # ## Parameters (optional):

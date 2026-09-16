@@ -16,7 +16,7 @@ module StarkInfra
   # ## Parameters (required):
   # - account_created [DateTime or string]: opening Date or DateTime for the linked account. ex: '2020-03-10T10:30:00.000000+00:00' or DateTime.new(2020, 3, 10, 10, 30, 0, 0).
   # - account_number [string]: number of the linked account. ex: '76543'.
-  # - account_type [string]: type of the linked account. Options: 'checking', 'savings', 'salary' or 'payment'.
+  # - account_type [string]: type of the linked account. Options: 'checking', 'savings', 'salary', 'payment', 'other'.
   # - branch_code [string]: branch code of the linked account. ex: '1234'.
   # - name [string]: holder's name of the linked account. ex: 'Jamie Lannister'.
   # - tax_id [string]: holder's taxId (CPF/CNPJ) of the linked account. ex: '012.345.678-90'.

@@ -12,7 +12,7 @@ module StarkInfra
   # ## Parameters (required):
   # - name [string]: receiver full name. ex: 'Anthony Edward Stark'
   # - tax_id [string]: receiver tax ID (CPF or CNPJ) with or without formatting. ex: '01234567890' or '20.018.183/0001-80'
-  # - bank_code [string]: code of the receiver bank institution in Brazil. ex: '20018183'
+  # - bank_code [string]: receiver institution ISPB code, 8 digits. ex: '20018183'
   # - branch_code [string]: receiver bank account branch. Use '-' in case there is a verifier digit. ex: '1357-9'
   # - account_number [string]: receiver bank account number. Use '-' before the verifier digit. ex: '876543-2'
   #

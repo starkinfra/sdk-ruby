@@ -40,7 +40,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixInternalTransactionReport is created. ex: '5656565656565656'
-  # - status [string]: current PixInternalTransactionReport status. ex: 'created', 'failed', 'sent' or 'success'
+  # - status [string]: current PixInternalTransactionReport status. Options: 'created', 'processing', 'success', 'failed'.
   # - updated [DateTime]: latest update datetime for the PixInternalTransactionReport. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixInternalTransactionReport < StarkCore::Utils::Resource
     attr_reader :amount, :created, :end_to_end_id, :method, :reference_type, :sender_account_number,

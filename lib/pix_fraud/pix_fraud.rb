@@ -13,7 +13,7 @@ module StarkInfra
   # to the Stark Infra API and returns the created object.
   #
   # ## Parameters (required):
-  # - external_id [string]: end_to_end_id or return_id of the transaction being reported. ex: 'E20018183202201201450u34sDGd19lz'
+  # - external_id [string]: unique string to prevent duplicates among your PixFrauds. ex: 'my-internal-id-123456'
   # - type [string]: type of PixFraud. Options: 'identity', 'mule', 'scam', 'other'
   # - tax_id [string]: user tax ID (CPF or CNPJ) with or without formatting. ex: '01234567890' or '20.018.183/0001-80'
   #

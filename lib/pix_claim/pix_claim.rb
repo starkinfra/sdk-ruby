@@ -8,6 +8,8 @@ module StarkInfra
   #
   # A Pix Claim is a request to transfer a Pix Key from an account hosted at another
   # Pix participant to an account under your bank code. Pix Claims must always be requested by the claimer.
+  # An 'ownership' claim changes the holder of a Pix Key and only applies to phone-type keys; a 'portability'
+  # claim changes the linked account without changing the holder, and applies to phone, email or taxId keys.
   #
   # When you initialize a PixClaim, the entity will not be automatically
   # created in the Stark Infra API. The 'create' function sends the objects
@@ -29,7 +31,7 @@ module StarkInfra
   # - id [string]: unique id returned when the PixClaim is created. ex: '5656565656565656'
   # - status [string]: current PixClaim status. Options: 'created', 'failed', 'delivered', 'confirmed', 'success', 'canceled'
   # - type [string]: type of Pix Claim. Options: 'ownership', 'portability'.
-  # - key_type [string]: keyType of the claimed Pix Key. Options: 'CPF', 'CNPJ', 'phone' or 'email'
+  # - key_type [string]: keyType of the claimed Pix Key. Options: 'cpf', 'cnpj', 'phone', 'email', 'evp'.
   # - flow [string]: direction of the Pix Claim. Options: 'in' if you received the PixClaim or 'out' if you created the PixClaim.
   # - claimer_bank_code [string]: bank_code of the Pix participant that created the PixClaim. ex: '20018183'.
   # - claimed_bank_code [string]: bank_code of the account donating the PixClaim. ex: '20018183'.
@@ -183,11 +185,13 @@ module StarkInfra
 
     # # Update a PixClaim entity
     #
-    # Update a PixClaim parameters by passing id.
+    # Update a PixClaim by passing id. You must answer an inbound PixClaim within 7 days of its status
+    # changing to 'delivered' — if unanswered, a 'portability' claim is rejected by default and an
+    # 'ownership' claim is accepted by default, both with reason 'defaultBehavior'.
     #
     # ## Parameters (required):
     # - id [string]: PixClaim unique id. ex: '5656565656565656'
-    # - status [string]: patched status for Pix Claim. Options: 'confirmed' and 'canceled'
+    # - status [string]: patched status for the PixClaim. Options: 'confirmed' (only allowed from 'delivered' status; deletes the referenced PixKey from Stark Infra and the Central Bank) and 'canceled' (only allowed from 'delivered' or 'confirmed' status).
     #
     # ## Parameters (optional):
     # - reason [string, default 'userRequested']: reason why the PixClaim is being patched. Options: 'fraud', 'userRequested', 'accountClosure'.

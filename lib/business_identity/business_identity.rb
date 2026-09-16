@@ -26,7 +26,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the BusinessIdentity is created. ex: "5656565656565656"
   # - name [string]: company's full name. ex: "Stark Bank S.A."
-  # - tax_id_status [string]: current status of the tax ID. ex: "active"
+  # - tax_id_status [string]: bureau status of the CNPJ, normalized from the Receita Federal value. Options: 'active' (ATIVA), 'blocked' (SUSPENSA), 'pending' (INAPTA), 'canceled' (BAIXADA), 'voided' (NULA).
   # - insight_tax_id [string]: tax ID returned by the validation insight. ex: "20018183000180"
   # - insight_document_type [string]: document type returned by the validation insight. ex: "cnpj"
   # - num_pages [integer]: number of pages of the attached documents. ex: 3
@@ -60,7 +60,9 @@ module StarkInfra
 
     # # Create BusinessIdentities
     #
-    # Send a list of BusinessIdentity objects for creation at the Stark Infra API
+    # Send a list of BusinessIdentity objects for creation at the Stark Infra API. Each entry is created in
+    # 'pending' status. The CNPJ must be valid, active in the official bureau, and return non-empty
+    # representatives (sócios), or the request fails.
     #
     # ## Parameters (required):
     # - identities [list of BusinessIdentity objects]: list of BusinessIdentity objects to be created in the API.
@@ -166,7 +168,7 @@ module StarkInfra
     # - id [string]: BusinessIdentity unique id. ex: '5656565656565656'
     #
     # ## Parameters (optional):
-    # - status [string, default nil]: You may send BusinessAttachments to validation by passing 'processing' in the status
+    # - status [string, default nil]: only 'processing' is accepted, triggering the AI Model analysis. The identity must be in 'created'/'pending' status and already have at least one BusinessAttachment associated with it.
     # - tags [list of strings, default nil]: list of strings for reference when searching for BusinessIdentities. ex: ["employees", "monthly"]
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
     #
@@ -184,7 +186,8 @@ module StarkInfra
 
     # # Cancel a BusinessIdentity entity
     #
-    # Cancel a BusinessIdentity entity previously created in the Stark Infra API
+    # Cancel a BusinessIdentity entity previously created in the Stark Infra API. Only identities in 'created'
+    # or 'pending' status can be canceled.
     #
     # ## Parameters (required):
     # - id [string]: BusinessIdentity unique id. ex: '5656565656565656'

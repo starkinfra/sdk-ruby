@@ -16,6 +16,15 @@ module StarkInfra
         @value = value
       end
 
+      # # Parse CreditNote::Rules
+      #
+      # Converts a list of hashes (or Rule objects) received from the API into a list of CreditNote::Rule objects.
+      #
+      # ## Parameters (required):
+      # - rules [list of hashes or CreditNote::Rule objects]: list to be parsed.
+      #
+      # ## Return:
+      # - list of parsed CreditNote::Rule objects
       def self.parse_rules(rules)
         resource_maker = StarkInfra::CreditNote::Rule.resource[:resource_maker]
         return rules if rules.nil?

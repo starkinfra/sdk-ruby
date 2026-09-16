@@ -22,9 +22,9 @@ module StarkInfra
   # - name [string]: credit receiver's full name. ex: 'Edward Stark'
   # - tax_id [string]: credit receiver's tax ID (CPF or CNPJ). ex: '20.018.183/0001-80'
   # - scheduled [DateTime, Date or string]: date of transfer execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-  # - invoices [list of CreditNote::Invoice objects]: list of Invoice objects to be created and sent to the credit receiver. ex: [Invoice.new(), Invoice.new()]
+  # - invoices [list of up to 100 CreditNote::Invoice objects]: installments to be paid by the borrower. All invoices in the same CreditNote must share the same fine and interest. ex: [Invoice.new(), Invoice.new()]
   # - payment [CreditNote::Transfer object]: payment entity to be created and sent to the credit receiver. ex: Transfer.new()
-  # - signers [list of CreditSigner objects]: signer's name, contact and delivery method for the signature request. ex: [CreditSigner.new(), CreditSigner.new()]
+  # - signers [list of up to 10 CreditSigner objects]: signer's name, contact and delivery method for the signature request. ex: [CreditSigner.new(), CreditSigner.new()]
   # - external_id [string]: a string that must be unique among all your CreditNotes, used to avoid resource duplication. ex: 'my-internal-id-123456'
   # - street_line_1 [string]: credit receiver main address. ex: 'Av. Paulista, 200'
   # - street_line_2 [string]: credit receiver address complement. ex: 'Apto. 123'
@@ -42,7 +42,7 @@ module StarkInfra
   # - rebate_amount [integer, default nil]: credit analysis fee deducted from lent amount. ex: 11234 (= R$ 112.34)
   # - tags [list of strings, default nil]: list of strings for reference when searching for CreditNotes. ex: ['employees', 'monthly']
   # - expiration [integer, default 604800]: time interval in seconds between scheduled date and expiration date. ex: 123456789
-  # - rules [list of CreditNote::Rule, default []]: list of CreditNote::Rule objects for modifying transfer behavior. ex: [CreditNote::Rule(key='invoiceCreationMode', value='scheduled')]
+  # - rules [list of CreditNote::Rule, default []]: list of {key, value} rules modifying the credit note behavior. Currently available key: 'invoiceCreationMode', values 'scheduled' (default - invoice issued a few days before due date), 'instant' (issued as soon as disbursed) or 'never' (not issued automatically).
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditNote is created. ex: '5656565656565656'
@@ -106,7 +106,8 @@ module StarkInfra
 
     # # Create CreditNotes
     #
-    # Send a list of CreditNote objects for creation in the Stark Infra API
+    # Send a list of CreditNote objects for creation in the Stark Infra API. You can create up to 100
+    # CreditNotes in a single call.
     #
     # ## Parameters (required):
     # - notes [list of CreditNote objects]: list of CreditNote objects to be created in the API
@@ -202,7 +203,9 @@ module StarkInfra
 
     # # Cancel a CreditNote entity
     #
-    # Cancel a CreditNote entity previously created in the Stark Infra API
+    # Cancel a CreditNote entity previously created in the Stark Infra API. Only CreditNotes with status
+    # 'created', 'signed' or 'processing' are actually canceled (which also cancels the signing document);
+    # notes already 'success', 'failed', 'expired' or 'canceled' are returned unchanged.
     #
     # ## Parameters (required):
     # - id [string]: object unique id. ex: '5656565656565656'

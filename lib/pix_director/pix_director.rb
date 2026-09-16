@@ -23,7 +23,7 @@ module StarkInfra
   # - team_phones [list of strings]: list of phones of the team. ex: ['+5511988889999', '+5511988889998']
   #
   # ## Attributes (return-only):
-  # - status [string]: current PixDirector status. ex: 'success'
+  # - status [string]: current PixDirector status. Options: 'success', 'processing', 'failed'.
   class PixDirector < StarkCore::Utils::SubResource
     attr_reader :name, :tax_id, :phone, :email, :password, :team_email, :team_phones, :status
     def initialize(name:, tax_id:, phone:, email:, password:, team_email:, team_phones:, status: nil)

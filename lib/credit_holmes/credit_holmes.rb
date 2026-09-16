@@ -42,7 +42,8 @@ module StarkInfra
 
     # # Create CreditHolmes
     #
-    # Send a list of CreditHolmes objects for creation at the Stark Infra API
+    # Send a list of CreditHolmes objects for creation at the Stark Infra API. You can create up to 100
+    # CreditHolmes in a single call.
     #
     # ## Parameters (required):
     # - holmes [list of CreditHolmes objects]: list of CreditHolmes objects to be created in the API.
