@@ -219,6 +219,40 @@ module StarkInfra
       StarkInfra::Utils::Rest.delete_id(id: id, user: user, **resource)
     end
 
+    # # Retrieve a specific CreditNote pdf file
+    #
+    # Receive the CCB disbursement pdf file of a CreditNote previously created in the Stark Infra API by its id.
+    # Not available for canceled CreditNotes.
+    #
+    # ## Parameters (required):
+    # - id [string]: CreditNote unique id. ex: '5656565656565656'
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - CreditNote pdf file
+    def self.pdf(id, user: nil)
+      StarkInfra::Utils::Rest.get_content(id: id, user: user, sub_resource_name: 'pdf', **resource)
+    end
+
+    # # Retrieve a specific CreditNote payment pdf file
+    #
+    # Receive the CCB disbursement payment pdf file of a CreditNote previously created in the Stark Infra API by its id.
+    # Only CreditNotes with status "success" have a payment pdf.
+    #
+    # ## Parameters (required):
+    # - id [string]: CreditNote unique id. ex: '5656565656565656'
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - CreditNote payment pdf file
+    def self.payment(id, user: nil)
+      StarkInfra::Utils::Rest.get_content(id: id, user: user, sub_resource_name: 'payment/pdf', **resource)
+    end
+
     def self.parse_payment(payment, payment_type)
       resource_maker = { 'transfer' => Transfer.resource[:resource_maker] }
       if payment.is_a?(Hash)

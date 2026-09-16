@@ -983,6 +983,22 @@ puts purchase
 puts purchase.installment_count
 ```
 
+### Update an IssuingPurchase
+
+You can update a specific purchase by its id.
+
+```ruby
+require('starkinfra')
+
+purchase = StarkInfra::IssuingPurchase.update(
+  '5155165527080960',
+  description: 'Office Supplies',
+  tags: %w[tony stark]
+)
+
+puts purchase
+```
+
 ### Query IssuingPurchase logs
 
 Logs are pretty important to understand the life cycle of a purchase.
@@ -3469,6 +3485,42 @@ require('starkinfra')
 note = StarkInfra::CreditNote.cancel('5155165527080960')
 
 puts note
+```
+
+### Retrieve CCB disbursement pdf file
+
+To retrieve the CCB disbursement pdf file, use the CreditNote.pdf function with a CreditNote id. The pdf is not available for canceled CreditNotes.
+
+```ruby
+require('starkinfra')
+
+pdf = StarkInfra::CreditNote.pdf('5155165527080960')
+
+File.binwrite('credit_note.pdf', pdf)
+```
+
+### Retrieve CCB disbursement payment pdf file
+
+To retrieve the CCB disbursement payment pdf file, use the CreditNote.payment function with the id of a CreditNote in status "success".
+
+```ruby
+require('starkinfra')
+
+pdf = StarkInfra::CreditNote.payment('5155165527080960')
+
+File.binwrite('credit_note_payment.pdf', pdf)
+```
+
+### CCB Token Resend
+
+To resend the contract signing token to a CreditSigner, use the CreditSigner.resend_token function with the signer's id.
+
+```ruby
+require('starkinfra')
+
+signer = StarkInfra::CreditSigner.resend_token('5155165527080960')
+
+puts signer
 ```
 
 ### Query CreditNote logs
