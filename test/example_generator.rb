@@ -169,7 +169,7 @@ class ExampleGenerator
     ]
 
     StarkInfra::CreditNote.new(
-      template_id: '5707012469948416',
+      template_id: ENV.fetch('SANDBOX_TEMPLATE_ID', '5707012469948416'),
       name: 'Jamie Lannister',
       tax_id: '012.345.678-90',
       nominal_amount: 100_000,
@@ -193,7 +193,7 @@ class ExampleGenerator
 
   def self.creditnote_hash_example
     {
-      'template_id' => '5707012469948416',
+      'template_id' => ENV.fetch('SANDBOX_TEMPLATE_ID', '5707012469948416'),
       'name' => 'Jamie Lannister',
       'tax_id' => '012.345.678-90',
       'nominal_amount' => 100_000,

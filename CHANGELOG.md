@@ -22,6 +22,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - PixUser resource
 - PixPullSubscription.parse method
 - BusinessAccountRequest resource
+- pdf and payment methods to CreditNote resource
+- resend_token method to CreditSigner resource
+- update method to IssuingPurchase resource
 
 ## [0.6.0] - 2026-07-16
 ### Added

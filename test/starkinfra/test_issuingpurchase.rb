@@ -35,6 +35,16 @@ describe(StarkInfra::IssuingPurchase, '#issuing-purchase#') do
     expect(purchase.metadata).wont_be_nil
   end
 
+  it 'update' do
+    purchase = StarkInfra::IssuingPurchase.query(limit: 1).to_a[0]
+    skip('no IssuingPurchase available in this workspace') if purchase.nil?
+
+    description = 'updated by ruby sdk test'
+    tags = %w[updated tags]
+    updated_purchase = StarkInfra::IssuingPurchase.update(purchase.id, description: description, tags: tags)
+    expect(updated_purchase.description).must_equal(description)
+  end
+
   it 'query exposes installment_count' do
     purchases = StarkInfra::IssuingPurchase.query(limit: 5)
     purchases.each do |purchase|

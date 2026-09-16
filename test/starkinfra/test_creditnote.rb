@@ -75,6 +75,26 @@ describe(StarkInfra::CreditNote, '#credit-note#') do
     expect(note_canceled.status).must_equal('canceled')
   end
 
+  it 'pdf' do
+    notes = StarkInfra::CreditNote.query(limit: 1, status: 'created').to_a
+    flunk('no created CreditNote available in this workspace') if notes.empty?
+
+    pdf = StarkInfra::CreditNote.pdf(notes[0].id)
+    expect(pdf.length).must_be(:>, 4)
+    expect(pdf[0...4]).must_equal('%PDF')
+    File.binwrite('credit_note.pdf', pdf)
+  end
+
+  it 'payment pdf' do
+    notes = StarkInfra::CreditNote.query(limit: 1, status: 'success').to_a
+    skip('no CreditNote with status success available in this workspace') if notes.empty?
+
+    pdf = StarkInfra::CreditNote.payment(notes[0].id)
+    expect(pdf.length).must_be(:>, 4)
+    expect(pdf[0...4]).must_equal('%PDF')
+    File.binwrite('credit_note_payment.pdf', pdf)
+  end
+
   it 'create from hash' do
     credit_note = ExampleGenerator.creditnote_hash_example
 

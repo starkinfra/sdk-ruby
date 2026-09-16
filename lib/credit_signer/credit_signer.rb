@@ -23,6 +23,22 @@ module StarkInfra
       @method = method
     end
 
+    # # Resend token to signer
+    #
+    # Resend token to a specific signer.
+    #
+    # ## Parameters (required):
+    # - id [string]: CreditSigner unique id. ex: '5656565656565656'
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - CreditSigner object with updated attributes
+    def self.resend_token(id, user: nil)
+      StarkInfra::Utils::Rest.patch_id(id: id, is_sent: false, user: user, **resource)
+    end
+
     # # Parse CreditSigners
     #
     # Converts a list of hashes (or CreditSigner objects) received from the API into a list of CreditSigner objects.

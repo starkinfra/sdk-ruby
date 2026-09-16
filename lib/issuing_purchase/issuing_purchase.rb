@@ -201,6 +201,30 @@ module StarkInfra
       )
     end
 
+    # # Update IssuingPurchase entity
+    #
+    # Update an IssuingPurchase by passing id.
+    #
+    # ## Parameters (required):
+    # - id [string]: IssuingPurchase id. ex: '5656565656565656'
+    #
+    # ## Parameters (optional):
+    # - tags [list of strings, default nil]: list of strings for tagging. ex: ['tony', 'stark']
+    # - description [string, default nil]: new IssuingPurchase description. Max of 140 characters. ex: 'Office Supplies'
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call
+    #
+    # ## Return:
+    # - target IssuingPurchase with updated attributes
+    def self.update(id, description: nil, tags: nil, user: nil)
+      StarkInfra::Utils::Rest.patch_id(
+        id: id,
+        description: description,
+        tags: tags,
+        user: user,
+        **resource
+      )
+    end
+
     # # Create a single verified IssuingPurchase authorization request from a content string
     #
     # Use this method to parse and verify the authenticity of the authorization request received at the informed endpoint.
