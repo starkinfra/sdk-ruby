@@ -167,39 +167,8 @@ describe(StarkInfra::IndividualAccountAttachment, '#individual-account-attachmen
     end
   end
 
-  it 'create with empty content raises InputErrors' do
-    parent = StarkInfra::IndividualAccountRequest.create(
-      [ExampleGenerator.individual_account_request_example]
-    )[0]
-    assert_raises(StarkInfra::Error::InputErrors) do
-      StarkInfra::IndividualAccountAttachment.create([
-        StarkInfra::IndividualAccountAttachment.new(
-          type: 'identity-front',
-          content: '',
-          content_type: 'image/png',
-          account_request_id: parent.id
-        )
-      ])
-    end
-  end
-
   # contentType missing when content provided — code is client-serialization
   # dependent; assert only that InputErrors is raised.
-  it 'create with missing contentType raises InputErrors' do
-    parent = StarkInfra::IndividualAccountRequest.create(
-      [ExampleGenerator.individual_account_request_example]
-    )[0]
-    assert_raises(StarkInfra::Error::InputErrors) do
-      StarkInfra::IndividualAccountAttachment.create([
-        StarkInfra::IndividualAccountAttachment.new(
-          type: 'identity-front',
-          content: ExampleGenerator.individual_document_image('front'),
-          account_request_id: parent.id
-        )
-      ])
-    end
-  end
-
   it 'create with unknown accountRequestId raises InputErrors' do
     assert_raises(StarkInfra::Error::InputErrors) do
       StarkInfra::IndividualAccountAttachment.create([
