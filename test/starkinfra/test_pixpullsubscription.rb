@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require('date')
+require('json')
 require_relative('../test_helper.rb')
 require_relative('../example_generator.rb')
 
@@ -94,6 +95,38 @@ describe(StarkInfra::PixPullSubscription, '#pix-pull-subscription#') do
     canceled = StarkInfra::PixPullSubscription.cancel(subscription.id, reason: 'receiverUserRequested')
     expect(canceled).must_be_kind_of(StarkInfra::PixPullSubscription)
     expect(canceled.id).must_equal(subscription.id)
+  end
+
+  it 'parse with right signature' do
+    subscription = StarkInfra::PixPullSubscription.parse(
+      content: ExampleGenerator.pixpullsubscription_payload.to_json,
+      signature: 'MEUCIQC7FVhXdripx/aXg5yNLxmNoZlehpyvX3QYDXJ8o02X2QIgVwKfJKuIS5RDq50NC/+55h/7VccDkV1vm8Q/7jNu0VM='
+    )
+    expect(subscription).wont_be_nil
+  end
+
+  it 'parse with wrong signature' do
+    begin
+      StarkInfra::PixPullSubscription.parse(
+        content: ExampleGenerator.pixpullsubscription_payload.to_json,
+        signature: 'MEUCIQDOpo1j+V40DNZK2URL2786UQK/8mDXon9ayEd8U0/l7AIgYXtIZJBTs8zCRR3vmted6Ehz/qfw1GRut/eYyvf1yOk='
+      )
+    rescue StarkInfra::Error::InvalidSignatureError
+    else
+      raise(StandardError, 'invalid signature was not detected')
+    end
+  end
+
+  it 'parse with malformed signature' do
+    begin
+      StarkInfra::PixPullSubscription.parse(
+        content: ExampleGenerator.pixpullsubscription_payload.to_json,
+        signature: 'something is definitely wrong'
+      )
+    rescue StarkInfra::Error::InvalidSignatureError
+    else
+      raise(StandardError, 'malformed signature was not detected')
+    end
   end
 
   def deserialize_subscription(payload)

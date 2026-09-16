@@ -58,10 +58,14 @@ This SDK version is compatible with the Stark Infra API v2.
     - [PixDispute](#create-pixdisputes): Create Pix Dispute investigations
     - [PixPullSubscription](#create-pixpullsubscriptions): Create recurring Pix debit authorizations
     - [PixPullRequest](#create-pixpullrequests): Trigger Pix automatic debits for active subscriptions
+    - [PixUser](#get-a-pixuser): Get fraud statistics of a Pix user
     - [PixDomain](#query-pixdomains): View registered SPI participants certificates
     - [StaticBrcode](#create-staticbrcodes): Create static Pix BR codes
     - [DynamicBrcode](#create-dynamicbrcodes): Create dynamic Pix BR codes
     - [BrcodePreview](#create-brcodepreviews): Read data from BR Codes before paying them
+  - [Ledger](#ledger)
+    - [Ledger](#create-ledgers): Track the balance of a given amount
+    - [LedgerTransaction](#create-ledgertransactions): Insert transactions into a Ledger
   - [Lending](#lending)
     - [CreditNote](#create-creditnotes): Create credit notes
     - [CreditPreview](#create-creditpreviews): Create credit previews
@@ -2723,6 +2727,23 @@ log = StarkInfra::PixPullSubscription::Log.get('5155165527080960')
 puts log
 ```
 
+### Parse a PixPullSubscription
+
+Create a single PixPullSubscription object from a content string received from a handler listening
+at the subscription url. If the provided digital signature does not check out with the StarkInfra
+public key, a StarkInfra::Error::InvalidSignatureError will be raised.
+
+```ruby
+require('starkinfra')
+
+subscription = StarkInfra::PixPullSubscription.parse(
+  content: content,
+  signature: signature
+)
+
+puts subscription
+```
+
 ### Create PixPullRequests
 
 You can create PixPullRequests to trigger the automatic debit linked to an active PixPullSubscription. Each request references the parent subscription via subscription_id.
@@ -2835,6 +2856,18 @@ require('starkinfra')
 log = StarkInfra::PixPullRequest::Log.get('5656565656565656')
 
 puts log
+```
+
+### Get a PixUser
+
+You can get fraud statistics of a Pix user by their tax ID.
+
+```ruby
+require('starkinfra')
+
+user = StarkInfra::PixUser.get('012.345.678-90')
+
+puts user
 ```
 
 ### Query PixDomains
@@ -3083,6 +3116,203 @@ end
 ```
 
 When the previewed BR Code carries recurring-debit metadata, `preview.subscription` is populated with a `StarkInfra::BrcodePreview::Subscription` snapshot; otherwise it is `nil`.
+
+## Ledger
+
+Ledgers are used to track the balance of a given amount by inserting LedgerTransactions to them.
+They can represent a bank account, a digital wallet, an inventory product, etc.
+
+### Create Ledgers
+
+You can send a list of Ledger objects for creation at the Stark Infra API.
+
+```ruby
+require('starkinfra')
+
+ledgers = StarkInfra::Ledger.create([
+  StarkInfra::Ledger.new(
+    external_id: 'my-internal-id-123456',
+    rules: [
+      StarkInfra::Ledger::Rule.new(key: 'minimumBalance', value: 0)
+    ],
+    tags: ['account/123', 'savings']
+  )
+])
+
+ledgers.each do |ledger|
+  puts ledger
+end
+```
+
+**Note**: Instead of using Ledger objects, you can also pass each element in dictionary format
+
+### Query Ledgers
+
+You can query multiple Ledgers according to filters.
+
+```ruby
+require('starkinfra')
+
+ledgers = StarkInfra::Ledger.query(
+  limit: 10,
+  after: '2020-01-01',
+  before: '2020-04-01',
+  external_ids: ['my-internal-id-123456'],
+  tags: ['account/123', 'savings']
+)
+
+ledgers.each do |ledger|
+  puts ledger
+end
+```
+
+### Query paged Ledgers
+
+If you want to manually page your Ledgers, you can use the page function.
+
+```ruby
+require('starkinfra')
+
+ledgers, cursor = StarkInfra::Ledger.page(limit: 5)
+
+ledgers.each do |ledger|
+  puts ledger
+end
+```
+
+### Get a Ledger
+
+After its creation, information on a Ledger may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+ledger = StarkInfra::Ledger.get('5656565656565656')
+
+puts ledger
+```
+
+### Update a Ledger
+
+You can update a specific Ledger by its id.
+
+```ruby
+require('starkinfra')
+
+ledger = StarkInfra::Ledger.update(
+  '5656565656565656',
+  tags: ['account/123', 'checking']
+)
+
+puts ledger
+```
+
+### Query Ledger logs
+
+You can query Ledger logs to better understand the Ledger's life cycle.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::Ledger::Log.query(
+  limit: 50,
+  after: '2022-01-01',
+  before: '2022-01-20',
+  ledger_id: '5656565656565656'
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a Ledger log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::Ledger::Log.get('5656565656565656')
+
+puts log
+```
+
+## LedgerTransaction
+
+LedgerTransactions are used to track the balance of a given amount by inserting them into a Ledger.
+
+### Create LedgerTransactions
+
+You can send a list of LedgerTransaction objects for creation at the Stark Infra API. You can send up
+to 500 objects in a single request, targeting different Ledgers if needed; each is applied to its
+Ledger in the order sent, and the resulting balance is returned for each one.
+
+```ruby
+require('starkinfra')
+
+transactions = StarkInfra::LedgerTransaction.create([
+  StarkInfra::LedgerTransaction.new(
+    amount: 11234,
+    ledger_id: '5656565656565656',
+    external_id: 'my-internal-id-123456',
+    source: 'bank-transfer/123',
+    tags: ['transfer/123', 'savings']
+  )
+])
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
+**Note**: Instead of using LedgerTransaction objects, you can also pass each element in dictionary format
+
+### Query LedgerTransactions
+
+You can query multiple LedgerTransactions according to filters. Either `ledger_id` or `ids` must be
+provided.
+
+```ruby
+require('starkinfra')
+
+transactions = StarkInfra::LedgerTransaction.query(
+  limit: 10,
+  ledger_id: '5656565656565656',
+  after: '2020-01-01',
+  before: '2020-04-01'
+)
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
+### Query paged LedgerTransactions
+
+If you want to manually page your LedgerTransactions, you can use the page function.
+
+```ruby
+require('starkinfra')
+
+transactions, cursor = StarkInfra::LedgerTransaction.page(limit: 5, ledger_id: '5656565656565656')
+
+transactions.each do |transaction|
+  puts transaction
+end
+```
+
+### Get a LedgerTransaction
+
+After its creation, information on a LedgerTransaction may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+transaction = StarkInfra::LedgerTransaction.get('5656565656565656')
+
+puts transaction
+```
 
 ## Lending
 

@@ -2,6 +2,7 @@
 
 require('starkcore')
 require_relative('../utils/rest')
+require_relative('../utils/parse')
 
 module StarkInfra
   # # PixPullSubscription object
@@ -238,6 +239,31 @@ module StarkInfra
       )
       maker = resource[:resource_maker]
       StarkCore::Utils::API.from_api_json(maker, response.json['subscription'])
+    end
+
+    # # Create a single verified PixPullSubscription object from a content string
+    #
+    # Create a single PixPullSubscription object from a content string received from a handler listening at the subscription url.
+    # If the provided digital signature does not check out with the StarkInfra public key, a
+    # StarkInfra::Error::InvalidSignatureError will be raised.
+    #
+    # ## Parameters (required):
+    # - content [string]: response content from request received at user endpoint (not parsed)
+    # - signature [string]: base-64 digital signature received at response header 'Digital-Signature'
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - Parsed PixPullSubscription object
+    def self.parse(content:, signature:, user: nil)
+      StarkInfra::Utils::Parse.parse_and_verify(
+        content: content,
+        signature: signature,
+        user: user,
+        key: nil,
+        resource: resource
+      )
     end
 
     def self.resource
