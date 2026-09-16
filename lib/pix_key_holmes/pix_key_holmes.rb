@@ -41,7 +41,8 @@ module StarkInfra
 
     # # Create PixKeyHolmes
     #
-    # Send a list of PixKeyHolmes objects for creation at the Stark Infra API
+    # Send a list of PixKeyHolmes objects for creation at the Stark Infra API. You can create up to 100
+    # PixKeyHolmes in a single call.
     #
     # ## Parameters (required):
     # - holmes [list of PixKeyHolmes objects]: list of PixKeyHolmes objects to be created in the API.

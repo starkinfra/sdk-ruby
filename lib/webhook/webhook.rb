@@ -7,7 +7,7 @@ module StarkInfra
   # # Webhook object
   #
   # A Webhook is used to subscribe to notification events on a user-selected endpoint.
-  # Currently available services for subscription are contract, credit-note, signer, issuing-card, issuing-invoice, issuing-purchase, pix-request.in, pix-request.out, pix-reversal.in, pix-reversal.out, pix-claim, pix-key, pix-chargeback, pix-infraction, pix-pull-request, pix-pull-subscription.
+  # Currently available services for subscription include contract, credit-note, signer, issuing-card, issuing-invoice, issuing-purchase, pix-request.in, pix-request.out, pix-reversal.in, pix-reversal.out, pix-claim, pix-key, pix-chargeback, pix-infraction, pix-dispute, pix-pull-request, pix-pull-subscription, business-identity (see StarkInfra::Event for the authoritative, currently-wired list).
   #
   # ## Parameters (required):
   # - url [string]: URL that will be notified when an event occurs.
@@ -93,7 +93,7 @@ module StarkInfra
 
     # # Delete a Webhook entity
     #
-    # Delete a Webhook entity previously created in the Stark Infra API
+    # Delete a Webhook entity previously created in the Stark Infra API. This action cannot be undone.
     #
     # ## Parameters (required):
     # - id [string]: Webhook unique id. ex: '5656565656565656'

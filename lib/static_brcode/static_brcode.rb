@@ -17,7 +17,7 @@ module StarkInfra
   ## Parameters (required):
   # - name [string]: receiver's name. ex: 'Tony Stark'
   # - key_id [string]: receiver's Pixkey id. ex: '+5541999999999'
-  # - city [string, default São Paulo]: receiver's city name. ex: 'Rio de Janeiro'
+  # - city [string]: receiver's city name. ex: 'Rio de Janeiro'
   #
   # ## Parameters (optional):
   # - amount [integer, default nil]: positive integer that represents the amount in cents of the resulting Pix transaction. If the amount is zero, the sender can choose any amount in the moment of payment. ex: 1234 (= R$ 12.34)

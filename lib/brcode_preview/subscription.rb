@@ -14,14 +14,14 @@ module StarkInfra
     # BrcodePreview returned by the API.
     #
     # ## Attributes (return-only):
-    # - amount [integer]: amount in cents charged per cycle. nil for variable-amount subscriptions. ex: 1000 (= R$ 10.00)
+    # - amount [integer]: amount in cents charged per cycle. 0 for variable-amount subscriptions. ex: 1000 (= R$ 10.00)
     # - amount_min_limit [integer]: floor value for the maximum amount the sender can set when approving a variable-amount subscription. nil for fixed-amount subscriptions. ex: 500 (= R$ 5.00)
     # - bacen_id [string]: Central Bank's unique recurrency id for the subscription.
     # - created [DateTime]: creation datetime of the subscription. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
     # - description [string]: additional information delivered to the sender.
     # - installment_end [DateTime]: end datetime of settlements allowed for this subscription. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
     # - installment_start [DateTime]: start datetime of settlements allowed for this subscription. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
-    # - interval [string]: cycle definition exposed verbatim from the server. ex: 'monthly'
+    # - interval [string]: billing interval of the subscription, translated from the Central Bank's periodicity code. Options: 'week', 'month', 'quarter', 'semester', 'year'.
     # - pull_retry_limit [integer]: max number of retries the receiver may issue for a single failed pull cycle.
     # - receiver_bank_code [string]: receiver's bank institution code.
     # - receiver_name [string]: receiver's full name.

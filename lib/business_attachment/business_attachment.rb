@@ -16,7 +16,7 @@ module StarkInfra
   #
   # ## Parameters (required):
   # - name [string]: name of the BusinessAttachment. ex: "articles-of-incorporation.pdf"
-  # - content [string]: Base64 data url of the file or its raw bytes. ex: data:application/pdf;base64,JVBERi0xLjQ...
+  # - content [string]: Base64 data url of the file or its raw bytes on creation; when retrieved via get, populated only when expand: ['content'] is passed, nil otherwise. ex: data:application/pdf;base64,JVBERi0xLjQ...
   # - business_identity_id [string]: Unique id of BusinessIdentity. ex: "5656565656565656"
   #
   # ## Parameters (optional):
@@ -52,7 +52,10 @@ module StarkInfra
 
     # # Create BusinessAttachments
     #
-    # Send a list of BusinessAttachment objects for creation at the Stark Infra API
+    # Send a list of BusinessAttachment objects for creation at the Stark Infra API. Limit of 1 attachment per
+    # request and 2 attachments per identity. Only PDF, JPG and PNG files are accepted, up to 8 MB each; name
+    # must be unique among the identity's other 'created' attachments; the identity must be in 'created'/'pending'
+    # status with fewer than 2 attachments already.
     #
     # ## Parameters (required):
     # - attachments [list of BusinessAttachment objects]: list of BusinessAttachment objects to be created in the API.
@@ -149,7 +152,7 @@ module StarkInfra
 
     # # Cancel a BusinessAttachment entity
     #
-    # Cancel a BusinessAttachment entity previously created in the Stark Infra API
+    # Cancel a BusinessAttachment entity previously created in the Stark Infra API. Only attachments in 'created' status can be canceled.
     #
     # ## Parameters (required):
     # - id [string]: BusinessAttachment unique id. ex: '5656565656565656'

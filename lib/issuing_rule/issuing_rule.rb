@@ -48,6 +48,15 @@ module StarkInfra
       @purposes = purposes
     end
 
+    # # Parse MerchantCategories
+    #
+    # Converts a list of hashes into a list of MerchantCategory objects.
+    #
+    # ## Parameters (required):
+    # - categories [list of hashes]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed MerchantCategory objects
     def self.parse_categories(categories)
       resource_maker = StarkInfra::MerchantCategory.resource[:resource_maker]
       return categories if categories.nil?
@@ -62,6 +71,15 @@ module StarkInfra
       parsed_categories
     end
 
+    # # Parse MerchantCountries
+    #
+    # Converts a list of hashes into a list of MerchantCountry objects.
+    #
+    # ## Parameters (required):
+    # - countries [list of hashes]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed MerchantCountry objects
     def self.parse_countries(countries)
       resource_maker = StarkInfra::MerchantCountry.resource[:resource_maker]
       return countries if countries.nil?
@@ -76,6 +94,15 @@ module StarkInfra
       parsed_countries
     end
 
+    # # Parse CardMethods
+    #
+    # Converts a list of hashes into a list of CardMethod objects.
+    #
+    # ## Parameters (required):
+    # - methods [list of hashes]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed CardMethod objects
     def self.parse_methods(methods)
       resource_maker = StarkInfra::CardMethod.resource[:resource_maker]
       return methods if methods.nil?
@@ -90,6 +117,15 @@ module StarkInfra
       parsed_methods
     end
 
+    # # Parse IssuingRules
+    #
+    # Converts a list of hashes into a list of IssuingRule objects.
+    #
+    # ## Parameters (required):
+    # - rules [list of hashes]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed IssuingRule objects
     def self.parse_rules(rules)
       rule_maker = StarkInfra::IssuingRule.resource[:resource_maker]
       return rules if rules.nil?

@@ -9,8 +9,8 @@ module StarkInfra
   # The IssuingWithdrawal objects created in your Workspace return cash from your Issuing balance to your Banking balance.
   #
   # ## Parameters (required):
-  # - amount [integer]: IssuingWithdrawal value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
-  # - external_id [string] IssuingWithdrawal external ID. ex: '12345'
+  # - amount [integer]: IssuingWithdrawal value in cents. ex: 1234 (= R$ 12.34)
+  # - external_id [string]: unique identifier for this withdrawal, used to prevent duplicates on retries. ex: '12345'
   # - description [string]: IssuingWithdrawal description. ex: 'sending money back'
   #
   # ## Parameters (optional):

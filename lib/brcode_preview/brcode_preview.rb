@@ -13,12 +13,13 @@ module StarkInfra
   #
   # Parameters (optional):
   # - end_to_end_id [string]: central bank's unique transaction ID. ex: "E79457883202101262140HHX553UPqeq"
+  # - scheduled [Date or string, default nil]: date the payment is scheduled to be processed. Affects the preview values for due dynamic QR codes. ex: Date.new(2022, 1, 31)
   #
   # Attributes (return-only):
   # - account_number [string]: Payment receiver account number. ex: '1234567'
   # - account_type [string]: Payment receiver account type. ex: 'checking'
   # - amount [integer]: Value in cents that this payment is expecting to receive. If 0, any value is accepted. ex: 123 (= R$1,23)
-  # - amount_type [string]: amount type of the BR Code. If the amount type is 'custom' the BR Code's amount can be changed by the sender at the moment of payment. Options: 'fixed' or 'custom'
+  # - amount_type [string]: amount type of the BR Code. Options: 'fixed' or 'minimum'. ex: 'fixed'
   # - bank_code [string]: Payment receiver bank code. ex: '20018183'
   # - branch_code [string]: Payment receiver branch code. ex: '0001'
   # - cash_amount [integer]: Amount to be withdrawn from the cashier in cents. ex: 1000 (= R$ 10.00)

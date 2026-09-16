@@ -13,18 +13,26 @@ module StarkInfra
   # to the Stark Infra API and returns the list of created objects.
   #
   # ## Parameters (required):
-  # - type [string]: table type that defines the amortization system. Options: 'sac', 'price', 'american', 'bullet', 'custom'
+  # - type [string]: table type that defines the amortization system. Options: 'sac' (constant amortization), 'price' (fixed installments), 'american' (periodic interest and principal at maturity), 'bullet' (principal and interest at maturity), 'custom' (you provide the invoices and the rates are computed).
   # - nominal_amount [integer]: amount in cents transferred to the credit receiver, before deductions. ex: 11234 (= R$ 112.34)
   # - scheduled [DateTime, Date or string]: date of transfer execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - tax_id [string]: credit receiver's tax ID (CPF or CNPJ). ex: '20.018.183/0001-80'
   #
   # ## Parameters (conditionally required):
+  # - nominal_amount or amount [integer]: provide exactly one; the other is computed from the invoice schedule (not used for type 'custom').
+  # - count or initial_amount [integer]: for 'sac' and 'price' types, provide exactly one; the other is computed.
   # - invoices [list of CreditNote::Invoice objects]: list of CreditNote.Invoice objects to be created and sent to the credit receiver.
   # - nominal_interest [float]: yearly nominal interest rate of the credit note, in percentage. ex: 12.5
   # - initial_due [DateTime, Date or string]: date of the first invoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0), Date.new(2020, 3, 10) or '2020-03-10'
   # - count [integer]: quantity of invoices for payment. ex: 12
   # - initial_amount [integer]: value of the first invoice in cents. ex: 1234 (= R$12.34)
-  # - interval [string]: interval between invoices. ex: 'year', 'month'
+  # - interval [string, default 'month']: interval between invoices. Options: 'day', 'week', 'month', 'quarter', 'semester', 'year'.
+  #
+  # ## Parameters (conditionally required, by type):
+  # - 'sac'/'price': nominal_interest, scheduled, initial_due, tax_id and one of count/initial_amount.
+  # - 'american': nominal_interest, scheduled, initial_due, count, tax_id.
+  # - 'bullet': nominal_interest, scheduled, initial_due, tax_id.
+  # - 'custom': scheduled, tax_id, invoices.
   #
   # ## Parameters (optional):
   # - rebate_amount [integer, default nil]: credit analysis fee deducted from lent amount. ex: 11234 (= R$ 112.34)

@@ -18,7 +18,7 @@ module StarkInfra
   # - shipping_state_code [string]: shipping state code. ex: "NY"
   # - shipping_street_line_1 [string]: shipping main address. ex: "AVENUE OF THE AMERICAS"
   # - shipping_street_line_2 [string]: shipping address complement. ex: "Apt. 6"
-  # - shipping_service [string]: shipping service. ex: "loggi"
+  # - shipping_service [string]: shipping service. Options: 'loggi', 'conveyor'.
   # - shipping_tracking_number [string]: shipping tracking number. ex: "5656565656565656"
   # - shipping_zip_code [string]: shipping zip code. ex: "12345-678"
   #
@@ -73,7 +73,8 @@ module StarkInfra
 
     # # Create IssuingEmbossingRequests
     #
-    # Send a list of IssuingEmbossingRequest objects for creation in the Stark Infra API
+    # Send a list of IssuingEmbossingRequest objects for creation in the Stark Infra API. Use this method to
+    # create up to 100 new IssuingEmbossingRequests at a time.
     #
     # ## Parameters (required):
     # - requests [list of IssuingEmbossingRequest objects]: list of IssuingEmbossingRequest objects to be created in the API

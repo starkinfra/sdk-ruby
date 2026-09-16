@@ -12,7 +12,7 @@ module StarkInfra
   # can be retrieved to see the available information.
   #
   # ## Attributes (return-only):
-  # - id [string]: unique id returned when Balance is created. ex: '5656565656565656'
+  # - id [string]: identifier of the balance. Holds the participant bank code for direct participants, or the workspace id for indirect participants.
   # - amount [integer]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
   # - currency [string]: currency of the current workspace. Expect others to be added eventually. ex: 'BRL'
   # - updated [DateTime]: latest update datetime for the balance. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)

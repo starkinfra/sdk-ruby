@@ -16,7 +16,7 @@ module StarkInfra
   #
   # ## Parameters (required):
   # - reference_id [string]: end_to_end_id of the transaction being reported. ex: 'E20018183202201201450u34sDGd19lz'
-  # - method [string]: method of the dispute. Options: 'scam', 'unauthorized', 'coercion', 'invasion', 'other'
+  # - method [string]: method of the dispute. Options: 'scam', 'unauthorized', 'coercion', 'invasion', 'other', 'unknown'.
   # - operator_email [string]: contact email of the operator responsible for the PixDispute. ex: 'ruby-sdk@starkinfra.com'
   # - operator_phone [string]: contact phone number of the operator responsible for the PixDispute. ex: '+5511999999999'
   #

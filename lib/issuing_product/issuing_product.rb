@@ -12,10 +12,10 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique card product number (BIN) registered within the card network. ex: '53810200'
   # - network [string]: card network flag. ex: 'mastercard'
-  # - funding_type [string]: type of funding used for payment. ex: 'credit', 'debit'
+  # - funding_type [string]: type of funding used for payment. Options: 'prepaid', 'credit'.
   # - holder_type [string]: holder type. ex: 'business', 'individual'
   # - code [string]: internal code from card flag informing the product. ex: 'MRW', 'MCO', 'MWB', 'MCS'
-  # - customer_type [string]: Same as holderType. Kept for backward compatibility
+  # - customer_type [string]: same as holder_type. Kept for backward compatibility.
   # - created [DateTime]: creation datetime for the IssuingProduct. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingProduct < StarkCore::Utils::Resource
     attr_reader :id, :network, :funding_type, :holder_type, :code, :customer_type, :created

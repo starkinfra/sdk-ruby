@@ -13,6 +13,9 @@ module StarkInfra
   # in the BR Code. Stark Infra will receive the GET request and forward it to your
   # registered endpoint with a GET request containing the UUID of the BR Code for
   # identification.
+  # The 'subscription', 'subscriptionAndInstant' and 'dueAndOrSubscription' types let a DynamicBrcode initiate
+  # a Pix Automático recurring authorization; subscription reads are answered through PixPullSubscription, not
+  # response_due/response_instant.
   #
   # When you initialize a DynamicBrcode, the entity will not be automatically
   # created in the Stark Infra API. The 'create' function sends the objects
@@ -24,7 +27,7 @@ module StarkInfra
   # - external_id [string]: string that must be unique among all your DynamicBrcodes. Duplicated external ids will cause failures. ex: 'my-internal-id-123456'
   #
   # ## Parameters (optional):
-  # - type [string, default 'instant']: type of the DynamicBrcode. Options: 'instant', 'due'
+  # - type [string, default 'instant']: type of the DynamicBrcode. Options: 'instant', 'due', 'subscription', 'subscriptionAndInstant', 'dueAndOrSubscription'.
   # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
   #
   # ## Attributes (return-only):

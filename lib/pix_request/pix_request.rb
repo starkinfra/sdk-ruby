@@ -35,7 +35,7 @@ module StarkInfra
   # - cashier_bank_code [string]: Cashier's bank code. Required if the cash_amount is different from 0. ex: '20018183'
   #
   # ## Parameters (optional):
-  # - cash_amount [integer, default nil]: Amount to be withdrawal from the cashier in cents. ex: 1000 (= R$ 10.00)
+  # - cash_amount [integer, default nil]: amount to be withdrawn from the cashier in cents for Pix Saque/Troco; must be less than or equal to amount. ex: 1000 (= R$ 10.00)
   # - receiver_key_id [string, default nil]: Receiver's dict key. Example: tax id (CPF/CNPJ).
   # - description [string, default nil]: optional description to override default description to be shown in the bank statement. ex: 'Payment for service #1234'
   # - reconciliation_id [string, default nil]: Reconciliation ID linked to this payment. ex: 'b77f5236-7ab9-4487-9f95-66ee6eaf1781'
@@ -48,7 +48,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixRequest is created. ex: '5656565656565656'
   # - fee [integer]: fee charged when PixRequest is paid. ex: 200 (= R$ 2.00)
-  # - status [string]: current PixRequest status. ex: 'registered' or 'paid'
+  # - status [string]: current PixRequest status. Options: 'created', 'processing', 'success', 'failed'.
   # - flow [string]: direction of money flow. ex: 'in' or 'out'
   # - sender_bank_code [string]: code of the sender bank institution in Brazil. ex: '20018183'
   # - created [DateTime]: creation datetime for the PixRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
@@ -231,7 +231,8 @@ module StarkInfra
       request
     end
 
-    # Helps you respond to a PixRequest authorization
+    # Helps you respond to a PixRequest authorization. You must answer within 1 second with HTTP status 200,
+    # or the request is denied by default.
     #
     ## Parameters (required):
     # - status [string]: response to the authorization. ex: 'approved' or 'denied'

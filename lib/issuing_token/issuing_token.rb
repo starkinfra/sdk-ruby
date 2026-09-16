@@ -15,7 +15,7 @@ module StarkInfra
   # - wallet_id [string]: wallet provider which the token is bounded to. ex: 'google'
   # - wallet_name [string]: wallet name. ex: 'GOOGLE'
   # - merchant_id [string]: merchant unique id. ex: '5656565656565656'
-  # - status [string]: current IssuingToken status. ex: 'active', 'blocked', 'canceled', 'frozen' or 'pending'
+  # - status [string]: current IssuingToken status. Options: 'active', 'blocked', 'canceled', 'frozen', 'pending', 'denied'.
   # - wallet_device_score [number]: Device score informed by the digital wallet.
   # - wallet_account_score [number]: Account score informed by the digital wallet
   # - updated [DateTime]: latest update datetime for the IssuingToken. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
@@ -180,7 +180,7 @@ module StarkInfra
 
     # # Cancel an IssuingToken entity
     #
-    # Cancel an IssuingToken entity previously created in the Stark Infra API by its id
+    # Cancel an IssuingToken entity previously created in the Stark Infra API by its id. This action is irreversible.
     #
     # ## Parameters (required):
     # - id [string]: IssuingToken unique id. ex: '5656565656565656'

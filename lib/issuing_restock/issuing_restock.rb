@@ -18,7 +18,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when IssuingRestock is created. ex: '5656565656565656'
-  # - status [string]: current IssuingRestock status. ex: "created", "processing", "confirmed"
+  # - status [string]: current IssuingRestock status. Options: 'created', 'processing', 'confirmed', 'canceled'.
   # - updated [DateTime]: latest update datetime for the IssuingRestock. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - created [DateTime]: creation datetime for the IssuingRestock. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IssuingRestock < StarkCore::Utils::Resource
@@ -37,7 +37,8 @@ module StarkInfra
 
     # # Create IssuingRestocks
     #
-    # Send a list of IssuingRestock objects for creation in the Stark Infra API
+    # Send a list of IssuingRestock objects for creation in the Stark Infra API. Use this method to create up
+    # to 100 new IssuingRestocks at a time.
     #
     # ## Parameters (required):
     # - restocks [list of IssuingRestock objects]: list of IssuingRestock objects to be created in the API

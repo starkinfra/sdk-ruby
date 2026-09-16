@@ -192,9 +192,9 @@ module StarkInfra
 
     # # Update PixPullSubscriptions
     #
-    # A Pix Subscription can be patched for three distinct purposes - to update, confirm or deny it.
-    # As the receiver, you can approve or deny the subscription if the subscription type is 'subscriptionAndPayment'.
-    # As the sender, you can confirm or deny a delivered subscription.
+    # A PixPullSubscription can be patched to approve, deny or activate it. As the payer (sender), you may set
+    # status to 'approved' or 'denied'. As the receiver, you may set status to 'active' once approved. When
+    # confirming (approving), include sender_city_code.
     #
     # ## Parameters (required):
     # - id [string]: PixPullSubscription unique id. ex: '5656565656565656'
@@ -203,7 +203,7 @@ module StarkInfra
     #     - status [string]: new status of the Pix Subscription.
     #     ## Parameters (conditionally-required):
     #     - sender_city_code [string]: IBGE code of the payer's city. Required if you are confirming the subscription.
-    #     - reason [string]: reason why the Pix Subscription is being patched. Options: 'accountClosed', 'accountBlocked', 'invalidBranchCode', 'notRecognizedBySender', 'userRejected', 'notOffered'
+    #     - reason [string]: reason why the PixPullSubscription is being patched. Options: 'invalidSenderAccountNumber', 'accountClosed', 'accountBlocked', 'invalidBranchCode', 'notRecognizedBySender', 'userRejected', 'notOffered'.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
@@ -222,7 +222,7 @@ module StarkInfra
     #
     # ## Parameters (required):
     # - id [string]: PixPullSubscription unique id. ex: '5656565656565656'
-    # - reason [string]: reason for the cancellation. As receiver: 'accountClosed', 'receiverOrganizationClosed', 'receiverInternalError', 'fraud', 'receiverUserRequested'. As sender: 'accountClosed', 'senderDeceased', 'fraud', 'senderUserRequested'.
+    # - reason [string, default nil]: reason for the cancellation. Options: 'accountClosed', 'receiverOrganizationClosed', 'receiverInternalError', 'senderDeceased', 'fraud', 'senderUserRequested', 'receiverUserRequested', 'paymentNotFound'.
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call

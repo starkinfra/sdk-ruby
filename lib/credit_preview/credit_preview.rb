@@ -23,7 +23,8 @@ module StarkInfra
 
     # # Create CreditPreviews
     #
-    # Send a list of CreditPreview objects for processing in the Stark Infra API
+    # Send a list of CreditPreview objects for processing in the Stark Infra API. You can create up to 100
+    # previews in a single call.
     #
     # ## Parameters (required):
     # - previews [list of CreditPreview objects]: list of CreditPreview objects to be created in the API

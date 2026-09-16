@@ -9,8 +9,8 @@ module StarkInfra
   #
   # ## Parameters (required):
   # - name [string]: signer's name. ex: 'Tony Stark'
-  # - contact [string]: signer's contact information. ex: 'tony@starkindustries.com'
-  # - method [string]: delivery method for the contract. ex: 'link'
+  # - contact [string]: signer contact that receives the signing link or token. Can be an email, a phone number or, for the 'server' and 'organization' methods, a URL. ex: 'tony@starkindustries.com'
+  # - method [string]: signing method. Options: 'link' (signing link sent to the contact), 'token' (signing token sent to the contact), 'server' and 'organization' (automatic signatures over URL contacts).
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditSigner is created. ex: '5656565656565656'
@@ -23,6 +23,15 @@ module StarkInfra
       @method = method
     end
 
+    # # Parse CreditSigners
+    #
+    # Converts a list of hashes (or CreditSigner objects) received from the API into a list of CreditSigner objects.
+    #
+    # ## Parameters (required):
+    # - signers [list of hashes or CreditSigner objects]: list to be parsed.
+    #
+    # ## Return:
+    # - list of parsed CreditSigner objects
     def self.parse_signers(signers)
       resource_maker = StarkInfra::CreditSigner.resource[:resource_maker]
       return signers if signers.nil?

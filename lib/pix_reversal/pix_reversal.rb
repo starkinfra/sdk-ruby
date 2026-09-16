@@ -18,7 +18,7 @@ module StarkInfra
   # - amount [integer]: amount in cents to be reversed from PixRequest. ex: 1234 (= R$ 12.34)
   # - external_id [string]: string that must be unique among all your PixReversals. Duplicated external IDs will cause failures. By default, this parameter will block any PixReversal that repeats amount and receiver information on the same date. ex: 'my-internal-id-123456'
   # - end_to_end_id [string]: central bank's unique transaction ID. ex: 'E79457883202101262140HHX553UPqeq'
-  # - reason [string]: reason why the PixRequest is being reversed. Options are 'bankError', 'fraud', 'pixWithdrawError', 'refund3ByEndCustomer'
+  # - reason [string]: reason why the PixReversal is being reversed. Options are 'bankError', 'fraud', 'cashierError', 'customerRequest'.
   #
   # ## Parameters (optional):
   # - tags [list of strings, default nil]: list of strings for reference when searching for PixReversals. ex: ['employees', 'monthly']
@@ -27,7 +27,7 @@ module StarkInfra
   # - id [string]: unique id returned when the PixReversal is created. ex: '5656565656565656'.
   # - return_id [string]: central bank's unique reversal transaction ID. ex: 'D20018183202202030109X3OoBHG74wo'.
   # - fee [string]: fee charged by this PixReversal. ex: 200 (= R$ 2.00)
-  # - status [string]: current PixReversal status. ex: 'registered' or 'paid'
+  # - status [string]: current PixReversal status. Options are 'created', 'processing', 'success' or 'failed'.
   # - flow [string]: direction of money flow. ex: 'in' or 'out'
   # - created [DateTime]: creation datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
@@ -54,7 +54,8 @@ module StarkInfra
 
     # # Create PixReversals
     #
-    # Send a list of PixReversal objects for creation in the Stark Infra API
+    # Send a list of PixReversal objects for creation in the Stark Infra API. Reversals can only be created
+    # for inbound PixRequests with status 'success'; reference the original request by its end_to_end_id.
     #
     # ## Parameters (required):
     # - reversals [list of PixReversal objects]: list of PixReversal objects to be created in the API
@@ -185,7 +186,9 @@ module StarkInfra
       reversal
     end
 
-    # Helps you respond to a PixReversal authorization
+    # Helps you respond to a PixReversal authorization sent to your pixReversalUrl (must differ from your
+    # pixRequestUrl). Answer within 1 second with HTTP 200, or it is denied by default; if no pixReversalUrl
+    # is registered, inbound reversals are accepted by default.
     #
     ## Parameters (required):
     # - status [string]: response to the authorization. ex: 'approved' or 'denied'
