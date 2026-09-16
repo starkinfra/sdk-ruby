@@ -21,20 +21,21 @@ module StarkInfra
   # - income [integer]: monthly income in cents. Must be >= 0. ex: 1000000 (= R$ 10,000.00)
   #
   # ## Parameters (optional):
+  # - birth_date [Date or string, default nil]: individual's birth date. Returned as nil when not informed. ex: Date.new(2012, 3, 6) or '2012-03-06'
   # - tags [list of strings, default nil]: list of strings for reference when searching for IndividualAccountRequests. ex: ['employees', 'monthly']
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the IndividualAccountRequest is created. ex: '5656565656565656'
-  # - status [string]: current status of the IndividualAccountRequest. Options: 'approved', 'created', 'denied', 'processing', 'updated'
+  # - status [string]: current status of the IndividualAccountRequest. Options: 'created', 'processing', 'approved', 'denied', 'failed'
   # - account_type [string]: account type of the request. Always 'individual' for this resource. ex: 'individual'
-  # - flags [list of strings]: server-side review flags. Empty unless the request triggered a manual-review condition.
+  # - flags [list of hashes]: flags raised by the KYC pipeline, populated when the request is denied. Each flag has a code and a message. ex: [{ 'code' => 'bureauValidation', 'message' => '...' }]
   # - validator_link [string]: webview link to be delivered to the taker to complete biometrics and document capture.
   # - created [DateTime]: creation datetime for the IndividualAccountRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the IndividualAccountRequest. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class IndividualAccountRequest < StarkCore::Utils::Resource
-    attr_reader :name, :tax_id, :address, :income, :tags, :id, :status, :account_type, :flags, :validator_link, :created, :updated
+    attr_reader :name, :tax_id, :address, :income, :birth_date, :tags, :id, :status, :account_type, :flags, :validator_link, :created, :updated
     def initialize(
-      name:, tax_id:, address:, income:, tags: nil,
+      name:, tax_id:, address:, income:, birth_date: nil, tags: nil,
       id: nil, status: nil, account_type: nil, flags: nil, validator_link: nil, created: nil, updated: nil
     )
       super(id)
@@ -42,6 +43,7 @@ module StarkInfra
       @tax_id = tax_id
       @address = IndividualAccountRequest::Address.parse_address(address)
       @income = income
+      @birth_date = birth_date.to_s.empty? ? nil : StarkCore::Utils::Checks.check_date(birth_date)
       @tags = tags
       @status = status
       @account_type = account_type
@@ -170,19 +172,21 @@ module StarkInfra
     # - tax_id [string, default nil]: replace the CPF. ex: '012.345.678-90'
     # - address [IndividualAccountRequest::Address object, default nil]: replace the address as a whole object.
     # - income [integer, default nil]: replace monthly income in cents. ex: 1000000
+    # - birth_date [Date or string, default nil]: replace the birth date. ex: '2012-03-06'
     # - status [string, default nil]: manual state transition. ex: 'processing'
     # - tags [list of strings, default nil]: replace tag list. ex: ['employees', 'monthly']
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - target IndividualAccountRequest with updated attributes
-    def self.update(id, name: nil, tax_id: nil, address: nil, income: nil, status: nil, tags: nil, user: nil)
+    def self.update(id, name: nil, tax_id: nil, address: nil, income: nil, birth_date: nil, status: nil, tags: nil, user: nil)
       StarkInfra::Utils::Rest.patch_id(
         id: id,
         name: name,
         tax_id: tax_id,
         address: address,
         income: income,
+        birth_date: birth_date.to_s.empty? ? nil : StarkCore::Utils::Checks.check_date(birth_date),
         status: status,
         tags: tags,
         user: user,
@@ -200,6 +204,7 @@ module StarkInfra
             tax_id: json['tax_id'],
             address: json['address'],
             income: json['income'],
+            birth_date: json['birth_date'],
             tags: json['tags'],
             status: json['status'],
             account_type: json['account_type'],
