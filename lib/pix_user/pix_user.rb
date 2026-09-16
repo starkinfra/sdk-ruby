@@ -2,7 +2,6 @@
 
 require('starkcore')
 require_relative('../utils/rest')
-require_relative('statistics')
 
 module StarkInfra
   # # PixUser object
