@@ -19,6 +19,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - LedgerTransaction resource
 - PixUser resource
 - PixPullSubscription.parse method
+- BusinessAccountRequest resource
 
 ## [0.6.0] - 2026-07-16
 ### Added
