@@ -21,6 +21,8 @@ module StarkInfra
   # ## Parameters (optional):
   # - description [string, default nil]: description for any details that can help with the infraction investigation.
   # - tags [list of strings, default nil]: list of strings for tagging. ex: ['travel', 'food']
+  # - fraud_type [string, default nil]: type of Pix Fraud. Options: 'identity', 'mule', 'scam', 'other', 'unknown'
+  # - method [string, default nil]: method of Pix Infraction. Options: 'scam', 'unauthorized', 'coercion', 'invasion', 'other', 'unknown'
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixInfraction is created. ex: '5656565656565656'
@@ -35,14 +37,17 @@ module StarkInfra
   # - dispute_id [string]: id of the PixDispute associated with the PixInfraction. ex: '5656565656565656'
   # - created [DateTime]: creation datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixInfraction. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - bacen_id [string]: unique transaction id returned from Central Bank. ex: 'ccf9bd9c-e99d-999e-bab9-b999ca999f99'
+  # - fraud_id [string]: id of the Pix Fraud. ex: '5741774970552320'
   class PixInfraction < StarkCore::Utils::Resource
     attr_reader :reference_id, :type, :operator_email, :operator_phone, :description, :tags, :id, :credited_bank_code,
                 :flow, :analysis, :debited_bank_code, :reported_by, :result, :status, :amount, :dispute_id,
-                :created, :updated
+                :created, :updated, :bacen_id, :fraud_id, :fraud_type, :method
     def initialize(
       reference_id:, type:, operator_email:, operator_phone:, description: nil, id: nil, tags: nil,
       credited_bank_code: nil, debited_bank_code: nil, flow: nil, analysis: nil, reported_by: nil, result: nil,
-      status: nil, amount: nil, dispute_id: nil, created: nil, updated: nil
+      status: nil, amount: nil, dispute_id: nil, created: nil, updated: nil,
+      bacen_id: nil, fraud_id: nil, fraud_type: nil, method: nil
     )
       super(id)
       @reference_id = reference_id
@@ -62,6 +67,10 @@ module StarkInfra
       @dispute_id = dispute_id
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @bacen_id = bacen_id
+      @fraud_id = fraud_id
+      @fraud_type = fraud_type
+      @method = method
     end
 
     # # Create PixInfractions
@@ -224,7 +233,11 @@ module StarkInfra
             amount: json['amount'],
             dispute_id: json['dispute_id'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            bacen_id: json['bacen_id'],
+            fraud_id: json['fraud_id'],
+            fraud_type: json['fraud_type'],
+            method: json['method']
           )
         }
       }
