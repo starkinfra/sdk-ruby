@@ -221,7 +221,7 @@ module StarkInfra
     # ## Return:
     # - Parsed PixRequest object
     def self.parse(content:, signature:, user: nil)
-      request = StarkCore::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
+      request = StarkInfra::Utils::Parse.parse_and_verify(content: content, signature: signature, user: user, resource: resource)
 
       !request.fee.nil? ? request.fee : 0
       !request.tags.nil? ? request.tags : []
