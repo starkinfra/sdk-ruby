@@ -31,12 +31,13 @@ module StarkInfra
   # - flow [string]: direction of money flow. ex: 'in' or 'out'
   # - created [DateTime]: creation datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixReversal. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - description [string]: description of the reversal.
   class PixReversal < StarkCore::Utils::Resource
     attr_reader :amount, :external_id, :end_to_end_id, :reason, :tags, :id, :return_id,
-                :fee, :status, :flow, :created, :updated
+                :fee, :status, :flow, :created, :updated, :description
     def initialize(
       amount:, external_id:, end_to_end_id:, reason:, tags: nil, id: nil, return_id: nil, fee: nil,
-      status: nil, flow: nil, created: nil, updated: nil
+      status: nil, flow: nil, created: nil, updated: nil, description: nil
     )
       super(id)
       @amount = amount
@@ -50,6 +51,7 @@ module StarkInfra
       @flow = flow
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @description = description
     end
 
     # # Create PixReversals
@@ -225,7 +227,8 @@ module StarkInfra
             status: json['status'],
             flow: json['flow'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            description: json['description']
           )
         }
       }
