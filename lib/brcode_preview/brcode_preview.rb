@@ -37,15 +37,22 @@ module StarkInfra
   # - status [string]: Payment status. ex: 'active', 'paid', 'canceled' or 'unknown'
   # - subscription [BrcodePreview::Subscription, default nil]: snapshot of the recurring-debit subscription attached to the BR Code, when present. Nil for one-shot BR Codes.
   # - tax_id [string]: Payment receiver tax ID. ex: '012.345.678-90'
+  # - data [list of hashes]: additional data of the dynamic QR code, in key/value pairs. ex: [{'key' => 'additional-info', 'value' => 'order #12345'}]
+  # - description [string]: description of the payment.
+  # - due [DateTime]: due date and time for payment of the dynamic QR code. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - expired [DateTime]: date and time after which the dynamic QR code is considered expired. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - jws [string]: JWS of the dynamic QR code. Returned only when 'jws' is passed in the expand query parameter. ex: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...'
   class BrcodePreview < StarkCore::Utils::Resource
     attr_reader :id, :payer_id, :end_to_end_id, :account_number, :account_type, :amount, :amount_type, :bank_code, :branch_code, :cash_amount,
                 :cashier_bank_code, :cashier_type, :discount_amount, :fine_amount, :key_id, :interest_amount, :name,
-                :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :subscription, :tax_id
+                :nominal_amount, :reconciliation_id, :reduction_amount, :scheduled, :status, :subscription, :tax_id,
+                :data, :description, :due, :expired, :jws
     def initialize(
       id:, payer_id:, end_to_end_id: nil, account_number: nil, account_type: nil, amount: nil, amount_type: nil, bank_code: nil,
       branch_code: nil, cash_amount: nil, cashier_bank_code:nil, cashier_type:nil, discount_amount: nil,
       fine_amount: nil, key_id: nil, interest_amount: nil, name: nil, nominal_amount: nil,
-      reconciliation_id: nil, reduction_amount: nil, scheduled: nil, status: nil, subscription: nil, tax_id: nil
+      reconciliation_id: nil, reduction_amount: nil, scheduled: nil, status: nil, subscription: nil, tax_id: nil,
+      data: nil, description: nil, due: nil, expired: nil, jws: nil
     )
       super(id)
       @payer_id = payer_id
@@ -71,6 +78,11 @@ module StarkInfra
       @status = status
       @subscription = subscription
       @tax_id = tax_id
+      @data = data
+      @description = description
+      @due = due.to_s.empty? ? nil : StarkCore::Utils::Checks.check_datetime(due)
+      @expired = expired.to_s.empty? ? nil : StarkCore::Utils::Checks.check_datetime(expired)
+      @jws = jws
     end
 
     # # Retrieve BrcodePreviews
@@ -117,7 +129,12 @@ module StarkInfra
             scheduled: json['scheduled'],
             status: json['status'],
             subscription: BrcodePreview::Subscription.parse_subscription(json['subscription']),
-            tax_id: json['tax_id']
+            tax_id: json['tax_id'],
+            data: json['data'],
+            description: json['description'],
+            due: json['due'],
+            expired: json['expired'],
+            jws: json['jws']
           )
         }
       }
