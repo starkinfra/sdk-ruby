@@ -771,6 +771,9 @@ class ExampleGenerator
       external_id: SecureRandom.base64,
       source: 'sdk-ruby-test',
       tags: %w[ruby sdk test]
+    )
+  end
+
   def self.individual_account_request_address_example
     StarkInfra::IndividualAccountRequest::Address.new(
       street: 'Rua do Estilo Barroco',
@@ -779,6 +782,9 @@ class ExampleGenerator
       city: 'SP',
       state: 'SP',
       zip_code: '05724005'
+    )
+  end
+
   def self.individual_account_request_example(
     name: 'Tony Stark',
     tax_id: '012.345.678-90',
@@ -792,15 +798,21 @@ class ExampleGenerator
       address: address.nil? ? individual_account_request_address_example : address,
       income: income,
       tags: tags
+    )
+  end
+
   def self.individual_account_attachment_example(
     account_request_id:,
     type: 'identity-front',
     content_type: 'image/png',
+    tags: ['SDK Ruby Test']
+  )
     StarkInfra::IndividualAccountAttachment.new(
       type: type,
       content: individual_document_image('front'),
       content_type: content_type,
       account_request_id: account_request_id,
+      tags: tags
     )
   end
 end
