@@ -35,6 +35,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - bacen_id, fraud_id, fraud_type and method attributes to PixInfraction resource
 - description attribute to PixReversal resource
 - chunk_count attribute to PixStatement resource
+- type attribute to StaticBrcode resource
 ### Fixed
 
 ## [0.6.0] - 2026-07-16
