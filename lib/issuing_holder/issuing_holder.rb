@@ -187,7 +187,7 @@ module StarkInfra
     # ## Return:
     # - canceled IssuingHolder object
     def self.cancel(id, user: nil)
-      StarkCore::Utils::Rest.delete_id(id: id, user: user, **resource)
+      StarkInfra::Utils::Rest.delete_id(id: id, user: user, **resource)
     end
 
     def self.resource
