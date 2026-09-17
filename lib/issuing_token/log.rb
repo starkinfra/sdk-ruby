@@ -14,7 +14,7 @@ module StarkInfra
     # ## Attributes (return-only):
     # - id [string]: unique id returned when the log is created. ex: '5656565656565656'
     # - token [IssuingToken]: IssuingToken entity to which the log refers to.
-    # - errors [list of strings]: list of errors linked to this IssuingToken event.
+    # - errors [list of hashes]: list of errors linked to this IssuingToken event, each with 'code' and 'message' keys.
     # - type [string]: type of the IssuingToken event which triggered the log creation. ex: 'active', 'blocked', 'canceled', 'frozen' or 'pending'
     # - created [DateTime]: creation datetime for the log. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
     class Log < StarkCore::Utils::Resource
