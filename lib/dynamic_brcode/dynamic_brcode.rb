@@ -284,7 +284,7 @@ module StarkInfra
     # ## Return:
     # - verified Brcode's uuid.
     def self.verify(uuid:, signature:, user: nil)
-      StarkCore::Utils::Parse.verify(content: uuid, signature: signature, user: user)
+      StarkInfra::Utils::Parse.verify(content: uuid, signature: signature, user: user)
     end
 
     def self.resource

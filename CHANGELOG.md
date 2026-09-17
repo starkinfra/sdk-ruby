@@ -38,6 +38,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - type attribute to StaticBrcode resource
 ### Fixed
 - parse method in PixReversal resource, which called the core parser directly and skipped the SDK version and host settings
+- verify method in DynamicBrcode resource and parse method in PixRequest resource, which called the core parser directly
 
 ## [0.6.0] - 2026-07-16
 ### Added
