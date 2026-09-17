@@ -7,11 +7,8 @@ require_relative('../utils/parse')
 module StarkInfra
   # # IndividualIdentity object
   #
-  # An IndividualDocument represents an individual to be validated. It can have several individual documents attached
-  # to it, which are used to validate the identity of the individual. Once an individual identity is created, individual
-  # documents must be attached to it using the created method of the individual document resource. When all the required
-  # individual documents are attached to an individual identity it can be sent to validation by patching its status to 
-  # processing.
+  # An IndividualIdentity represents an individual to be validated. Once an individual identity is created,
+  # it can be sent to validation by patching its status to processing.
   #
   # When you initialize a IndividualIdentity, the entity will not be automatically
   # created in the Stark Infra API. The 'create' function sends the objects
@@ -141,7 +138,7 @@ module StarkInfra
     #
     # ## Parameters (required):
     # - id [string]: IndividualIdentity unique id. ex: '5656565656565656'
-    # - status [string]: You may send IndividualDocuments to validation by passing 'processing' in the status
+    # - status [string]: You may send an IndividualIdentity to validation by passing 'processing' in the status
     #
     # ## Parameters (optional):
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if starkinfra.user was set before function call

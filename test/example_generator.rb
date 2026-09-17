@@ -454,7 +454,7 @@ class ExampleGenerator
     )
   end
 
-  def self.individual_document_image(image)
+  def self.attachment_image(image)
     rg_images = {
       "front" => "test/utils/identity/identity-front-face.png",
       "back" => "test/utils/identity/identity-back-face.png",
@@ -809,7 +809,7 @@ class ExampleGenerator
   )
     StarkInfra::IndividualAccountAttachment.new(
       type: type,
-      content: individual_document_image('front'),
+      content: attachment_image('front'),
       content_type: content_type,
       account_request_id: account_request_id,
       tags: tags

@@ -98,7 +98,7 @@ describe(StarkInfra::IndividualAccountAttachment, '#individual-account-attachmen
     parent = StarkInfra::IndividualAccountRequest.create(
       [ExampleGenerator.individual_account_request_example]
     )[0]
-    image = ExampleGenerator.individual_document_image('front')
+    image = ExampleGenerator.attachment_image('front')
 
     attachment_input = StarkInfra::IndividualAccountAttachment.new(
       type: 'identity-front',
@@ -159,7 +159,7 @@ describe(StarkInfra::IndividualAccountAttachment, '#individual-account-attachmen
       StarkInfra::IndividualAccountAttachment.create([
         StarkInfra::IndividualAccountAttachment.new(
           type: 'not-a-real-type',
-          content: ExampleGenerator.individual_document_image('front'),
+          content: ExampleGenerator.attachment_image('front'),
           content_type: 'image/png',
           account_request_id: parent.id
         )
@@ -174,7 +174,7 @@ describe(StarkInfra::IndividualAccountAttachment, '#individual-account-attachmen
       StarkInfra::IndividualAccountAttachment.create([
         StarkInfra::IndividualAccountAttachment.new(
           type: 'identity-front',
-          content: ExampleGenerator.individual_document_image('front'),
+          content: ExampleGenerator.attachment_image('front'),
           content_type: 'image/png',
           account_request_id: '0'
         )
