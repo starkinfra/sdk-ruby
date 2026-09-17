@@ -29,6 +29,7 @@ module StarkInfra
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixClaim is created. ex: '5656565656565656'
+  # - bacen_id [string]: unique transaction id returned from Central Bank. ex: 'ccf9bd9c-e99d-999e-bab9-b999ca999f99'
   # - status [string]: current PixClaim status. Options: 'created', 'failed', 'delivered', 'confirmed', 'success', 'canceled'
   # - type [string]: type of Pix Claim. Options: 'ownership', 'portability'.
   # - key_type [string]: keyType of the claimed Pix Key. Options: 'cpf', 'cnpj', 'phone', 'email', 'evp'.
@@ -39,11 +40,12 @@ module StarkInfra
   # - updated [DateTime]: update datetime for the PixClaim. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixClaim < StarkCore::Utils::Resource
     attr_reader :account_created, :account_number, :account_type, :branch_code, :name, :tax_id, :key_id,
-                :tags, :id, :status, :type, :key_type, :flow, :claimer_bank_code, :claimed_bank_code, :created, :updated
+                :tags, :id, :status, :type, :key_type, :flow, :claimer_bank_code, :claimed_bank_code, :created, :updated,
+                :bacen_id
     def initialize(
       account_created:, account_number:, account_type:, branch_code:, name:,
       tax_id:, key_id:, tags: nil, id: nil, status: nil, type: nil, key_type: nil, flow: nil,
-      claimer_bank_code: nil, claimed_bank_code: nil, created: nil, updated: nil
+      claimer_bank_code: nil, claimed_bank_code: nil, created: nil, updated: nil, bacen_id: nil
     )
       super(id)
       @account_created = account_created
@@ -62,6 +64,7 @@ module StarkInfra
       @claimed_bank_code = claimed_bank_code
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @bacen_id = bacen_id
     end
 
     # # Create a PixClaim object
@@ -230,7 +233,8 @@ module StarkInfra
             claimer_bank_code: json['claimer_bank_code'],
             claimed_bank_code: json['claimed_bank_code'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            bacen_id: json['bacen_id']
           )
         }
       }

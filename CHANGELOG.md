@@ -31,6 +31,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - IndividualAccountAttachment resource
 - data, description, due, expired and jws attributes to BrcodePreview resource
 - bacen_id attribute to PixChargeback resource
+- bacen_id attribute to PixClaim resource
 ### Fixed
 
 ## [0.6.0] - 2026-07-16
