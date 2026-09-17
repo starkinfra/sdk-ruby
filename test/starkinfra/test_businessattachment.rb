@@ -8,7 +8,7 @@ describe(StarkInfra::BusinessAttachment, '#BusinessAttachment#') do
   it 'create' do
     business_identity_id = StarkInfra::BusinessIdentity.create([ExampleGenerator.business_identity_example()]).first.id
 
-    image = ExampleGenerator.individual_document_image("front")
+    image = ExampleGenerator.attachment_image("front")
     attachments = StarkInfra::BusinessAttachment.create([
       StarkInfra::BusinessAttachment.new(
         name: 'articles-of-incorporation.png',

@@ -40,6 +40,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - parse method in PixReversal resource, which called the core parser directly and skipped the SDK version and host settings
 - verify method in DynamicBrcode resource and parse method in PixRequest resource, which called the core parser directly
 - cancel method in IssuingHolder resource, which called the core client directly
+### Removed
+- IndividualDocument resource and its Log: no API route serves them
 
 ## [0.6.0] - 2026-07-16
 ### Added
