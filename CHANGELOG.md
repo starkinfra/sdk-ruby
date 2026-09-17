@@ -37,6 +37,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - chunk_count attribute to PixStatement resource
 - type attribute to StaticBrcode resource
 ### Fixed
+- parse method in PixReversal resource, which called the core parser directly and skipped the SDK version and host settings
 
 ## [0.6.0] - 2026-07-16
 ### Added

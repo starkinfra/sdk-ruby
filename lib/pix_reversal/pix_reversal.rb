@@ -173,7 +173,7 @@ module StarkInfra
     # ## Return:
     # - Parsed PixReversal object
     def self.parse(content:, signature:, user: nil)
-      reversal = StarkCore::Utils::Parse.parse_and_verify(
+      reversal = StarkInfra::Utils::Parse.parse_and_verify(
         content: content,
         signature: signature,
         user: user,
