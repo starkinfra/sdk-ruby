@@ -29,6 +29,15 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - IndividualAccountRequest resource
 - IndividualAccountRequest::Address sub-resource
 - IndividualAccountAttachment resource
+- data, description, due, expired and jws attributes to BrcodePreview resource
+- bacen_id attribute to PixChargeback resource
+- bacen_id attribute to PixClaim resource
+- bacen_id, fraud_id, fraud_type and method attributes to PixInfraction resource
+- description attribute to PixReversal resource
+- chunk_count attribute to PixStatement resource
+- type attribute to StaticBrcode resource
+### Fixed
+- parse method in PixReversal resource, which called the core parser directly and skipped the SDK version and host settings
 
 ## [0.6.0] - 2026-07-16
 ### Added

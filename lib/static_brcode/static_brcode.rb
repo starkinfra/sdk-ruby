@@ -25,6 +25,7 @@ module StarkInfra
   # - reconciliation_id [string, default nil]: id to be used for conciliation of the resulting Pix transaction. This id must have up to 25 alphanumeric digits ex: 'ah27s53agj6493hjds6836v49'
   # - description [string, default None]: optional description to override default description to be shown in the bank statement. ex: "Payment for service #1234"
   # - tags [list of strings, default nil]:  list of strings for tagging. ex: ['travel', 'food']
+  # - type [string, default 'instant']: type of the StaticBrcode. Options: 'instant', 'instantAndOrSubscription'
   #
   # ## Attributes (return-only):
   # - id [string]: id returned on creation, this is the BR Code. ex: '00020126360014br.gov.bcb.pix0114+552840092118152040000530398654040.095802BR5915Jamie Lannister6009Sao Paulo620705038566304FC6C'
@@ -33,9 +34,10 @@ module StarkInfra
   # - created [DateTime]: creation datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the StaticBrcode. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class StaticBrcode < StarkCore::Utils::Resource
-    attr_reader :name, :key_id, :city, :amount, :cashier_bank_code, :description, :reconciliation_id, :id, :tags, :uuid, :url, :created, :updated
+    attr_reader :name, :key_id, :city, :amount, :cashier_bank_code, :description, :reconciliation_id, :id, :tags, :uuid, :url, :created, :updated, :type
     def initialize(
-      name:, key_id:, city:, amount:, cashier_bank_code: nil, description: nil, reconciliation_id: nil, id: nil, tags:nil, uuid: nil, url: nil, created: nil, updated: nil
+      name:, key_id:, city:, amount:, cashier_bank_code: nil, description: nil, reconciliation_id: nil, id: nil, tags:nil, uuid: nil, url: nil, created: nil, updated: nil,
+      type: nil
     )
       super(id)
       @name = name
@@ -50,6 +52,7 @@ module StarkInfra
       @url = url
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @type = type
     end
 
     # # Create StaticBrcodes
@@ -160,7 +163,8 @@ module StarkInfra
             uuid: json['uuid'],
             url: json['url'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            type: json['type']
           )
         }
       }

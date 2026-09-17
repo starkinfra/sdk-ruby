@@ -42,16 +42,17 @@ module StarkInfra
   # - reversal_tax_id [string]: tax ID for the reversal transaction. ex: '01234567890'
   # - created [DateTime]: creation datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixChargeback. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - bacen_id [string]: unique transaction id returned from Central Bank. ex: 'ccf9bd9c-e99d-999e-bab9-b999ca999f99'
   class PixChargeback < StarkCore::Utils::Resource
     attr_reader :amount, :reference_id, :reason, :description, :tags, :id, :analysis, :sender_bank_code,
                 :receiver_bank_code, :rejection_reason, :reversal_reference_id, :result, :flow, :status,
                 :dispute_id, :is_monitoring_required, :reversal_account_number, :reversal_account_type,
-                :reversal_bank_code, :reversal_branch_code, :reversal_tax_id, :created, :updated
+                :reversal_bank_code, :reversal_branch_code, :reversal_tax_id, :created, :updated, :bacen_id
     def initialize(
       amount:, reference_id:, reason:, description: nil, tags: nil, id: nil, analysis: nil, sender_bank_code: nil,
       receiver_bank_code: nil, rejection_reason: nil, reversal_reference_id: nil, result: nil, flow: nil, status: nil,
       dispute_id: nil, is_monitoring_required: nil, reversal_account_number: nil, reversal_account_type: nil,
-      reversal_bank_code: nil, reversal_branch_code: nil, reversal_tax_id: nil, created: nil, updated: nil
+      reversal_bank_code: nil, reversal_branch_code: nil, reversal_tax_id: nil, created: nil, updated: nil, bacen_id: nil
     )
       super(id)
       @amount = amount
@@ -76,6 +77,7 @@ module StarkInfra
       @reversal_tax_id = reversal_tax_id
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @bacen_id = bacen_id
     end
 
     # # Create PixChargebacks
@@ -251,7 +253,8 @@ module StarkInfra
             reversal_branch_code: json['reversal_branch_code'],
             reversal_tax_id: json['reversal_tax_id'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            bacen_id: json['bacen_id']
           )
         }
       }

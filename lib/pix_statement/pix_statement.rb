@@ -26,9 +26,13 @@ module StarkInfra
   # - transaction_count [integer]: number of transactions that happened during the day that the PixStatement was requested. ex: 11
   # - created [DateTime]: creation datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixStatement. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
+  # - chunk_count [integer]: number of chunks the statement file is split into. ex: 2
   class PixStatement < StarkCore::Utils::Resource
-    attr_reader :after, :before, :type, :id, :status, :transaction_count, :created, :updated
-    def initialize(after:, before:, type:, id: nil, status: nil, transaction_count: nil, created: nil, updated: nil)
+    attr_reader :after, :before, :type, :id, :status, :transaction_count, :created, :updated, :chunk_count
+    def initialize(
+      after:, before:, type:, id: nil, status: nil, transaction_count: nil, created: nil, updated: nil,
+      chunk_count: nil
+    )
       super(id)
       @after = StarkCore::Utils::Checks.check_date(after)
       @before = StarkCore::Utils::Checks.check_date(before)
@@ -37,6 +41,7 @@ module StarkInfra
       @transaction_count = transaction_count
       @created = StarkCore::Utils::Checks.check_datetime(created)
       @updated = StarkCore::Utils::Checks.check_datetime(updated)
+      @chunk_count = chunk_count
     end
 
     # # Create a PixStatement object
@@ -143,7 +148,8 @@ module StarkInfra
             status: json['status'],
             transaction_count: json['transaction_count'],
             created: json['created'],
-            updated: json['updated']
+            updated: json['updated'],
+            chunk_count: json['chunk_count']
           )
         }
       }
