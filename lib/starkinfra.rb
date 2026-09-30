@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require_relative('ai_agent/ai_agent')
+require_relative('ai_chat/ai_chat')
+require_relative('ai_knowledge_base/ai_knowledge_base')
+require_relative('ai_message/ai_message')
+require_relative('ai_speech/ai_speech')
+require_relative('ai_transcript/ai_transcript')
+require_relative('ai_voice/ai_voice')
 require_relative('brcode_preview/brcode_preview')
 require_relative('business_account_request/business_account_request')
 require_relative('business_account_request/log')
