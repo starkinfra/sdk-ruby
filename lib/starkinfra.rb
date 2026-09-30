@@ -98,7 +98,10 @@ require_relative('webhook/webhook')
 require_relative('event/event')
 require_relative('event/attempt')
 require_relative('request/request')
+require_relative('utils/bacen_id')
+require_relative('utils/end_to_end_id')
 require_relative('utils/return_id')
+require_relative('utils/pix_subscription_bacen_id')
 
 module StarkInfra
 

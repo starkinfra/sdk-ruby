@@ -14,11 +14,8 @@ module StarkInfra
   # ## Return:
   # - ReturnId string. ex: 'D200181832022012014505GD19lzAbCdE'
   class ReturnId
-    RANDOM_SOURCE = (('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a).freeze
-
     def self.create(bank_code)
-      random_string = (0...11).map { RANDOM_SOURCE.sample }.join
-      "D#{bank_code}#{Time.now.strftime('%Y%m%d%H%M')}#{random_string}"
+      "D#{BacenId.create(bank_code)}"
     end
   end
 end
