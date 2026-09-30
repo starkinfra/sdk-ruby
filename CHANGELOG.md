@@ -14,6 +14,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+- AiKnowledgeBase resource
+- AiVoice, AiSpeech, AiTranscript, AiAgent, AiChat and AiMessage resources
 - CreditHolmes::Log sub-resource
 - IssuingToken::Log sub-resource
 - IssuingTokenActivation resource
