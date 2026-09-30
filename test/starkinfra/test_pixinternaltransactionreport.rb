@@ -58,7 +58,11 @@ describe(StarkInfra::PixInternalTransactionReport, '#pix-internal-transaction-re
 
   it 'create reversal and get' do
     report_example = ExampleGenerator.pixinternaltransactionreport_reversal_example(bank_code)
+    expect(report_example.return_id.length).must_equal(32)
+    expect(report_example.return_id).must_match(/\AD/)
     report = StarkInfra::PixInternalTransactionReport.create([report_example])[0]
+    expect(report.reference_type).must_equal('reversal')
+    expect(report.return_id).wont_be_nil
 
     report_get = StarkInfra::PixInternalTransactionReport.get(report.id)
     expect(report.id).must_equal(report_get.id)
