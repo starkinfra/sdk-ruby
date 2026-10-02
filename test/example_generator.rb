@@ -3,7 +3,6 @@
 require('securerandom')
 require_relative('./end_to_end_id')
 require_relative('./utils/bacen_id')
-require_relative('./bacen_id')
 require_relative('./test_helper.rb')
 
 class ExampleGenerator
@@ -529,7 +528,7 @@ class ExampleGenerator
     StarkInfra::PixInternalTransactionReport.new(
       amount: 1,
       created: '2022-02-16T17:23:53.980238+00:00',
-      end_to_end_id: BacenId.create('E', bank_code),
+      end_to_end_id: StarkInfra::EndToEndId.create(bank_code),
       method: 'manual',
       reference_type: 'request',
       sender_account_number: '00000-0',
@@ -549,7 +548,7 @@ class ExampleGenerator
     StarkInfra::PixInternalTransactionReport.new(
       amount: 1,
       created: '2022-02-16T17:23:53.980238+00:00',
-      end_to_end_id: BacenId.create('E', bank_code),
+      end_to_end_id: StarkInfra::EndToEndId.create(bank_code),
       method: 'dict',
       reference_type: 'reversal',
       sender_account_number: '00000-0',
@@ -563,16 +562,16 @@ class ExampleGenerator
       receiver_bank_code: '18236120',
       receiver_tax_id: '45.987.245/0001-92',
       receiver_key_id: '+5511989898989',
-      return_id: BacenId.create('D', bank_code)
+      return_id: StarkInfra::ReturnId.create(bank_code)
     )
   end
 
   def self.pixpullsubscription_example
     bank_code = BankCode.bank_code
     StarkInfra::PixPullSubscription.new(
-      bacen_id: BacenId.pixpullsubscription_bacen_id(bank_code),
+      bacen_id: StarkInfra::PixSubscriptionBacenId.create(bank_code, 'RR'),
       external_id: SecureRandom.base64,
-      installment_start: Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+      installment_start: (Time.now + 7 * 24 * 3600).utc.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
       interval: 'month',
       receiver_bank_code: bank_code,
       receiver_name: 'Stark Bank',
