@@ -79,4 +79,11 @@ describe(StarkInfra::PixKeyHolmes, '#pix-key-holmes#') do
     expect(sherlock.created).wont_be_nil
     expect(sherlock.updated).wont_be_nil
   end
+
+  it 'query and get' do
+    sherlock = StarkInfra::PixKeyHolmes.query(limit: 1).to_a[0]
+
+    get_sherlock = StarkInfra::PixKeyHolmes.get(sherlock.id)
+    expect(get_sherlock.id).must_equal(sherlock.id)
+  end
 end
