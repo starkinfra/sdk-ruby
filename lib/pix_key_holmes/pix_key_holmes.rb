@@ -23,7 +23,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixKeyHolmes is created. ex: "5656565656565656"
   # - result [string]: investigation result once the case is solved. ex: "registered", "unregistered"
-  # - status [string]: current status of the PixKeyHolmes. ex: "created", "solving", "solved", "failed"
+  # - status [string]: current status of the PixKeyHolmes. ex: "solving", "solved"
   # - created [DateTime]: creation datetime for the PixKeyHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixKeyHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixKeyHolmes < StarkCore::Utils::Resource
