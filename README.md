@@ -2454,6 +2454,51 @@ holmes.each do |sherlock|
 end
 ```
 
+### Get a PixKeyHolmes
+
+After its creation, information on a PixKeyHolmes may be retrieved by its id.
+
+```ruby
+require('starkinfra')
+
+sherlock = StarkInfra::PixKeyHolmes.get('5656565656565656')
+
+puts sherlock
+```
+
+### Query PixKeyHolmes logs
+
+You can query PixKeyHolmes logs to better understand PixKeyHolmes life cycles.
+
+```ruby
+require('starkinfra')
+
+logs = StarkInfra::PixKeyHolmes::Log.query(
+  limit: 50,
+  ids: ['5729405850615808'],
+  after: '2022-01-01',
+  before: '2022-01-20',
+  types: ['solved'],
+  holmes_ids: ['5719405850615809']
+)
+
+logs.each do |log|
+  puts log
+end
+```
+
+### Get a PixKeyHolmes log
+
+You can also get a specific log by its id.
+
+```ruby
+require('starkinfra')
+
+log = StarkInfra::PixKeyHolmes::Log.get('5155165527080960')
+
+puts log
+```
+
 ### Create PixChargebacks
 
 A Pix chargeback can be created when fraud is detected on a transaction or a system malfunction

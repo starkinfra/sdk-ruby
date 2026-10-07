@@ -56,6 +56,22 @@ module StarkInfra
       StarkInfra::Utils::Rest.post(entities: holmes, user: user, **resource)
     end
 
+    # # Retrieve a specific PixKeyHolmes
+    #
+    # Receive a single PixKeyHolmes object previously created in the Stark Infra API by its id
+    #
+    # ## Parameters (required):
+    # - id [string]: object unique id. ex: "5656565656565656"
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - PixKeyHolmes object with updated attributes
+    def self.get(id, user: nil)
+      StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
+    end
+
     # # Retrieve PixKeyHolmes
     #
     # Receive a generator of PixKeyHolmes objects previously created in the Stark Infra API
