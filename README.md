@@ -78,6 +78,14 @@ This SDK version is compatible with the Stark Infra API v2.
     - [BusinessIdentity](#create-businessidentities): Create business identities
     - [BusinessAttachment](#create-businessattachments): Create business attachments
     - [BusinessAccountRequest](#create-businessaccountrequests): Open a Stark Infra account for a company
+  - [AI](#ai)
+    - [AiKnowledgeBase](#create-an-aiknowledgebase): Turn a website into knowledge your agents can answer from
+    - [AiVoice](#create-an-aivoice): Clone a voice from a recording
+    - [AiSpeech](#create-an-aispeech): Read a text out loud with a cloned voice
+    - [AiTranscript](#create-an-aitranscript): Transcribe an audio file
+    - [AiAgent](#create-an-aiagent): Configure an assistant with a model, instructions, knowledge and voice
+    - [AiChat](#create-an-aichat): Open a conversation thread with an agent
+    - [AiMessage](#create-an-aimessage): Talk to an agent and read the history
   - [Webhook](#webhook):
     - [Webhook](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage Webhook events
@@ -4361,6 +4369,523 @@ require('starkinfra')
 log = StarkInfra::BusinessAccountRequest::Log.get('5155165527080960')
 
 puts log
+```
+
+## AI
+
+### Create an AiKnowledgeBase
+
+An AiKnowledgeBase turns a website into material an agent can read. Stark Infra crawls the root URL, follows its
+links, converts every page to Markdown and indexes it. The call returns at once with the base in 'processing' status.
+
+```ruby
+require('starkinfra')
+
+knowledge_base = StarkInfra::AiKnowledgeBase.create(
+  StarkInfra::AiKnowledgeBase.new(
+    name: 'Product Documentation',
+    root_url: 'https://docs.starkinfra.com',
+    is_recursive: false,
+    tags: %w[support public]
+  )
+)
+
+puts knowledge_base
+```
+
+### Get an AiKnowledgeBase
+
+Poll a knowledge base by its id until its status leaves 'processing'.
+
+```ruby
+require('starkinfra')
+
+knowledge_base = StarkInfra::AiKnowledgeBase.get('5155165527080960')
+
+puts knowledge_base
+```
+
+### Query AiKnowledgeBases
+
+You can list your knowledge bases, optionally filtered by ids, by a substring of the name or by status. Use limit to stop early.
+
+```ruby
+require('starkinfra')
+
+knowledge_bases = StarkInfra::AiKnowledgeBase.query(limit: 10, name: 'documentation', status: 'success')
+
+knowledge_bases.each do |knowledge_base|
+  puts knowledge_base
+end
+```
+
+### Get paged AiKnowledgeBases
+
+Use page instead of query to control the cursor yourself. The name filter applies to each page, so a page can come back empty with a cursor: keep going until the cursor is nil.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  knowledge_bases, cursor = StarkInfra::AiKnowledgeBase.page(cursor: cursor, limit: 10, name: 'documentation')
+  knowledge_bases.each do |knowledge_base|
+    puts knowledge_base
+  end
+  break if cursor.nil?
+end
+```
+
+### Update an AiKnowledgeBase
+
+Rename a knowledge base, retag it or change whether its crawl is recursive. The root URL cannot be changed.
+
+```ruby
+require('starkinfra')
+
+knowledge_base = StarkInfra::AiKnowledgeBase.update('5155165527080960', name: 'Public Documentation', tags: %w[support])
+
+puts knowledge_base
+```
+
+### List the pages of an AiKnowledgeBase
+
+Get every page the crawler has seen, grouped by host, with the status of each one.
+
+```ruby
+require('starkinfra')
+
+hosts = StarkInfra::AiKnowledgeBase.hosts('5155165527080960')
+
+hosts.each do |host, pages|
+  puts host
+  puts pages
+end
+```
+
+### Delete AiKnowledgeBases
+
+Delete up to 100 knowledge bases at once. Agents that still reference a deleted base simply retrieve nothing from it.
+
+```ruby
+require('starkinfra')
+
+knowledge_bases = StarkInfra::AiKnowledgeBase.delete(ids: %w[5155165527080960 4545454545454545])
+
+knowledge_bases.each do |knowledge_base|
+  puts knowledge_base
+end
+```
+
+### Create an AiVoice
+
+An AiVoice is a voice cloned from a recording you upload. The call returns at once with the voice in 'processing'
+status; only a voice in 'success' status can speak.
+
+```ruby
+require('starkinfra')
+require('base64')
+
+voice = StarkInfra::AiVoice.create(
+  StarkInfra::AiVoice.new(
+    audio: Base64.strict_encode64(File.binread('helena.mp3')),
+    name: 'Helena',
+    description: 'Calm voice',
+    language: 'portuguese',
+    gender: 'female'
+  )
+)
+
+puts voice
+```
+
+### Query AiVoices
+
+List your voices.
+
+```ruby
+require('starkinfra')
+
+voices = StarkInfra::AiVoice.query(limit: 10)
+
+voices.each do |voice|
+  puts voice
+end
+```
+
+### Get paged AiVoices
+
+Use page instead of query to control the cursor yourself.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  voices, cursor = StarkInfra::AiVoice.page(cursor: cursor, limit: 10)
+  voices.each do |voice|
+    puts voice
+  end
+  break if cursor.nil?
+end
+```
+
+### Delete AiVoices
+
+Delete up to 100 voices at once.
+
+```ruby
+require('starkinfra')
+
+voices = StarkInfra::AiVoice.delete(ids: %w[5155165527080960 4545454545454545])
+
+voices.each do |voice|
+  puts voice
+end
+```
+
+### Create an AiSpeech
+
+An AiSpeech is a text read out loud by an AiVoice. The audio is synthesized during the call, so the speech comes
+back already in 'success' status. A speech cannot be deleted once created.
+
+```ruby
+require('starkinfra')
+
+speech = StarkInfra::AiSpeech.create(
+  StarkInfra::AiSpeech.new(
+    voice_id: '5155165527080960',
+    text: 'Your order has shipped.'
+  )
+)
+
+puts speech
+```
+
+### Get an AiSpeech
+
+Get a speech with its base64-encoded audio. Use expand to also receive the name of the voice.
+
+```ruby
+require('starkinfra')
+
+speech = StarkInfra::AiSpeech.get('5155165527080960', expand: %w[voice_name])
+
+puts speech
+```
+
+### Query AiSpeeches
+
+List your speeches. The audio is left out of the results.
+
+```ruby
+require('starkinfra')
+
+speeches = StarkInfra::AiSpeech.query(limit: 10, expand: %w[voice_name])
+
+speeches.each do |speech|
+  puts speech
+end
+```
+
+### Get paged AiSpeeches
+
+Use page instead of query to control the cursor yourself.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  speeches, cursor = StarkInfra::AiSpeech.page(cursor: cursor, limit: 10)
+  speeches.each do |speech|
+    puts speech
+  end
+  break if cursor.nil?
+end
+```
+
+### Create an AiTranscript
+
+An AiTranscript is the text of an audio file you upload. The audio is transcribed during the call. A transcript
+cannot be deleted once created.
+
+```ruby
+require('starkinfra')
+require('base64')
+
+transcript = StarkInfra::AiTranscript.create(
+  StarkInfra::AiTranscript.new(
+    audio: Base64.strict_encode64(File.binread('recording.wav'))
+  )
+)
+
+puts transcript
+```
+
+### Query AiTranscripts
+
+List your transcripts.
+
+```ruby
+require('starkinfra')
+
+transcripts = StarkInfra::AiTranscript.query(limit: 10)
+
+transcripts.each do |transcript|
+  puts transcript
+end
+```
+
+### Get paged AiTranscripts
+
+Use page instead of query to control the cursor yourself.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  transcripts, cursor = StarkInfra::AiTranscript.page(cursor: cursor, limit: 10)
+  transcripts.each do |transcript|
+    puts transcript
+  end
+  break if cursor.nil?
+end
+```
+
+### Create an AiAgent
+
+An AiAgent is the configuration of an assistant: its model, instructions, knowledge bases and voice. The keys of
+the metadata schema are yours and are sent exactly as written.
+
+```ruby
+require('starkinfra')
+
+agent = StarkInfra::AiAgent.create(
+  StarkInfra::AiAgent.new(
+    name: 'Support assistant',
+    model: 'bender-1.0',
+    system_prompt: 'Answer in one short sentence.',
+    knowledge_base_ids: %w[5155165527080960],
+    metadata_schema: { 'order_id' => { 'type' => 'string', 'description' => 'Order the customer mentions' } }
+  )
+)
+
+puts agent
+```
+
+### Get an AiAgent
+
+Get an agent by its id. Use expand to receive the knowledge bases themselves.
+
+```ruby
+require('starkinfra')
+
+agent = StarkInfra::AiAgent.get('5155165527080960', expand: %w[knowledge_bases])
+
+puts agent
+```
+
+### Query AiAgents
+
+List your agents. Use expand to receive the knowledge bases themselves.
+
+```ruby
+require('starkinfra')
+
+agents = StarkInfra::AiAgent.query(limit: 10, expand: %w[knowledge_bases])
+
+agents.each do |agent|
+  puts agent
+end
+```
+
+### Get paged AiAgents
+
+Use page instead of query to control the cursor yourself.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  agents, cursor = StarkInfra::AiAgent.page(cursor: cursor, limit: 10)
+  agents.each do |agent|
+    puts agent
+  end
+  break if cursor.nil?
+end
+```
+
+### Update an AiAgent
+
+The API keeps what you do not send. To clear a parameter, send an empty value: '' for system_prompt and voice_id,
+[] for knowledge_base_ids and {} for metadata_schema.
+
+```ruby
+require('starkinfra')
+
+agent = StarkInfra::AiAgent.update('5155165527080960', name: 'Billing assistant', knowledge_base_ids: [])
+
+puts agent
+```
+
+### Delete AiAgents
+
+Delete up to 100 agents at once.
+
+```ruby
+require('starkinfra')
+
+agents = StarkInfra::AiAgent.delete(ids: %w[5155165527080960 4545454545454545])
+
+agents.each do |agent|
+  puts agent
+end
+```
+
+### Create an AiChat
+
+An AiChat is one conversation thread with an agent. When the title is omitted, the first message generates one.
+Use tags to find the chat later and context to give the agent data about the conversation; the keys of the context
+are yours and are sent exactly as written.
+
+```ruby
+require('starkinfra')
+
+chat = StarkInfra::AiChat.create(
+  StarkInfra::AiChat.new(
+    agent_id: '5155165527080960',
+    title: 'Order status',
+    tags: %w[vip gold],
+    context: { 'customerId' => '42' }
+  )
+)
+
+puts chat
+```
+
+### Get an AiChat
+
+Get a chat by its id. Use expand to also receive the name of the agent.
+
+```ruby
+require('starkinfra')
+
+chat = StarkInfra::AiChat.get('5155165527080960', expand: %w[agent_name])
+
+puts chat
+```
+
+### Query AiChats
+
+List your chats, optionally filtered by tags.
+
+```ruby
+require('starkinfra')
+
+chats = StarkInfra::AiChat.query(limit: 10, tags: %w[vip], expand: %w[agent_name])
+
+chats.each do |chat|
+  puts chat
+end
+```
+
+### Get paged AiChats
+
+Use page instead of query to control the cursor yourself.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  chats, cursor = StarkInfra::AiChat.page(cursor: cursor, limit: 10, tags: %w[vip])
+  chats.each do |chat|
+    puts chat
+  end
+  break if cursor.nil?
+end
+```
+
+### Update an AiChat
+
+Rename a chat, hand it over to another agent or change its tags and context. The API keeps what you do not send.
+To clear a parameter, send an empty value: [] for tags and {} for context.
+
+```ruby
+require('starkinfra')
+
+chat = StarkInfra::AiChat.update('5155165527080960', title: 'Refund request', tags: %w[refund], context: {})
+
+puts chat
+```
+
+### Delete AiChats
+
+Delete up to 100 chats at once, with their messages.
+
+```ruby
+require('starkinfra')
+
+chats = StarkInfra::AiChat.delete(ids: %w[5155165527080960 4545454545454545])
+
+chats.each do |chat|
+  puts chat
+end
+```
+
+### Create an AiMessage
+
+Post what the user said. The call waits for the agent, which takes a few seconds, and returns the user's message
+and the agent's answer. Use expand to receive the chat title, which is generated on the first turn.
+
+```ruby
+require('starkinfra')
+
+messages = StarkInfra::AiMessage.create(
+  StarkInfra::AiMessage.new(
+    chat_id: '5155165527080960',
+    text: 'What is the status of my order 123?'
+  ),
+  expand: %w[chat_name]
+)
+
+messages.each do |message|
+  puts message
+end
+```
+
+### Query AiMessages
+
+Get the history of a chat, following the cursor until it ends. Omit chat_id to read the messages of the whole workspace.
+
+```ruby
+require('starkinfra')
+
+messages = StarkInfra::AiMessage.query(limit: 10, chat_id: '5155165527080960')
+
+messages.each do |message|
+  puts message
+end
+```
+
+### Get AiMessages in pages
+
+Use page instead of query to control the cursor yourself. chat_id is optional here too.
+
+```ruby
+require('starkinfra')
+
+cursor = nil
+loop do
+  messages, cursor = StarkInfra::AiMessage.page(cursor: cursor, limit: 10, chat_id: '5155165527080960')
+  messages.each do |message|
+    puts message
+  end
+  break if cursor.nil?
+end
 ```
 
 ### Webhook
