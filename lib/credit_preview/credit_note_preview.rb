@@ -13,39 +13,32 @@ module StarkInfra
   # to the Stark Infra API and returns the list of created objects.
   #
   # ## Parameters (required):
-  # - type [string]: table type that defines the amortization system. Options: 'sac' (constant amortization), 'price' (fixed installments), 'american' (periodic interest and principal at maturity), 'bullet' (principal and interest at maturity), 'custom' (you provide the invoices and the rates are computed).
-  # - nominal_amount [integer]: amount in cents transferred to the credit receiver, before deductions. ex: 11234 (= R$ 112.34)
+  # - type [string]: table type that defines the amortization system. Options: 'sac', 'price', 'american', 'bullet', 'custom'
   # - scheduled [DateTime, Date or string]: date of transfer execution. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - tax_id [string]: credit receiver's tax ID (CPF or CNPJ). ex: '20.018.183/0001-80'
   #
   # ## Parameters (conditionally required):
-  # - nominal_amount or amount [integer]: provide exactly one; the other is computed from the invoice schedule (not used for type 'custom').
-  # - count or initial_amount [integer]: for 'sac' and 'price' types, provide exactly one; the other is computed.
-  # - invoices [list of CreditNote::Invoice objects]: list of CreditNote.Invoice objects to be created and sent to the credit receiver.
+  # Each `type` value requires its own subset of these fields: "sac", "price", "american" and "bullet" require nominal_interest and initial_due; "sac" and "price" require exactly one of count or initial_amount (count is also required for "american") plus interval; only "custom" requires invoices, leaving the others unused. For every type, including "custom", exactly one of nominal_amount or amount must also be provided.
+  # - invoices [list of CreditNote::Invoice objects]: list of CreditNote::Invoice objects to be created and sent to the credit receiver. ex: [Invoice, Invoice]
+  # - nominal_amount [integer]: amount in cents transferred to the credit receiver, before deductions, for every type including "custom". Provide exactly one of nominal_amount or amount; the other value, along with tax_amount and the interest rates, is computed from the invoice schedule. ex: 11234 (= R$ 112.34)
+  # - amount [integer]: net amount in cents to be disbursed to the credit receiver, for every type including "custom". Provide exactly one of nominal_amount or amount; the other value, along with tax_amount and the interest rates, is computed from the invoice schedule.
   # - nominal_interest [float]: yearly nominal interest rate of the credit note, in percentage. ex: 12.5
-  # - initial_due [DateTime, Date or string]: date of the first invoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0), Date.new(2020, 3, 10) or '2020-03-10'
+  # - initial_due [DateTime, Date or string]: date of the first invoice. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - count [integer]: quantity of invoices for payment. ex: 12
   # - initial_amount [integer]: value of the first invoice in cents. ex: 1234 (= R$12.34)
-  # - interval [string, default 'month']: interval between invoices. Options: 'day', 'week', 'month', 'quarter', 'semester', 'year'.
-  #
-  # ## Parameters (conditionally required, by type):
-  # - 'sac'/'price': nominal_interest, scheduled, initial_due, tax_id and one of count/initial_amount.
-  # - 'american': nominal_interest, scheduled, initial_due, count, tax_id.
-  # - 'bullet': nominal_interest, scheduled, initial_due, tax_id.
-  # - 'custom': scheduled, tax_id, invoices.
+  # - interval [string]: interval between invoices. ex: 'year', 'month'
   #
   # ## Parameters (optional):
   # - rebate_amount [integer, default nil]: credit analysis fee deducted from lent amount. ex: 11234 (= R$ 112.34)
   #
   # ## Attributes (return-only):
-  # - amount [integer]: credit note value in cents. ex: 1234 (= R$ 12.34)
   # - interest [float]: yearly effective interest rate of the credit note, in percentage. ex: 12.5
   # - tax_amount [integer]: tax amount included in the credit note. ex: 100
   class CreditNotePreview < StarkCore::Utils::SubResource
     attr_reader :type, :nominal_amount, :scheduled, :tax_id, :invoices, :nominal_interest, :initial_due, :count,
                 :initial_amount, :interval, :rebate_amount, :amount, :interest, :tax_amount
     def initialize(
-      type:, nominal_amount:, scheduled:, tax_id:, invoices: nil, nominal_interest: nil,
+      type:, nominal_amount: nil, scheduled: nil, tax_id: nil, invoices: nil, nominal_interest: nil,
       initial_due: nil, count: nil, initial_amount: nil, interval: nil, rebate_amount: nil,
       amount: nil, interest: nil, tax_amount: nil
     )
