@@ -12,7 +12,7 @@ describe('bacen id generators') do
     bacen_id = StarkInfra::PixSubscriptionBacenId.create(ispb, 'RR')
     expect(bacen_id.length).must_equal(29)
     expect(bacen_id).must_match(/\ARR#{ispb}\d{8}[a-zA-Z0-9]{11}\z/)
-    expect(bacen_id[10, 8]).must_equal(Time.now.strftime('%Y%m%d'))
+    expect(bacen_id[10, 8]).must_equal(Time.now.utc.strftime('%Y%m%d'))
   end
 
   it 'creates different pix subscription bacen ids' do
@@ -31,5 +31,12 @@ describe('bacen id generators') do
     return_id = StarkInfra::ReturnId.create(ispb)
     expect(return_id.length).must_equal(32)
     expect(return_id).must_match(/\AD#{ispb}\d{12}[a-zA-Z0-9]{11}\z/)
+  end
+
+  it 'creates end to end and return ids with the utc datetime' do
+    [StarkInfra::EndToEndId.create(ispb), StarkInfra::ReturnId.create(ispb)].each do |bacen_id|
+      generated = DateTime.strptime(bacen_id[9, 12], '%Y%m%d%H%M').to_time
+      expect((Time.now.utc - generated).abs).must_be(:<=, 120)
+    end
   end
 end
