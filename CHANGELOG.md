@@ -38,6 +38,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - description attribute to PixReversal resource
 - chunk_count attribute to PixStatement resource
 - type attribute to StaticBrcode resource
+### Changed
+- nominal_amount and amount parameters to conditionally required to CreditNotePreview sub-resource
 ### Fixed
 - parse method in PixReversal resource, which called the core parser directly and skipped the SDK version and host settings
 - verify method in DynamicBrcode resource and parse method in PixRequest resource, which called the core parser directly
