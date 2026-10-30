@@ -2266,8 +2266,9 @@ After a Pix infraction is patched, its status changes to closed.
 require('starkinfra')
 
 infraction = StarkInfra::PixInfraction.update(
-  id: '5155165527080960',
-  result: 'agreed'
+  '5155165527080960',
+  result: 'agreed',
+  fraud_type: 'scam'
 )
 
 puts infraction

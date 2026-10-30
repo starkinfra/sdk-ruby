@@ -185,14 +185,17 @@ module StarkInfra
     # - id [string]: PixInfraction unique id. ex: '5656565656565656'
     # - result [string]: result after the analysis of the PixInfraction. Options: 'agreed', 'disagreed'
     #
+    # ## Parameters (conditionally required):
+    # - fraud_type [string, default nil]: type of Pix Fraud, required only when result is 'agreed' (optional/ignored when result is 'disagreed'). Options: 'identity', 'mule', 'scam', 'other' — 'unknown' is not an accepted value.
+    #
     # ## Parameters (optional):
     # - analysis [string, nil]: analysis that led to the result.
     # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
     #
     # ## Return:
     # - PixInfraction object with updated attributes
-    def self.update(id, result:, analysis: nil, user: nil)
-      StarkInfra::Utils::Rest.patch_id(id: id, result: result, analysis: analysis, user: user, **resource)
+    def self.update(id, result:, fraud_type: nil, analysis: nil, user: nil)
+      StarkInfra::Utils::Rest.patch_id(id: id, result: result, fraud_type: fraud_type, analysis: analysis, user: user, **resource)
     end
 
     # # Cancel a PixInfraction entity

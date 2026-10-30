@@ -43,6 +43,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - verify method in DynamicBrcode resource and parse method in PixRequest resource, which called the core parser directly
 - cancel method in IssuingHolder resource, which called the core client directly
 - BacenId, EndToEndId, ReturnId and PixSubscriptionBacenId date generated in UTC instead of the machine timezone
+- PixInfraction.update now receives fraud_type, which is required when result is "agreed"
 ### Removed
 - IndividualDocument resource and its Log: no API route serves them
 
