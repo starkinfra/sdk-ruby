@@ -80,8 +80,17 @@ describe(StarkInfra::PixInfraction, '#pix-infraction#') do
     next if infraction_id.nil?
 
     infraction = StarkInfra::PixInfraction.get(infraction_id)
-    infraction = StarkInfra::PixInfraction.update(infraction.id, result: 'agreed')
+    infraction = StarkInfra::PixInfraction.update(infraction.id, result: 'agreed', fraud_type: 'scam')
     expect(infraction.status).must_equal('closed')
+  end
+
+  it 'page and update without fraud_type' do
+    infraction_id = get_infraction('out')
+    next if infraction_id.nil?
+
+    infraction = StarkInfra::PixInfraction.get(infraction_id)
+    infraction = StarkInfra::PixInfraction.update(infraction.id, result: 'disagreed')
+    expect(infraction.result).must_equal('disagreed')
   end
 
   it 'page and cancel' do
