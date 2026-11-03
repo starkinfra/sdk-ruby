@@ -4292,7 +4292,7 @@ requests = StarkInfra::BusinessAccountRequest.create([
 ])
 
 requests.each do |request|
-  puts request
+  puts request.id + ' ' + request.status
 end
 ```
 
@@ -4314,7 +4314,7 @@ requests = StarkInfra::BusinessAccountRequest.query(
 )
 
 requests.each do |request|
-  puts request
+  puts request.id + ' ' + request.status
 end
 ```
 
@@ -4332,7 +4332,7 @@ request.owners.each do |owner|
 end
 ```
 
-Each owner also carries a `validator_link`, the webview where that owner completes biometrics and document capture. Treat it as a credential: deliver it to its owner through a secure channel, and never log it or write it to disk.
+Each owner also carries a `validator_link`, the webview where that owner completes biometrics and document capture. Treat it as a credential: deliver it to its owner through a secure channel, and never log it or write it to disk. Printing a whole BusinessAccountRequest or BusinessAccountRequest::Log object (e.g. `puts request`) also prints every owner's `validator_link`, so print only the fields you need.
 
 ### Query BusinessAccountRequest logs
 
@@ -4348,7 +4348,7 @@ logs = StarkInfra::BusinessAccountRequest::Log.query(
 )
 
 logs.each do |log|
-  puts log
+  puts log.id + ' ' + log.type
 end
 ```
 
@@ -4361,7 +4361,7 @@ require('starkinfra')
 
 log = StarkInfra::BusinessAccountRequest::Log.get('5155165527080960')
 
-puts log
+puts log.id + ' ' + log.type
 ```
 
 ### Webhook
