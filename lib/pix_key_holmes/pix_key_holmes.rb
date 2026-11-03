@@ -23,7 +23,7 @@ module StarkInfra
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixKeyHolmes is created. ex: "5656565656565656"
   # - result [string]: investigation result once the case is solved. ex: "registered", "unregistered"
-  # - status [string]: current status of the PixKeyHolmes. ex: "created", "solving", "solved", "failed"
+  # - status [string]: current status of the PixKeyHolmes. ex: "solving", "solved"
   # - created [DateTime]: creation datetime for the PixKeyHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   # - updated [DateTime]: latest update datetime for the PixKeyHolmes. ex: DateTime.new(2020, 3, 10, 10, 30, 0, 0)
   class PixKeyHolmes < StarkCore::Utils::Resource
@@ -54,6 +54,22 @@ module StarkInfra
     # - list of PixKeyHolmes objects with updated attributes
     def self.create(holmes, user: nil)
       StarkInfra::Utils::Rest.post(entities: holmes, user: user, **resource)
+    end
+
+    # # Retrieve a specific PixKeyHolmes
+    #
+    # Receive a single PixKeyHolmes object previously created in the Stark Infra API by its id
+    #
+    # ## Parameters (required):
+    # - id [string]: object unique id. ex: "5656565656565656"
+    #
+    # ## Parameters (optional):
+    # - user [Organization/Project object, default nil]: Organization or Project object. Not necessary if StarkInfra.user was set before function call
+    #
+    # ## Return:
+    # - PixKeyHolmes object with updated attributes
+    def self.get(id, user: nil)
+      StarkInfra::Utils::Rest.get_id(id: id, user: user, **resource)
     end
 
     # # Retrieve PixKeyHolmes
