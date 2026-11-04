@@ -14,6 +14,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+- AiKnowledgeBase, AiVoice, AiSpeech, AiTranscript, AiAgent, AiChat and AiMessage resources
 - PixSubscriptionBacenId utility to generate Pix subscription bacenIds
 - EndToEndId and BacenId utilities
 - CreditHolmes::Log sub-resource
