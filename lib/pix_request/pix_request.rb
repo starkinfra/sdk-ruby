@@ -43,7 +43,10 @@ module StarkInfra
   # - tags [list of strings, default nil]: list of strings for reference when searching for PixRequests. ex: ['employees', 'monthly']
   # - method [string, default nil]: execution method of creation of the Pix. ex: 'manual', 'payerQrcode', 'dynamicQrcode'.
   # - priority priority [string, default 'high']: Specifies the message channel used to send the Pix Request. If set to 'high', the request is sent through the primary channel; if set to 'low', it uses the secondary channel. Options: 'high' or 'low'
-  # - reason [string, default 'customerRequest']: underlying reason for the payment transaction. ex: 'customerRequest', 'fraud', 'subscriptionFlaw'
+  # - reason [string, default 'customerRequest']: underlying reason for the payment transaction. Options: 'customerRequest', 'subscriptionFlaw', 'fraud'. When reason is 'fraud' (returning funds from a PixDispute), dispute_id is required and sender_tax_id must be your institution's organization tax ID (CNPJ).
+  #
+  # ## Parameters (conditionally-required):
+  # - dispute_id [string, default nil]: Id of the Pix Dispute being refunded. Required when reason is 'fraud' and not allowed with any other reason. The dispute must be one you received and must be awaiting the refund, otherwise the request is refused with invalidDisputeId.
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the PixRequest is created. ex: '5656565656565656'
@@ -58,13 +61,13 @@ module StarkInfra
                 :sender_account_type, :receiver_name, :receiver_tax_id, :receiver_bank_code, :receiver_account_number,
                 :receiver_branch_code, :receiver_account_type, :end_to_end_id, :cashier_type,
                 :cashier_bank_code, :cash_amount, :receiver_key_id, :description, :reconciliation_id, :initiator_tax_id,
-                :tags, :method, :priority, :reason, :id, :fee, :status, :flow, :sender_bank_code, :created, :updated
+                :tags, :method, :priority, :reason, :dispute_id, :id, :fee, :status, :flow, :sender_bank_code, :created, :updated
     def initialize(
       amount:, external_id:, sender_name:, sender_tax_id:, sender_branch_code:, sender_account_number:, 
       sender_account_type:, receiver_name:, receiver_tax_id:, receiver_bank_code:, receiver_account_number:, 
       receiver_branch_code:, receiver_account_type:, end_to_end_id:, cashier_type: nil, cashier_bank_code: nil,
       cash_amount: nil, receiver_key_id: nil, description: nil, reconciliation_id: nil, initiator_tax_id: nil,
-      tags: nil, method: nil, priority: nil, reason: nil, id: nil, fee: nil, status:nil, flow: nil, sender_bank_code: nil,
+      tags: nil, method: nil, priority: nil, reason: nil, dispute_id: nil, id: nil, fee: nil, status:nil, flow: nil, sender_bank_code: nil,
       created: nil, updated: nil
     )
       super(id)
@@ -93,6 +96,7 @@ module StarkInfra
       @method = method
       @priority = priority
       @reason = reason
+      @dispute_id = dispute_id
       @fee = fee
       @status = status
       @flow = flow
@@ -284,6 +288,7 @@ module StarkInfra
             method: json['method'],
             priority: json['priority'],
             reason: json['reason'],
+            dispute_id: json['dispute_id'],
             fee: json['fee'],
             status: json['status'],
             flow: json['flow'],

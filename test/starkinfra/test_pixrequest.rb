@@ -6,6 +6,33 @@ require_relative('../example_generator.rb')
 
 bank_code = BankCode.bank_code
 describe(StarkInfra::PixRequest, '#pix-request#') do
+  it 'create with dispute_id' do
+    request = StarkInfra::PixRequest.new(
+      amount: 10_000,
+      external_id: SecureRandom.base64,
+      sender_account_number: '00000',
+      sender_branch_code: '0000',
+      sender_account_type: 'checking',
+      sender_name: 'joao',
+      sender_tax_id: '09.346.601/0001-25',
+      receiver_bank_code: '00000000',
+      receiver_account_number: '00000',
+      receiver_branch_code: '0001',
+      receiver_account_type: 'checking',
+      receiver_name: 'maria',
+      receiver_tax_id: '45.987.245/0001-92',
+      end_to_end_id: 'E20018183202202161723Y4cqxlfLFcm',
+      reason: 'fraud',
+      dispute_id: '5656565656565656'
+    )
+    payload = StarkCore::Utils::API.api_json(request)
+
+    expect(request.reason).must_equal('fraud')
+    expect(request.dispute_id).must_equal('5656565656565656')
+    expect(payload['reason']).must_equal('fraud')
+    expect(payload['disputeId']).must_equal('5656565656565656')
+  end
+
   it 'query params' do
     requests = StarkInfra::PixRequest.query(
       limit: 4,
