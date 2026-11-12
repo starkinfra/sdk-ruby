@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [0.7.0] - 2026-11-13
 ### Added
 - PixKeyHolmes::Log sub-resource
 - PixKeyHolmes get method
