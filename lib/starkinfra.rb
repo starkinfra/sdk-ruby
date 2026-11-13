@@ -107,7 +107,7 @@ require_relative('utils/pix_subscription_bacen_id')
 module StarkInfra
 
   API_VERSION = 'v2'
-  SDK_VERSION = '0.6.0'
+  SDK_VERSION = '0.7.0'
   HOST = "infra"
   public_constant :API_VERSION, :SDK_VERSION, :HOST;
 
