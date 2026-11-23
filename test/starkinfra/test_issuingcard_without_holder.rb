@@ -233,5 +233,19 @@ describe(StarkInfra::IssuingCard, '#issuing-card-without-holder#') do
         end
       end
     end
+
+    it 'has the API reject pin in the batch' do
+      with_pending_cards(1) do |cards, _holder|
+        assert_rejected('invalidJson') { StarkInfra::IssuingCard.update_multi(cards: [{ id: cards.first.id, pin: '1234' }]) }
+      end
+    end
+
+    it 'has the API reject display_name in the batch' do
+      with_pending_cards(1) do |cards, _holder|
+        assert_rejected('invalidJson') do
+          StarkInfra::IssuingCard.update_multi(cards: [{ id: cards.first.id, display_name: 'Name' }])
+        end
+      end
+    end
   end
 end
