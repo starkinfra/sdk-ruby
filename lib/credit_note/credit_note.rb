@@ -43,6 +43,7 @@ module StarkInfra
   # - tags [list of strings, default nil]: list of strings for reference when searching for CreditNotes. ex: ['employees', 'monthly']
   # - expiration [integer, default 604800]: time interval in seconds between scheduled date and expiration date. ex: 123456789
   # - rules [list of CreditNote::Rule, default []]: list of {key, value} rules modifying the credit note behavior. Currently available key: 'invoiceCreationMode', values 'scheduled' (default - invoice issued a few days before due date), 'instant' (issued as soon as disbursed) or 'never' (not issued automatically).
+  # - template_replacements [CreditNote::TemplateReplacements or hash, default nil]: values that fill the placeholders of the contract template. The keys depend on the template, there is no fixed list. A hash is converted to CreditNote::TemplateReplacements and sends the same payload. Write the keys in snake_case, as strings or symbols: they are sent in camelCase (ex: guarantor_name is sent as guarantorName), and keys already written in camelCase are corrupted by the core (guarantorName is sent as guarantorname). Keys with nil values are not sent. When the API returns the field, every key comes back in CreditNote::TemplateReplacements, named as received (camelCase), and is read with template_replacements['guarantorName'] or template_replacements.to_h. ex: StarkInfra::CreditNote::TemplateReplacements.new(guarantor_name: 'Jon Snow', guarantor_tax_id: '012.345.678-90')
   #
   # ## Attributes (return-only):
   # - id [string]: unique id returned when the CreditNote is created. ex: '5656565656565656'
@@ -59,12 +60,13 @@ module StarkInfra
   class CreditNote < StarkCore::Utils::Resource
     attr_reader :template_id, :name, :tax_id, :scheduled, :invoices, :payment, :signers, :external_id,
                 :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :payment_type,
-                :nominal_amount, :amount, :rebate_amount, :tags, :expiration, :rules, :id, :document_id, :status,
+                :nominal_amount, :amount, :rebate_amount, :tags, :expiration, :rules, :template_replacements, :id, :document_id, :status,
                 :transaction_ids, :workspace_id, :tax_amount, :nominal_interest, :interest, :debtor_workspace_id, :created, :updated
     def initialize(
       template_id:, name:, tax_id:, scheduled:, invoices:, payment:, signers:, external_id:,
       street_line_1:, street_line_2:, district:, city:, state_code:, zip_code:, payment_type: nil,
-      nominal_amount: nil, amount: nil, rebate_amount: nil, tags: nil, expiration: nil, rules: nil, id: nil,
+      nominal_amount: nil, amount: nil, rebate_amount: nil, tags: nil, expiration: nil, rules: nil,
+      template_replacements: nil, id: nil,
       document_id: nil, status: nil, transaction_ids: nil, workspace_id: nil, tax_amount: nil,
       nominal_interest: nil, interest: nil, debtor_workspace_id: nil, created: nil, updated: nil
     )
@@ -88,6 +90,7 @@ module StarkInfra
       @tags = tags
       @expiration = expiration
       @rules = Rule.parse_rules(rules)
+      @template_replacements = TemplateReplacements.parse_template_replacements(template_replacements)
       @document_id = document_id
       @status = status
       @transaction_ids = transaction_ids
@@ -303,6 +306,7 @@ module StarkInfra
             tags: json['tags'],
             expiration: json['expiration'],
             rules: json['rules'],
+            template_replacements: json['template_replacements'],
             document_id: json['document_id'],
             status: json['status'],
             transaction_ids: json['transaction_ids'],

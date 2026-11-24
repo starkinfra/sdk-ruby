@@ -121,7 +121,15 @@ class ExampleGenerator
     )
   end
 
-  def self.creditnote_example
+  def self.template_replacements_example
+    StarkInfra::CreditNote::TemplateReplacements.new(
+      guarantor_name: 'Jon Snow',
+      guarantor_tax_id: '012.345.678-90',
+      guarantor_address: 'Av. Paulista, 200 - Bela Vista - Sao Paulo, SP'
+    )
+  end
+
+  def self.creditnote_example(template_replacements: nil, tags: ['iron'])
     invoice1 = StarkInfra::Invoice.new(
       amount: 50_000,
       due: (Time.now + 60 * 24 * 3600).to_date,
@@ -184,9 +192,10 @@ class ExampleGenerator
       city: 'São Paulo',
       state_code: 'SP',
       zip_code: '01234-567',
-      tags: ['iron'],
+      tags: tags,
       rebate_amount: 0,
-      rules: rules
+      rules: rules,
+      template_replacements: template_replacements
     )
   end
 

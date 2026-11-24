@@ -75,6 +75,19 @@ describe(StarkInfra::CreditNote, '#credit-note#') do
     expect(note_canceled.status).must_equal('canceled')
   end
 
+  it 'create with template replacements' do
+    credit_note = ExampleGenerator.creditnote_example(
+      tags: ['sdk-test'],
+      template_replacements: ExampleGenerator.template_replacements_example
+    )
+
+    note = StarkInfra::CreditNote.create([credit_note])[0]
+    expect(note.id).wont_be_nil
+    expect(note.template_replacements).must_be_instance_of(StarkInfra::CreditNote::TemplateReplacements)
+
+    StarkInfra::CreditNote.cancel(note.id)
+  end
+
   it 'pdf' do
     notes = StarkInfra::CreditNote.query(limit: 1, status: 'created').to_a
     flunk('no created CreditNote available in this workspace') if notes.empty?
