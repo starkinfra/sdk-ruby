@@ -14,6 +14,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+- CreditNote::TemplateReplacements sub-resource and template_replacements parameter to CreditNote, with free keys that fill the contract template placeholders (a raw hash is still accepted and sends the same payload)
 - IssuingCard.update_multi method, to update several cards in one request (PATCH /v2/issuing-card)
 - holder_name, holder_tax_id and holder_external_id parameters to IssuingCard.update, to assign a holder to a pending card
 ### Changed

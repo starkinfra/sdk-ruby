@@ -3522,6 +3522,13 @@ For lending operations, you can create a CreditNote to generate a CCB contract.
 Note that you must have recently created an identity check for that same Tax ID before
 being able to create a credit operation for them.
 
+The optional `template_replacements` fills the placeholders of the contract template, and its
+keys depend on the template. Pass a `StarkInfra::CreditNote::TemplateReplacements` (a raw hash is
+also accepted and sends the same payload). Write the keys in snake_case (strings or symbols for the
+hash): they are sent in camelCase (`guarantor_name` becomes `guarantorName`). Keys already in camelCase
+are corrupted by the SDK, so do not use them. Keys with nil values are not sent. When the API returns
+the field, every key comes back in `TemplateReplacements`, named as received (camelCase), and is read with `note.template_replacements['guarantorName']` or `note.template_replacements.to_h`.
+
 ```ruby
 require('starkinfra')
 
@@ -3564,6 +3571,11 @@ notes = StarkInfra::CreditNote.create([
         value: 'scheduled'
       )
     ],
+    template_replacements: StarkInfra::CreditNote::TemplateReplacements.new(
+      guarantor_name: 'Jon Snow',
+      guarantor_tax_id: '012.345.678-90',
+      guarantor_address: 'Av. Paulista, 200 - Bela Vista - Sao Paulo, SP'
+    ),
     external_id: '1234',
     street_line_1: 'Rua ABC',
     street_line_2: 'Ap 123',
