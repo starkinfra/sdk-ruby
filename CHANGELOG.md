@@ -13,6 +13,11 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- IssuingCard.update_multi method, to update several cards in one request (PATCH /v2/issuing-card)
+- holder_name, holder_tax_id and holder_external_id parameters to IssuingCard.update, to assign a holder to a pending card
+### Changed
+- holder_name, holder_tax_id and holder_external_id are optional in IssuingCard, so a physical card can be created without a holder
 
 ## [0.7.0] - 2026-11-13
 ### Added

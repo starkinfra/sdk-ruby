@@ -112,6 +112,21 @@ module StarkInfra
         )
       end
 
+      def self.patch_multi(resource_name:, resource_maker:, user:, entities:, **query)
+        return StarkCore::Utils::Rest.patch_multi(
+          resource_name: resource_name,
+          resource_maker: resource_maker,
+          sdk_version: StarkInfra::SDK_VERSION,
+          host: StarkInfra::HOST,
+          api_version: StarkInfra::API_VERSION,
+          user: user ? user : StarkInfra.user,
+          language: StarkInfra.language,
+          timeout: StarkInfra.timeout,
+          entities: entities,
+          **query
+        )
+      end
+
       def self.post_single(resource_name:, resource_maker:, user:, entity:)
         return StarkCore::Utils::Rest.post_single(
           resource_name: resource_name,
